@@ -219,6 +219,14 @@ body.noside #side{display:none}
 .seg .ch{width:14px;height:14px;display:block}
 #bar2 input[type=range]{width:90px}
 #sortSel{max-width:120px}
+#helpDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#helpDlg::backdrop{background:rgba(0,0,0,.45)}
+#helpDlg h2{margin:0;font-size:19px}
+#helpDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+#helpDlg .intro{color:var(--muted);margin:0 0 12px}
+#helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
+#helpDlg .help li{margin-bottom:7px}
+#bHelp{font-weight:600}
 .grp{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -264,6 +272,7 @@ body.noside #side{display:none}
   <span class="sep"></span>
   <button class="btn" id="bSide" data-i18n="side" data-i18n-title="sideT"></button>
   <button class="btn" id="bTheme" data-i18n-title="themeT"></button>
+  <button class="btn" id="bHelp" data-i18n="helpBtn" data-i18n-title="helpBtnT"></button>
   <span class="seg" id="langSeg"><button data-lang="de" title="Deutsch (Schweiz)">DE-CH</button><button data-lang="en" title="English">EN</button></span>
 </header>
 <div id="bar2">
@@ -286,6 +295,12 @@ body.noside #side{display:none}
 <input type="file" id="openFile" accept=".json,application/json" hidden>
 <input type="file" id="varImgFile" accept="image/*" multiple hidden>
 <div id="lightbox" hidden><img alt=""></div>
+<dialog id="helpDlg">
+  <div class="dlg-head"><h2 data-i18n="helpH"></h2><button class="icon" id="helpClose" aria-label="Close">✕</button></div>
+  <p class="intro" data-i18n="helpIntro"></p>
+  <ul class="help" id="helpList"></ul>
+  <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
+</dialog>
 <div id="toast"></div>
 <noscript><h1>Morphological Box – Morphologischer Kasten</h1><p>Dieses Tool benötigt JavaScript. / This tool requires JavaScript. Free online tool for morphological boxes (Zwicky boxes): sketches, traffic-light ratings and solution variants.</p></noscript>
 
@@ -331,7 +346,7 @@ de:{
   rmSketch:'Skizze entfernen', sketchHint:`Skizze hierher ziehen oder Karte anklicken + ${kb('Strg')}+${kb('V')} `, addSketch:'+ Skizze',
   notePh:'Notiz / Begründung der Variante …', variantsH:'Lösungsvarianten',
   noVarsLong:'Noch keine Varianten. Lege eine an und klicke dann pro Zeile eine Lösung an.',
-  criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'Bedienung',
+  criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s',
   help:()=>`<li><b>Zelle anklicken</b>: rechts Titel, Bild, Ampel und Begründung bearbeiten.</li>
     <li><b>Bild</b>: Datei auf eine Zelle ziehen oder Zelle wählen und ${kb('Strg')}+${kb('V')}. Bilder werden automatisch verkleinert.</li>
     <li><b>Mehrere Bilder</b> auf «+» ziehen: je eine neue Lösung.</li>
@@ -339,11 +354,12 @@ de:{
     <li><b>Varianten</b>: Chip oben anklicken, dann pro Zeile eine Lösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
     <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Lösungen jeder Teilfunktion nach Ampel, Gesamtbewertung oder alphabetisch.</li>
     <li><b>Skizzen zur Variante</b>: auf die Variantenkarte bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
-  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
+  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
+  helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Lösungen (Zellen). Wählst du pro Zeile eine Lösung, entsteht eine Lösungsvariante – sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Lösung(en) löschen?`, confirmDelCell:name=>`Lösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
   confirmDelVar:name=>`Variante ${q(name)} löschen?`, confirmRmSketch:'Skizze entfernen?',
@@ -395,11 +411,12 @@ en:{
     <li><b>Variants</b>: click a chip at the top, then click one solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
     <li><b>Sort</b> (top, under View): orders the solutions of every sub-function by rating, overall score or alphabetically.</li>
     <li><b>Variant sketches</b>: drop them on the variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
-  confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
+  confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
+  helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible solutions for each (cells). Picking one solution per row gives a solution variant – it is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} solution(s)?`, confirmDelCell:name=>`Delete solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
   confirmDelVar:name=>`Delete variant ${q(name)}?`, confirmRmSketch:'Remove sketch?',
@@ -750,8 +767,7 @@ function overview(){
   ${P.criteria.map(k=>`<div class="crit"><button class="eye ${ui.view===k.id?'on':''}" data-act="viewcrit" data-crit="${k.id}" title="${t('viewCritT')}">◉</button><input type="text" data-edit="critname" data-crit="${k.id}" value="${esc(k.name)}"><button class="icon" data-act="delcrit" data-crit="${k.id}" title="${t('delCrit')}">✕</button></div>`).join('')}
   <button class="btn small" data-act="addcrit">${t('addCrit')}</button>
   <h3>${t('helpH')}</h3>
-  <ul class="help">${t('help')}</ul>
-  <div class="btnrow" style="margin-top:10px"><button class="btn small" data-act="loadsample">${t('loadSample')}</button></div>`;
+  <div class="btnrow"><button class="btn small" data-act="help">${t('helpBtn')}</button><button class="btn small" data-act="loadsample">${t('loadSample')}</button></div>`;
 }
 function renderPrintHead(){
   $('#printhead').innerHTML=`<h1>${esc(P.title)}</h1><div class="legend">`+
@@ -798,6 +814,14 @@ function sortCells(mode){
   change(()=>P.rows.forEach(r=>r.cells.sort(cmp)));
   toast(t('sorted'));
 }
+function loadSample(){
+  if(!confirmDiscard()) return false;
+  if(!ui.dirty&&!confirm(t('confirmSample'))) return false;
+  clearBlobs(); P=sampleProject(); IMG={}; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  resetHistory(); validateUi(); renderAll(); scheduleSave(); return true;
+}
+function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
+function closeHelp(){ $('#helpDlg').close(); }
 function moveCell(cellId,rowId,targetId,after){
   const src=findCell(cellId), tRow=P.rows.find(r=>r.id===rowId);
   if(!src||!tRow||targetId===cellId) return;
@@ -922,6 +946,11 @@ $('#bTheme').onclick=()=>{
 $('#langSeg').onclick=e=>{ const b=e.target.closest('[data-lang]'); if(b&&b.dataset.lang!==LANG) setLang(b.dataset.lang); };
 applyStatic(); renderTheme();
 $('#bSide').onclick=()=>setSide(!sideVisible());
+$('#bHelp').onclick=openHelp;
+$('#helpClose').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
+$('#dlgSample').onclick=()=>{ if(loadSample()) closeHelp(); };
+$('#helpDlg').addEventListener('click',e=>{ if(e.target.id==='helpDlg') closeHelp(); }); // Klick auf Hintergrund
+$('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-seen','1'); }catch(e){} });
 $('#sortSel').onchange=e=>{ const m=e.target.value; e.target.value=''; e.target.blur(); sortCells(m); };
 $('#view').onchange=e=>{ ui.view=e.target.value; renderMatrix(); renderSide(); renderVarList(); };
 $('#bar2').addEventListener('click',e=>{
@@ -999,11 +1028,8 @@ $('#side').addEventListener('click',e=>{
     case 'addvar': addVariant(); break;
     case 'delvar': if(confirm(t('confirmDelVar',getVar(id).name))) change(()=>{ P.variants=P.variants.filter(v=>v.id!==id); }); break;
     case 'editvar': toggleEditVar(id); break;
-    case 'loadsample':
-      if(!confirmDiscard()) break;
-      if(!ui.dirty&&!confirm(t('confirmSample'))) break;
-      clearBlobs(); P=sampleProject(); IMG={}; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
-      resetHistory(); validateUi(); renderAll(); scheduleSave(); break;
+    case 'loadsample': loadSample(); break;
+    case 'help': openHelp(); break;
     case 'pickvimg': ui.pickVar=id; $('#varImgFile').click(); break;
     case 'rmvimg': if(confirm(t('confirmRmSketch'))){ const v=getVar(id); change(()=>{ v.imgs=v.imgs.filter(x=>x!==b.dataset.img); }); } break;
   }
@@ -1045,12 +1071,14 @@ document.addEventListener('keydown',e=>{
   const mod=e.ctrlKey||e.metaKey, key=e.key.toLowerCase();
   if(mod&&key==='s'){ e.preventDefault(); saveFile(e.shiftKey); return; }
   if(mod&&key==='o'){ e.preventDefault(); openFile(); return; }
+  if($('#helpDlg').open) return; // Dialog offen: Tastenkürzel nicht an den Kasten weitergeben
   if(e.target.matches('input,textarea,select')){ if(e.key==='Escape') e.target.blur(); return; }
   if(mod&&key==='z'&&!e.shiftKey){ e.preventDefault(); undo(); return; }
   if(mod&&(key==='y'||(key==='z'&&e.shiftKey))){ e.preventDefault(); redo(); return; }
   if(mod||e.altKey) return;
   if(e.key==='Escape'&&!$('#lightbox').hidden){ $('#lightbox').hidden=true; return; }
   if(e.key==='Escape'){ if(ui.editVar){ ui.editVar=null; renderAll(); } else if(ui.sel) select(null); return; }
+  if(e.key==='?'||e.key==='F1'){ e.preventDefault(); openHelp(); return; }
   if(key==='s'){ setSide(!sideVisible()); return; }
   if(key==='d'){ P.settings.showDesc=!P.settings.showDesc; $('#showdesc').checked=P.settings.showDesc; renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); return; }
   if(ui.sel&&['1','2','3','0'].includes(e.key)){
@@ -1163,6 +1191,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
+  { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
 })();
 </script>
