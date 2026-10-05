@@ -219,6 +219,7 @@ body.noside #side{display:none}
 .seg .ch{width:14px;height:14px;display:block}
 #bar2 input[type=range]{width:90px}
 #sortSel{max-width:120px}
+#exportSel{max-width:100px;padding:5px 6px}
 #helpDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 #helpDlg::backdrop{background:rgba(0,0,0,.45)}
 #helpDlg h2{margin:0;font-size:19px}
@@ -232,7 +233,7 @@ body.noside #side{display:none}
 #toast.show{opacity:1;transform:translateX(-50%)}
 
 @media print{
-  @page{size:landscape;margin:8mm}
+  @page{size:A4 landscape;margin:8mm}
   :root,:root[data-theme="dark"],:root:not([data-theme="light"]){
   --bg:#f3f4f7; --panel:#fff; --line:#d8dbe1; --text:#1d2330; --muted:#6b7280; --accent:#2f6fed;
   --g:#2e9e4f; --y:#e0a800; --r:#d64545;
@@ -243,7 +244,14 @@ body.noside #side{display:none}
   }
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html,body{height:auto;overflow:visible;background:#fff;display:block}
-  #bar,#bar2,#banner,#side,#toast,#lightbox,.addcell,#addrow,.handle,.delrow,.sk .hint{display:none!important}
+  #bar,#bar2,#banner,#side,#toast,#lightbox,#helpDlg,.addcell,#addrow,.handle,.delrow,.sk .hint,.ph,#varlist .sub{display:none!important}
+  #canvas,#matrix{display:block;min-width:0} /* inline-block lässt sich nicht auf Seiten umbrechen */
+  #matrix{padding-bottom:0}
+  .row{break-inside:avoid}
+  #varlist{break-before:page;margin-top:0}
+  #varlist h2{font-size:16px;margin-bottom:8px}
+  .vt td.pick:hover{outline:none}
+  .rowname{border-color:transparent!important;background:transparent!important}
   main{display:block}
   #stage{overflow:visible;padding:0}
   .rowhead{position:static;box-shadow:none}
@@ -268,7 +276,7 @@ body.noside #side{display:none}
   <button class="btn" id="bOpen" data-i18n="open" data-i18n-title="openT"></button>
   <button class="btn" id="bSave" data-i18n="save" data-i18n-title="saveT"></button>
   <button class="btn" id="bSaveAs" data-i18n="saveAs" data-i18n-title="saveAsT"></button>
-  <button class="btn" id="bPrint" data-i18n="print"></button>
+  <select id="exportSel" data-i18n-title="exportT"></select>
   <span class="sep"></span>
   <button class="btn" id="bSide" data-i18n="side" data-i18n-title="sideT"></button>
   <button class="btn" id="bTheme" data-i18n-title="themeT"></button>
@@ -346,6 +354,11 @@ de:{
   side:'◨ Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)', themeT:'Farbschema: Auto / Hell / Dunkel',
   themeAuto:'◐ Auto', themeLight:'☀ Hell', themeDark:'☾ Dunkel',
   viewGrp:'Ansicht', viewBy:'Ampel', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Texte', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Transparenz', linesT:'Transparenz der Variantenlinien (rechts = durchsichtiger)', variantsLbl:'Varianten',
+  exportPh:'Export…', exportT:'Drucken / PDF, Excel-Datei (mit Bildern) oder CSV', exportXlsx:'Excel (.xlsx) – mit Bildern', exportCsv:'CSV – nur Text',
+  exporting:'Excel-Datei wird erstellt …', exported:n=>'Exportiert: '+n, exportFail:'Export fehlgeschlagen',
+  xlSheetBox:'Kasten', xlSheetVariants:'Varianten', xlSheetRatings:'Bewertungen', xlDistribution:'Verteilung', xlMissing:'Fehlt noch', xlHasRed:'Enthält Rot', xlVisible:'Sichtbar', xlYes:'Ja', xlNo:'Nein',
+  xlColSubfn:'Teilfunktion', xlColSolution:'Lösung', xlColLevel:'Ampel', xlColReason:'Begründung', xlColOverall:'Gesamt', xlColVariants:'In Varianten', xlColImage:'Bild',
+  xlInfoProject:'Projekt', xlInfoExported:'Exportiert am', xlInfoTool:'Erstellt mit', xlInfoView:'Ampel-Kriterium der Ansicht', xlInfoScale:'Bewertung in %', xlInfoCounts:'Umfang', xlInfoSubfns:'Teilfunktionen', xlInfoSolutions:'Lösungen', xlInfoVariants:'Varianten',
   sortPh:'Sortieren…', sortT:'Lösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'nach Ampel (aktuelles Kriterium)', sortScore:'nach Gesamtbewertung (alle Kriterien)', sortAlpha:'alphabetisch', sorted:'Lösungen sortiert – Strg+Z macht es rückgängig',
   g:'Grün', y:'Gelb', r:'Rot', n:'unbewertet',
   newBox:'Neuer Kasten', overall:'Gesamt', subfnN:n=>'Teilfunktion '+n, newSolution:'Neue Lösung', newSubfn:'Neue Teilfunktion', newCrit:'Neues Kriterium', variantN:x=>'Variante '+x,
@@ -372,6 +385,7 @@ de:{
     <li><b>Mehrere Bilder</b> auf «+» ziehen: je eine neue Lösung.</li>
     <li><b>Verschieben</b>: Zellen ziehen (auch in andere Zeilen), Zeilen am ⠿ ziehen.</li>
     <li><b>Varianten</b>: Chip oben anklicken, dann pro Zeile eine Lösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
+    <li><b>Export…</b> (oben): Excel-Datei mit Kasten, Varianten, Bewertungen und allen Bildern – oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Variantenübersicht.</li>
     <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Lösungen jeder Teilfunktion nach Ampel, Gesamtbewertung oder alphabetisch.</li>
     <li><b>Skizzen zur Variante</b>: auf die Variantenkarte bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus</li>
@@ -406,6 +420,11 @@ en:{
   side:'◨ Sidebar', sideT:'Show/hide sidebar (key S)', themeT:'Colour scheme: Auto / Light / Dark',
   themeAuto:'◐ Auto', themeLight:'☀ Light', themeDark:'☾ Dark',
   viewGrp:'View', viewBy:'Rating', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Texts', descT:'Show descriptions in the cells (key D)', lines:'Transparency', linesT:'Transparency of the variant lines (right = more see-through)', variantsLbl:'Variants',
+  exportPh:'Export…', exportT:'Print / PDF, Excel file (with images) or CSV', exportXlsx:'Excel (.xlsx) – with images', exportCsv:'CSV – text only',
+  exporting:'Creating Excel file …', exported:n=>'Exported: '+n, exportFail:'Export failed',
+  xlSheetBox:'Box', xlSheetVariants:'Variants', xlSheetRatings:'Ratings', xlDistribution:'distribution', xlMissing:'Still missing', xlHasRed:'Contains red', xlVisible:'Visible', xlYes:'Yes', xlNo:'No',
+  xlColSubfn:'Sub-function', xlColSolution:'Solution', xlColLevel:'Rating', xlColReason:'Reason', xlColOverall:'Overall', xlColVariants:'In variants', xlColImage:'Image',
+  xlInfoProject:'Project', xlInfoExported:'Exported on', xlInfoTool:'Created with', xlInfoView:'Rating criterion in view', xlInfoScale:'Score in %', xlInfoCounts:'Size', xlInfoSubfns:'sub-functions', xlInfoSolutions:'solutions', xlInfoVariants:'variants',
   sortPh:'Sort…', sortT:'Reorder the solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'by rating (current criterion)', sortScore:'by overall score (all criteria)', sortAlpha:'alphabetically', sorted:'Solutions sorted – Ctrl+Z to undo',
   g:'Green', y:'Yellow', r:'Red', n:'unrated',
   newBox:'New box', overall:'Overall', subfnN:n=>'Sub-function '+n, newSolution:'New solution', newSubfn:'New sub-function', newCrit:'New criterion', variantN:x=>'Variant '+x,
@@ -432,6 +451,7 @@ en:{
     <li><b>Several images</b> dropped on “+” create one new solution each.</li>
     <li><b>Rearrange</b>: drag cells (also into other rows), drag rows by ⠿.</li>
     <li><b>Variants</b>: click a chip at the top, then click one solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
+    <li><b>Export…</b> (top): Excel file with box, variants, ratings and all images – or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 variant overview.</li>
     <li><b>Sort</b> (top, under View): orders the solutions of every sub-function by rating, overall score or alphabetically.</li>
     <li><b>Variant sketches</b>: drop them on the variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off</li>
@@ -653,6 +673,7 @@ function updateStatus(){
 function renderToolbar(){
   const ti=$('#ptitle'); if(document.activeElement!==ti) ti.value=P.title;
   $('#view').innerHTML=P.criteria.map(k=>`<option value="${k.id}" ${k.id===ui.view?'selected':''}>${esc(k.name)||t('noName')}</option>`).join('');
+  $('#exportSel').innerHTML=['','pdf','xlsx','csv'].map(v=>`<option value="${v}">${t({'':'exportPh',pdf:'print',xlsx:'exportXlsx',csv:'exportCsv'}[v])}</option>`).join('');
   $('#sortSel').innerHTML=['','rating','score','alpha'].map(v=>`<option value="${v}">${t({'':'sortPh',rating:'sortRating',score:'sortScore',alpha:'sortAlpha'}[v])}</option>`).join('');
   $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').checked=!!P.settings.showDesc;
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
@@ -727,7 +748,7 @@ function drawLines(){
     // Verlängerung nach unten bis zur Spalte der Variante in der Übersicht
     let arrow='';
     const th=m.querySelector(`#varlist th[data-vh="${v.id}"]`);
-    if(th){
+    if(th&&!ui.printing){
       const r=th.getBoundingClientRect(), [x0,y0]=pts[pts.length-1];
       const x1=r.left-base.left+r.width/2, y1=r.top-base.top-2, ym=(y0+y1)/2;
       if(y1>y0){
@@ -950,6 +971,273 @@ function scheduleSave(){
   },500);
 }
 
+/* ---------- Export: Excel (.xlsx, eigener Writer ohne Bibliothek) und CSV ---------- */
+const CRC_T=(()=>{ const tb=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; tb[n]=c>>>0; } return tb; })();
+function crc32(u){ let c=0xFFFFFFFF; for(let i=0;i<u.length;i++) c=CRC_T[(c^u[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function zipStore(files,type){ // ZIP ohne Kompression (reicht für .xlsx; Bilder sind ohnehin JPEG)
+  const enc=new TextEncoder(), parts=[], central=[]; let off=0;
+  const d=new Date(), time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1), date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for(const f of files){
+    const name=enc.encode(f.name), data=f.data, crc=crc32(data);
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(8,0,true);
+    h.setUint16(10,time,true); h.setUint16(12,date,true); h.setUint32(14,crc,true); h.setUint32(18,data.length,true); h.setUint32(22,data.length,true);
+    h.setUint16(26,name.length,true); h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),name,data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(8,0x0800,true); c.setUint16(10,0,true);
+    c.setUint16(12,time,true); c.setUint16(14,date,true); c.setUint32(16,crc,true); c.setUint32(20,data.length,true); c.setUint32(24,data.length,true);
+    c.setUint16(28,name.length,true); c.setUint32(42,off,true);
+    central.push(new Uint8Array(c.buffer),name);
+    off+=30+name.length+data.length;
+  }
+  const cdSize=central.reduce((s,p)=>s+p.length,0), e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true); e.setUint32(12,cdSize,true); e.setUint32(16,off,true);
+  return new Blob([...parts,...central,new Uint8Array(e.buffer)],{type});
+}
+const xe=s=>String(s??'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function colName(c){ let s=''; c++; while(c>0){ const m=(c-1)%26; s=String.fromCharCode(65+m)+s; c=Math.floor((c-1)/26); } return s; }
+const NS_MAIN='http://schemas.openxmlformats.org/spreadsheetml/2006/main', NS_REL='http://schemas.openxmlformats.org/officeDocument/2006/relationships', NS_PKG='http://schemas.openxmlformats.org/package/2006/relationships';
+const XML_HEAD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+
+function makeStyles(){ // sammelt Schriften/Füllungen/Rahmen und vergibt Stil-Indizes
+  const fonts=[], fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'], borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'];
+  const xfs=['<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'];
+  const idx=(arr,x)=>{ let i=arr.indexOf(x); if(i<0){ arr.push(x); i=arr.length-1; } return i; };
+  const font=({b,i,sz=11,color='FF1D2330'}={})=>idx(fonts,`<font>${b?'<b/>':''}${i?'<i/>':''}<sz val="${sz}"/><color rgb="${color}"/><name val="Calibri"/><family val="2"/></font>`);
+  font();
+  const fill=c=>c?idx(fills,`<fill><patternFill patternType="solid"><fgColor rgb="${c}"/><bgColor indexed="64"/></patternFill></fill>`):0;
+  const border=sides=>{ if(!sides) return 0; const s=k=>sides.includes(k)?`<${k} style="thin"><color rgb="FFC9CDD4"/></${k}>`:`<${k}/>`; return idx(borders,`<border>${s('left')}${s('right')}${s('top')}${s('bottom')}<diagonal/></border>`); };
+  const style=(o={})=>{
+    const sides=o.border==='all'?['left','right','top','bottom']:o.border?o.border.split(','):null;
+    return idx(xfs,`<xf numFmtId="${o.pct?9:0}" fontId="${font(o)}" fillId="${fill(o.fill)}" borderId="${border(sides)}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"${o.pct?' applyNumberFormat="1"':''}><alignment horizontal="${o.h||'left'}" vertical="${o.v||'top'}"${o.wrap===false?'':' wrapText="1"'}/></xf>`);
+  };
+  const xml=()=>XML_HEAD+`<styleSheet xmlns="${NS_MAIN}"><fonts count="${fonts.length}">${fonts.join('')}</fonts><fills count="${fills.length}">${fills.join('')}</fills><borders count="${borders.length}">${borders.join('')}</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${xfs.length}">${xfs.join('')}</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  return {style,xml};
+}
+class XSheet{
+  constructor(name){ this.name=name; this.rows=new Map(); this.colW=[]; this.merges=[]; this.pics=[]; this.freeze=null; this.filter=null; }
+  row(r){ if(!this.rows.has(r)) this.rows.set(r,{cells:new Map()}); return this.rows.get(r); }
+  cell(r,c,v,s=0){ this.row(r).cells.set(c,{v,s}); }
+  height(r,pt){ this.row(r).ht=Math.round(pt*10)/10; }
+  width(c,w){ this.colW[c]=w; }
+  merge(r1,c1,r2,c2){ this.merges.push(`${colName(c1)}${r1+1}:${colName(c2)}${r2+1}`); }
+  pic(r,c,img,x,y,w,h){ this.pics.push({r,c,img,x,y,w,h}); } // Versatz und Grösse in px
+}
+function cellXml(ref,{v,s}){
+  if(v==null||v==='') return `<c r="${ref}" s="${s}"/>`;
+  if(typeof v==='number') return `<c r="${ref}" s="${s}"><v>${v}</v></c>`;
+  const body=typeof v==='string'?`<t xml:space="preserve">${xe(v)}</t>`:
+    v.rich.filter(r=>r.t).map(r=>`<r><rPr>${r.b?'<b/>':''}${r.i?'<i/>':''}<sz val="${r.sz||11}"/><color rgb="${r.color||'FF1D2330'}"/><rFont val="Calibri"/><family val="2"/></rPr><t xml:space="preserve">${xe(r.t)}</t></r>`).join('');
+  return body?`<c r="${ref}" s="${s}" t="inlineStr"><is>${body}</is></c>`:`<c r="${ref}" s="${s}"/>`;
+}
+function sheetXml(sh,drawRid){
+  const cols=sh.colW.map((w,i)=>w?`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`:'').join('');
+  const rows=[...sh.rows.entries()].sort((a,b)=>a[0]-b[0]).map(([r,row])=>
+    `<row r="${r+1}"${row.ht?` ht="${row.ht}" customHeight="1"`:''}>`+[...row.cells.entries()].sort((a,b)=>a[0]-b[0]).map(([c,cell])=>cellXml(colName(c)+(r+1),cell)).join('')+'</row>').join('');
+  const f=sh.freeze, pane=f?`<pane${f.c?` xSplit="${f.c}"`:''}${f.r?` ySplit="${f.r}"`:''} topLeftCell="${colName(f.c||0)}${(f.r||0)+1}" activePane="${f.r&&f.c?'bottomRight':f.r?'bottomLeft':'topRight'}" state="frozen"/>`:'';
+  return XML_HEAD+`<worksheet xmlns="${NS_MAIN}" xmlns:r="${NS_REL}"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0">${pane}</sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/>`+
+    (cols?`<cols>${cols}</cols>`:'')+`<sheetData>${rows}</sheetData>`+(sh.filter?`<autoFilter ref="${sh.filter}"/>`:'')+
+    (sh.merges.length?`<mergeCells count="${sh.merges.length}">${sh.merges.map(m=>`<mergeCell ref="${m}"/>`).join('')}</mergeCells>`:'')+
+    `<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>`+(drawRid?`<drawing r:id="${drawRid}"/>`:'')+'</worksheet>';
+}
+function drawingXml(pics,rid){
+  const E=9525; // EMU pro px
+  return XML_HEAD+`<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${NS_REL}">`+
+    pics.map((p,i)=>{ const cx=Math.round(p.w*E), cy=Math.round(p.h*E);
+      return `<xdr:oneCellAnchor><xdr:from><xdr:col>${p.c}</xdr:col><xdr:colOff>${Math.round(p.x*E)}</xdr:colOff><xdr:row>${p.r}</xdr:row><xdr:rowOff>${Math.round(p.y*E)}</xdr:rowOff></xdr:from><xdr:ext cx="${cx}" cy="${cy}"/>`+
+        `<xdr:pic><xdr:nvPicPr><xdr:cNvPr id="${i+2}" name="Picture ${i+1}"/><xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr></xdr:nvPicPr><xdr:blipFill><a:blip r:embed="${rid[p.img.key]}"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill>`+
+        `<xdr:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr></xdr:pic><xdr:clientData/></xdr:oneCellAnchor>`; }).join('')+'</xdr:wsDr>';
+}
+async function xlsxImage(id,cache){ // Excel kennt kein WebP -> JPEG
+  if(cache.has(id)) return cache.get(id);
+  const src=IMG[id]; if(!src){ cache.set(id,null); return null; }
+  try{
+    const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; });
+    const cv=document.createElement('canvas'); cv.width=im.naturalWidth||1; cv.height=im.naturalHeight||1;
+    const ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(im,0,0);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',0.88));
+    const o={key:id,data:new Uint8Array(await blob.arrayBuffer()),w:cv.width,h:cv.height,file:`image${cache.size+1}.jpeg`};
+    cache.set(id,o); return o;
+  }catch(e){ console.warn(e); cache.set(id,null); return null; }
+}
+const fitBox=(im,bw,bh)=>{ const s=Math.min(bw/im.w,bh/im.h); const w=im.w*s, h=im.h*s; return {w,h,x:(bw-w)/2,y:(bh-h)/2}; };
+const colPx=w=>Math.floor(w*7+5), ptPx=pt=>pt*4/3;
+const textLines=(txt,chars)=>String(txt||'').split('\n').reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/Math.max(8,chars))),0);
+
+async function buildXlsx(){
+  const S=makeStyles(), cache=new Map(), sheets=[];
+  const DOT={g:'FF2E9E4F',y:'FFE0A800',r:'FFD64545',n:'FFB0B6C2'}, BG={g:'FFEAF7EE',y:'FFFFF7DA',r:'FFFDECEC',n:'FFFFFFFF'};
+  const argb=hex=>'FF'+String(hex||'#888888').replace('#','').toUpperCase().slice(0,6).padEnd(6,'0');
+  const GREY='FFF3F4F7', MUTED='FF6B7280', SUB='FF4B5563';
+  const today=new Date().toLocaleDateString(t('dateLocale'));
+  const lvl=(c,k)=>(c.ratings[k]||{}).level||'n';
+  const varsOf=(row,c)=>P.variants.filter(v=>v.picks[row.id]===c.id);
+  const head1=S.style({b:true,sz:16,wrap:false}), headSub=S.style({color:MUTED,wrap:false});
+  const lab=S.style({b:true,fill:GREY,border:'all'}), box=S.style({border:'all'});
+
+  /* Blatt 1: Kasten */
+  const sh1=new XSheet(t('xlSheetBox')); sheets.push(sh1);
+  const CW=30, IMG_PT=95, maxCells=Math.max(1,...P.rows.map(r=>r.cells.length));
+  sh1.width(0,26); for(let c=1;c<=maxCells;c++) sh1.width(c,CW);
+  sh1.cell(0,0,P.title||t('appTitle'),head1);
+  sh1.cell(1,0,`${t('printRating')}${critName(ui.view)} · ${today}`,headSub);
+  if(P.variants.length) sh1.cell(2,0,{rich:P.variants.flatMap(v=>[{t:'■ ',color:argb(v.color),sz:13},{t:v.name+(v.note?' – '+v.note:'')+'     ',b:true}])},S.style({wrap:false}));
+  const critLine=Math.ceil(P.criteria.reduce((n,k)=>n+k.name.length+4,0)/(CW*1.1));
+  let r=4;
+  for(const row of P.rows){
+    const hasImg=row.cells.some(c=>c.img&&IMG[c.img]);
+    sh1.height(r,hasImg?IMG_PT:6);
+    sh1.cell(r,0,row.name,S.style({b:true,sz:12,fill:GREY,border:'all',v:'center'})); sh1.cell(r+1,0,null,S.style({fill:GREY,border:'all'})); sh1.merge(r,0,r+1,0);
+    let lines=2;
+    for(const [i,c] of row.cells.entries()){
+      const col=i+1, l=lvl(c,ui.view), vs=varsOf(row,c);
+      sh1.cell(r,col,null,S.style({fill:BG[l],border:'left,right,top'}));
+      const runs=[{t:c.title||t('untitled'),b:true,sz:12}];
+      if(c.desc) runs.push({t:'\n'+c.desc,color:SUB,sz:10});
+      runs.push({t:'\n'});
+      P.criteria.forEach(k=>runs.push({t:'● ',color:DOT[lvl(c,k.id)],sz:12},{t:k.name+'   ',color:MUTED,sz:9}));
+      if(vs.length){ runs.push({t:'\n'}); vs.forEach(v=>runs.push({t:'■ ',color:argb(v.color),sz:13},{t:v.name+'   ',b:true,sz:10,color:argb(v.color)})); }
+      sh1.cell(r+1,col,{rich:runs},S.style({fill:BG[l],border:'left,right,bottom'}));
+      lines=Math.max(lines,1+textLines(c.desc,CW*1.2)+critLine+(vs.length?1:0));
+      if(c.img){ const im=await xlsxImage(c.img,cache); if(im){ const f=fitBox(im,colPx(CW)-12,ptPx(IMG_PT)-10); sh1.pic(r,col,im,6+f.x,5+f.y,f.w,f.h); } }
+    }
+    sh1.height(r+1,Math.min(400,lines*15+6));
+    sh1.height(r+2,6); r+=3;
+  }
+  sh1.freeze={c:1,r:4};
+
+  /* Blatt 2: Varianten */
+  const sh2=new XSheet(t('xlSheetVariants')); sheets.push(sh2);
+  const VW=34; sh2.width(0,26); P.variants.forEach((v,i)=>sh2.width(i+1,VW));
+  sh2.cell(0,0,t('overviewH'),head1);
+  sh2.cell(1,0,`${t('printRating')}${critName(ui.view)} · ${today}`,headSub);
+  if(!P.variants.length) sh2.cell(3,0,t('noVariants'));
+  else{
+    let q=3;
+    sh2.cell(q,0,null,lab);
+    P.variants.forEach((v,i)=>sh2.cell(q,i+1,v.name,S.style({b:true,sz:12,color:'FFFFFFFF',fill:argb(v.color),border:'all'})));
+    q++;
+    const anySk=P.variants.some(v=>v.imgs.some(id=>IMG[id])), SK_PT=anySk?120:18;
+    sh2.cell(q,0,t('sketches'),lab); sh2.height(q,SK_PT);
+    for(const [i,v] of P.variants.entries()){
+      sh2.cell(q,i+1,null,box);
+      const ims=[]; for(const id of v.imgs){ const im=await xlsxImage(id,cache); if(im) ims.push(im); }
+      const bw=(colPx(VW)-8)/Math.max(1,ims.length), bh=ptPx(SK_PT)-10;
+      ims.forEach((im,j)=>{ const f=fitBox(im,bw-4,bh); sh2.pic(q,i+1,im,6+j*bw+f.x,5+f.y,f.w,f.h); });
+    }
+    q++;
+    for(const row of P.rows){
+      sh2.cell(q,0,row.name,lab); let lines=1;
+      P.variants.forEach((v,i)=>{
+        const c=row.cells.find(x=>x.id===v.picks[row.id]);
+        if(!c){ sh2.cell(q,i+1,t('missing'),S.style({i:true,color:'FF9A6A00',border:'all'})); return; }
+        const rt=c.ratings[ui.view]||{}, runs=[{t:c.title||t('untitled'),b:true,sz:12}];
+        if(rt.reason) runs.push({t:'\n'+rt.reason,color:SUB,sz:10});
+        sh2.cell(q,i+1,{rich:runs},S.style({fill:BG[rt.level||'n'],border:'all'}));
+        lines=Math.max(lines,1+textLines(rt.reason,VW*1.2));
+      });
+      sh2.height(q,lines*15+6); q++;
+    }
+    const scores=P.variants.map(scoreVariant);
+    P.criteria.forEach((k,ki)=>{
+      sh2.cell(q,0,k.name,lab);
+      scores.forEach((s,i)=>{ const p=s.per[ki], l=p.pct==null?'n':p.pct>=75?'g':p.pct>=50?'y':'r';
+        sh2.cell(q,i+1,p.pct==null?'–':p.pct/100,S.style({pct:true,b:true,fill:BG[l],border:'all',h:'center'})); });
+      q++;
+      sh2.cell(q,0,`${k.name} – ${t('xlDistribution')}`,S.style({fill:GREY,border:'all',color:MUTED,sz:9}));
+      scores.forEach((s,i)=>{ const n=s.per[ki].cnt; sh2.cell(q,i+1,`${LV('g')} ${n.g} · ${LV('y')} ${n.y} · ${LV('r')} ${n.r} · ${LV('n')} ${n.n}`,S.style({border:'all',color:MUTED,sz:9})); });
+      q++;
+    });
+    sh2.cell(q,0,t('xlMissing'),lab); scores.forEach((s,i)=>sh2.cell(q,i+1,s.missing.map(x=>x.name).join(', ')||'–',box)); q++;
+    sh2.cell(q,0,t('xlHasRed'),lab); scores.forEach((s,i)=>sh2.cell(q,i+1,s.red?t('xlYes'):t('xlNo'),box)); q++;
+    sh2.cell(q,0,t('xlVisible'),lab); P.variants.forEach((v,i)=>sh2.cell(q,i+1,v.visible?t('xlYes'):t('xlNo'),box)); q++;
+    sh2.cell(q,0,t('note'),lab); let nl=1; P.variants.forEach((v,i)=>{ sh2.cell(q,i+1,v.note||'',box); nl=Math.max(nl,textLines(v.note,VW*1.2)); }); sh2.height(q,nl*15+6);
+    sh2.freeze={c:1,r:4};
+  }
+
+  /* Blatt 3: Bewertungen (flache Liste, filterbar) */
+  const sh3=new XSheet(t('xlSheetRatings')); sheets.push(sh3);
+  const head=[t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name} – ${t('xlColLevel')}`,`${k.name} – ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants'),t('xlColImage')];
+  [22,24,40,...P.criteria.flatMap(()=>[12,36]),11,20,16].forEach((w,i)=>sh3.width(i,w));
+  const hs=S.style({b:true,fill:GREY,border:'all',v:'center'});
+  head.forEach((h,i)=>sh3.cell(0,i,h,hs)); sh3.height(0,32);
+  let r3=1; const imgCol=head.length-1;
+  for(const row of P.rows) for(const c of row.cells){
+    let col=0, lines=Math.max(1,textLines(c.desc,40*1.2));
+    sh3.cell(r3,col++,row.name,S.style({b:true,border:'all'}));
+    sh3.cell(r3,col++,c.title||'',S.style({b:true,border:'all'}));
+    sh3.cell(r3,col++,c.desc||'',box);
+    P.criteria.forEach(k=>{ const rt=c.ratings[k.id]||{}, l=rt.level||'n';
+      sh3.cell(r3,col++,rt.level?LV(l):'',S.style({b:true,fill:BG[l],color:l==='n'?'FF1D2330':DOT[l],border:'all',h:'center'}));
+      sh3.cell(r3,col++,rt.reason||'',box); lines=Math.max(lines,textLines(rt.reason,36*1.2)); });
+    const sc=cellScore(c); sh3.cell(r3,col++,sc<0?'':sc,S.style({pct:true,border:'all',h:'center'}));
+    sh3.cell(r3,col++,varsOf(row,c).map(v=>v.name).join(', '),box);
+    sh3.cell(r3,col,null,box);
+    let ht=lines*15+6;
+    if(c.img){ const im=await xlsxImage(c.img,cache); if(im){ ht=Math.max(ht,50); const f=fitBox(im,colPx(16)-10,ptPx(50)-8); sh3.pic(r3,imgCol,im,5+f.x,4+f.y,f.w,f.h); } }
+    sh3.height(r3,ht); r3++;
+  }
+  sh3.freeze={r:1,c:2}; sh3.filter=`A1:${colName(head.length-1)}${Math.max(2,r3)}`;
+
+  /* Blatt 4: Info */
+  const sh4=new XSheet('Info'); sheets.push(sh4); sh4.width(0,30); sh4.width(1,80);
+  sh4.cell(0,0,t('appTitle'),head1);
+  [[t('xlInfoProject'),P.title],[t('xlInfoExported'),new Date().toLocaleString(t('dateLocale'))],[t('xlInfoTool'),'https://master-d1990.github.io/morphological-box/'],
+   [t('xlInfoView'),critName(ui.view)],[t('criteriaH'),P.criteria.map(k=>k.name).join(', ')],[t('xlInfoScale'),t('pctT')],
+   [t('xlInfoCounts'),`${P.rows.length} ${t('xlInfoSubfns')} · ${P.rows.reduce((n,x)=>n+x.cells.length,0)} ${t('xlInfoSolutions')} · ${P.variants.length} ${t('xlInfoVariants')}`]]
+   .forEach(([a,b],i)=>{ sh4.cell(i+2,0,a,S.style({b:true})); sh4.cell(i+2,1,b,S.style({})); });
+
+  /* Paket zusammensetzen */
+  const enc=new TextEncoder(), files=[], add=(name,str)=>files.push({name,data:enc.encode(str)});
+  const sname=n=>String(n).replace(/[\[\]:*?\/\\]/g,'').slice(0,31)||'Sheet';
+  let ct=`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>`;
+  sheets.forEach((sh,i)=>{
+    const n=i+1; let rid=null;
+    ct+=`<Override PartName="/xl/worksheets/sheet${n}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`;
+    if(sh.pics.length){
+      ct+=`<Override PartName="/xl/drawings/drawing${n}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>`;
+      const used=[...new Set(sh.pics.map(p=>p.img))], mrid={}; used.forEach((im,j)=>mrid[im.key]='rId'+(j+1));
+      add(`xl/drawings/drawing${n}.xml`,drawingXml(sh.pics,mrid));
+      add(`xl/drawings/_rels/drawing${n}.xml.rels`,XML_HEAD+`<Relationships xmlns="${NS_PKG}">${used.map((im,j)=>`<Relationship Id="rId${j+1}" Type="${NS_REL}/image" Target="../media/${im.file}"/>`).join('')}</Relationships>`);
+      add(`xl/worksheets/_rels/sheet${n}.xml.rels`,XML_HEAD+`<Relationships xmlns="${NS_PKG}"><Relationship Id="rId1" Type="${NS_REL}/drawing" Target="../drawings/drawing${n}.xml"/></Relationships>`);
+      rid='rId1';
+    }
+    add(`xl/worksheets/sheet${n}.xml`,sheetXml(sh,rid));
+  });
+  const defNames=sheets.map((sh,i)=>sh.filter?`<definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${xe(sname(sh.name)).replace(/'/g,"''")}'!${sh.filter.replace(/([A-Z]+)(\d+)/g,'$$$1$$$2')}</definedName>`:'').join('');
+  add('xl/workbook.xml',XML_HEAD+`<workbook xmlns="${NS_MAIN}" xmlns:r="${NS_REL}"><bookViews><workbookView/></bookViews><sheets>${sheets.map((sh,i)=>`<sheet name="${xe(sname(sh.name))}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets>${defNames?`<definedNames>${defNames}</definedNames>`:''}</workbook>`);
+  add('xl/_rels/workbook.xml.rels',XML_HEAD+`<Relationships xmlns="${NS_PKG}">${sheets.map((sh,i)=>`<Relationship Id="rId${i+1}" Type="${NS_REL}/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="${NS_REL}/styles" Target="styles.xml"/></Relationships>`);
+  add('xl/styles.xml',S.xml());
+  [...cache.values()].filter(Boolean).forEach(im=>files.push({name:`xl/media/${im.file}`,data:im.data}));
+  add('_rels/.rels',XML_HEAD+`<Relationships xmlns="${NS_PKG}"><Relationship Id="rId1" Type="${NS_REL}/officeDocument" Target="xl/workbook.xml"/></Relationships>`);
+  files.unshift({name:'[Content_Types].xml',data:enc.encode(XML_HEAD+ct+'</Types>')});
+  return zipStore(files,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+}
+function buildCsv(){
+  const sep=LANG==='de'?';':',', cq=v=>{ const s=String(v??''); return /[";,\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const head=[t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name} – ${t('xlColLevel')}`,`${k.name} – ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants')];
+  const lines=[head.map(cq).join(sep)];
+  for(const row of P.rows) for(const c of row.cells){
+    const sc=cellScore(c);
+    lines.push([row.name,c.title,c.desc,...P.criteria.flatMap(k=>{ const rt=c.ratings[k.id]||{}; return [rt.level?LV(rt.level):'',rt.reason||'']; }),
+      sc<0?'':Math.round(sc*100)+' %',P.variants.filter(v=>v.picks[row.id]===c.id).map(v=>v.name).join(', ')].map(cq).join(sep));
+  }
+  return new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+}
+function download(blob,name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+async function exportAs(kind){
+  const base=fileName().replace(/\.kasten\.json$/,'');
+  if(kind==='pdf'){ $('#stage').scrollLeft=0; window.print(); return; }
+  try{
+    if(kind==='xlsx'){ toast(t('exporting')); download(await buildXlsx(),base+'.xlsx'); toast(t('exported',base+'.xlsx')); }
+    if(kind==='csv'){ download(buildCsv(),base+'.csv'); toast(t('exported',base+'.csv')); }
+  }catch(err){ console.error(err); toast(t('exportFail')); }
+}
+
 /* ---------- Toast ---------- */
 let toastT;
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2400); }
@@ -964,7 +1252,7 @@ $('#bNew').onclick=()=>{
 $('#bOpen').onclick=openFile;
 $('#bSave').onclick=()=>saveFile(false);
 $('#bSaveAs').onclick=()=>saveFile(true);
-$('#bPrint').onclick=()=>{ $('#stage').scrollLeft=0; window.print(); };
+
 $('#undo').onclick=undo; $('#redo').onclick=redo;
 $('#bTheme').onclick=()=>{
   const cur=document.documentElement.dataset.theme||'auto';
@@ -981,6 +1269,7 @@ $('#helpClose').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
 $('#dlgSample').onclick=()=>{ if(loadSample()) closeHelp(); };
 $('#helpDlg').addEventListener('click',e=>{ if(e.target.id==='helpDlg') closeHelp(); }); // Klick auf Hintergrund
 $('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-seen','1'); }catch(e){} });
+$('#exportSel').onchange=e=>{ const k=e.target.value; e.target.value=''; e.target.blur(); exportAs(k); };
 $('#sortSel').onchange=e=>{ const m=e.target.value; e.target.value=''; e.target.blur(); sortCells(m); };
 $('#view').onchange=e=>{ ui.view=e.target.value; renderMatrix(); renderSide(); renderVarList(); };
 $('#bar2').addEventListener('click',e=>{
@@ -1201,12 +1490,26 @@ document.addEventListener('drop',async e=>{
 });
 
 /* ---------- Druck ---------- */
-window.addEventListener('beforeprint',()=>{
-  const m=$('#canvas'); m.style.zoom=''; $('#stage').scrollLeft=0;
-  renderPrintHead(); drawLines();
-  const z=Math.min(1,1040/m.scrollWidth); if(z<1) m.style.zoom=z;
-});
-window.addEventListener('afterprint',()=>{ $('#canvas').style.zoom=''; drawLines(); });
+// Druck: Seite 1 = Titel + Kasten (auf A4 quer eingepasst), Seite 2 = Variantenübersicht
+const PRINT_W=1060, PRINT_H=730; // nutzbare Fläche A4 quer bei 8 mm Rand, in CSS-px
+function preparePrint(){
+  const mx=$('#matrix'), vl=$('#varlist'), svg=$('#lines');
+  mx.style.zoom=''; vl.style.zoom=''; svg.style.transform=''; $('#stage').scrollLeft=0;
+  ui.printing=true; renderPrintHead(); drawLines();
+  const headH=70+Math.ceil(P.variants.filter(v=>v.visible).length/4)*18;
+  // tatsächliche Inhaltsgrösse (ohne «+»-Knöpfe, die im Druck fehlen)
+  const mr=mx.getBoundingClientRect(); let cw=1,ch=1;
+  $$('#matrix .rowhead, #matrix .cell').forEach(el=>{ const r=el.getBoundingClientRect(); cw=Math.max(cw,r.right-mr.left); ch=Math.max(ch,r.bottom-mr.top); });
+  const z=Math.min(1.4,PRINT_W/cw,(PRINT_H-headH)/ch); // kleine Kästen dürfen etwas grösser werden
+  if(z!==1){ mx.style.zoom=z; svg.style.transformOrigin='0 0'; svg.style.transform=`scale(${z})`; }
+  const tbl=vl.querySelector('.vt'); const zv=tbl?Math.min(1,PRINT_W/tbl.offsetWidth):1;
+  if(zv<1) vl.style.zoom=zv;
+}
+function endPrint(){
+  ui.printing=false; $('#matrix').style.zoom=''; $('#varlist').style.zoom=''; $('#lines').style.transform=''; drawLines();
+}
+window.addEventListener('beforeprint',preparePrint);
+window.addEventListener('afterprint',endPrint);
 window.addEventListener('resize',()=>drawLines());
 window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.preventDefault(); e.returnValue=''; } });
 
