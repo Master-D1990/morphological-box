@@ -209,6 +209,10 @@ Main parts of the script, in order:
 
 Pull requests are welcome.
 
+### How it was made
+
+Ideas, requirements and testing by Master-D1990. The code was largely written with the help of Claude (Anthropic), an AI assistant.
+
 ---
 
 ## License
