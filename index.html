@@ -125,7 +125,8 @@ main{flex:1;display:flex;min-height:0}
 .vsk .ph{flex:1;min-width:140px}
 .cell .ph{padding:1px 4px;line-height:1.25}
 .imgdrop{font-size:11px!important;color:var(--ph)!important}
-.ctitle{font-weight:600;font-size:13px;line-height:1.25;height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ctitle{font-weight:600;font-size:clamp(11.5px,calc(var(--cell-w)*.078),13px);line-height:1.25;height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ctitle,.cdesc,.vt td,.rowname{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere}
 .ctitle i{color:var(--ph);font-weight:400}
 .dots{display:flex;gap:4px;height:14px;margin-top:auto}
 .cdesc{font-size:12px;line-height:1.3;color:var(--muted);white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;margin-bottom:2px}
