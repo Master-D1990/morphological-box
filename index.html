@@ -343,7 +343,7 @@ de:{
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
-  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.',
+  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Lösung(en) löschen?`, confirmDelCell:name=>`Lösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
   confirmDelVar:name=>`Variante ${q(name)} löschen?`, confirmRmSketch:'Skizze entfernen?',
@@ -399,7 +399,7 @@ en:{
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
-  confirmNew:'Create a new empty box? The current one will be replaced.',
+  confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} solution(s)?`, confirmDelCell:name=>`Delete solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
   confirmDelVar:name=>`Delete variant ${q(name)}?`, confirmRmSketch:'Remove sketch?',
@@ -750,7 +750,8 @@ function overview(){
   ${P.criteria.map(k=>`<div class="crit"><button class="eye ${ui.view===k.id?'on':''}" data-act="viewcrit" data-crit="${k.id}" title="${t('viewCritT')}">◉</button><input type="text" data-edit="critname" data-crit="${k.id}" value="${esc(k.name)}"><button class="icon" data-act="delcrit" data-crit="${k.id}" title="${t('delCrit')}">✕</button></div>`).join('')}
   <button class="btn small" data-act="addcrit">${t('addCrit')}</button>
   <h3>${t('helpH')}</h3>
-  <ul class="help">${t('help')}</ul>`;
+  <ul class="help">${t('help')}</ul>
+  <div class="btnrow" style="margin-top:10px"><button class="btn small" data-act="loadsample">${t('loadSample')}</button></div>`;
 }
 function renderPrintHead(){
   $('#printhead').innerHTML=`<h1>${esc(P.title)}</h1><div class="legend">`+
@@ -998,6 +999,11 @@ $('#side').addEventListener('click',e=>{
     case 'addvar': addVariant(); break;
     case 'delvar': if(confirm(t('confirmDelVar',getVar(id).name))) change(()=>{ P.variants=P.variants.filter(v=>v.id!==id); }); break;
     case 'editvar': toggleEditVar(id); break;
+    case 'loadsample':
+      if(!confirmDiscard()) break;
+      if(!ui.dirty&&!confirm(t('confirmSample'))) break;
+      clearBlobs(); P=sampleProject(); IMG={}; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+      resetHistory(); validateUi(); renderAll(); scheduleSave(); break;
     case 'pickvimg': ui.pickVar=id; $('#varImgFile').click(); break;
     case 'rmvimg': if(confirm(t('confirmRmSketch'))){ const v=getVar(id); change(()=>{ v.imgs=v.imgs.filter(x=>x!==b.dataset.img); }); } break;
   }
