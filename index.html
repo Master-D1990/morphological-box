@@ -79,6 +79,7 @@ select{border:1px solid var(--line);border-radius:6px;padding:3px 6px;background
 .chip button{border:0;background:transparent;padding:2px 9px 2px 4px;cursor:pointer;font-size:13px}
 .chip .vis{color:var(--c);padding:2px 2px 2px 8px;font-size:14px}
 .chip.off{opacity:.5}
+.chip .vedit{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chip.editing{background:var(--c)} .chip.editing button{color:#fff}
 
 #banner{--c:#888;padding:8px 14px;background:color-mix(in srgb,var(--c) 14%,var(--panel));border-bottom:3px solid var(--c);display:flex;gap:12px;align-items:center}
@@ -102,17 +103,35 @@ main{flex:1;display:flex;min-height:0}
 .icon{border:0;background:transparent;color:var(--faint);cursor:pointer;padding:3px 6px;border-radius:4px}
 .icon:hover{color:var(--r);background:var(--r-bg)}
 .cells{display:flex;gap:12px;align-items:stretch;border-radius:8px}
-.cell{position:relative;z-index:1;flex:0 0 var(--cell-w);width:var(--cell-w);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:transform .08s}
+.cell{position:relative;z-index:1;scroll-margin-top:72px;scroll-margin-left:250px;flex:0 0 var(--cell-w);width:var(--cell-w);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:transform .08s}
+.ctext{display:flex;flex-direction:column;gap:4px;flex:1}
 .cell:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
 .cell .img{height:var(--img-h);display:flex;align-items:center;justify-content:center;background:var(--soft);border-radius:5px;overflow:hidden}
 .cell img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none}
-.ph{color:var(--ph);font-size:11px;text-align:center;padding:4px}
+.ph{color:var(--ph);font-size:11px;line-height:1.35;text-align:center;padding:4px}
+/* leere Zellen: nur dezentes Symbol, Hinweistext erst bei Maus/Auswahl/Datei-Ziehen */
+.ph{display:flex;flex-direction:column;align-items:center;gap:2px}
+.phicon{width:30px;height:30px;opacity:.55;flex:0 0 auto}
+.phtxt{display:none}
+.phtypes{display:block;font-size:9.5px;opacity:.8;margin-top:2px;letter-spacing:.02em}
+/* Ohne Maus nur das Symbol; bei Maus, Auswahl oder Datei-Ziehen ersetzt der Text das Symbol
+   (so braucht der Platzhalter nie mehr Platz als vorhanden). Seitenleiste: immer beides. */
+.cell:hover .phtxt,.cell.sel .phtxt,.cell.mark-file .phtxt,
+.vt td.sk:hover .phtxt,.vt td.sk.active .phtxt,.vt td.sk.mark-file .phtxt,
+.vsk:hover .phtxt,.vsk.mark-file .phtxt,.vcard.active .phtxt,#imgdrop .phtxt{display:block}
+.cell:hover .phicon,.cell.sel .phicon,.cell.mark-file .phicon,
+.vt td.sk:hover .phicon,.vt td.sk.active .phicon,.vt td.sk.mark-file .phicon,
+.vsk:hover .phicon,.vsk.mark-file .phicon,.vcard.active .phicon{display:none}
+.vsk .ph{flex:1;min-width:140px}
+.cell .ph{padding:1px 4px;line-height:1.25}
+.imgdrop{font-size:11px!important;color:var(--ph)!important}
 .ctitle{font-weight:600;font-size:13px;line-height:1.25;height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .ctitle i{color:var(--ph);font-weight:400}
-.dots{display:flex;gap:4px;height:10px;margin-top:auto}
+.dots{display:flex;gap:4px;height:14px;margin-top:auto}
 .cdesc{font-size:12px;line-height:1.3;color:var(--muted);white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;margin-bottom:2px}
 .cell.wd .ctitle{height:auto}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--empty)}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--empty);display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;line-height:1;color:#fff}
+.dot.y{color:#1d2330}
 .dot.g{background:var(--g)} .dot.y{background:var(--y)} .dot.r{background:var(--r)}
 .cell.lvl-g{border-color:var(--g);box-shadow:inset 0 0 0 2px var(--g);background:var(--g-bg)}
 .cell.lvl-y{border-color:var(--y);box-shadow:inset 0 0 0 2px var(--y);background:var(--y-bg)}
@@ -130,11 +149,13 @@ main{flex:1;display:flex;min-height:0}
 /* Kopfzeile + Koordinaten */
 .row.colhead{position:sticky;top:-18px;z-index:6;margin-bottom:8px;padding-top:4px;background:var(--bg)}
 .colhead .cells{align-items:stretch}
-.corner{box-sizing:border-box;flex-direction:column;align-items:stretch!important;justify-content:space-between;padding:4px 10px!important;min-height:46px;font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+.corner{box-sizing:border-box;flex-direction:column;align-items:stretch!important;justify-content:space-between;padding:4px 10px!important;min-height:50px;font-size:11px;font-weight:600;color:var(--muted);
   background:linear-gradient(to top right,transparent calc(50% - .6px),var(--line),transparent calc(50% + .6px)),var(--panel)!important}
 .corner .c-sol{align-self:flex-end} .corner .c-fn{align-self:flex-start}
 .colletter{flex:0 0 var(--cell-w);width:var(--cell-w);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted);font-size:15px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
 .rnum{font-weight:700;color:var(--accent);min-width:18px;text-align:center;font-size:13px}
+.cgrip{color:var(--faint);font-weight:400;margin-right:5px;cursor:grab}
+.cell{user-select:none}
 .cco{position:absolute;top:4px;left:4px;z-index:2;font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--panel);color:var(--muted);border:1px solid var(--line);line-height:1.3;pointer-events:none}
 .co{font-size:10.5px;font-weight:700;padding:0 4px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-right:4px;background:var(--panel)}
 /* Variantenübersicht: + Spalte */
@@ -149,25 +170,38 @@ main{flex:1;display:flex;min-height:0}
 #varlist{margin-top:8px}
 #varlist h2{font-size:15px;margin:0 0 4px}
 #varlist .sub{margin-bottom:10px}
-.vt{border-collapse:separate;border-spacing:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;break-inside:avoid}
-.vt th,.vt td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:middle}
-.vt tr>*:last-child{border-right:0}
-.vt tbody tr:last-child>*{border-bottom:0}
-.vt thead th{font-size:13px;white-space:nowrap;border-top:5px solid var(--c,transparent)}
+/* Jede Spalte (Teilfunktionen + jede Lösungsvariante) als eigene Karte mit Abstand */
+.vt{border-collapse:separate;border-spacing:12px 0;margin-left:-12px;break-inside:avoid}
+.vt th,.vt td{background:var(--panel);border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:middle}
+.vt thead th{font-size:13px;white-space:nowrap;border-top:5px solid var(--c,var(--line));border-radius:10px 10px 0 0}
+.vt tbody tr:last-child>*{border-radius:0 0 10px 10px}
+.vt td.lvl-n{background:var(--panel)}
 .vt thead th.off{opacity:.5}
+.vl-head{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.vl-head h2{margin:0}
+.vt th .vgrip{cursor:grab}
+.vt th .vgrip{color:var(--faint);margin-right:6px;font-weight:400}
+.vt th.mark-left{box-shadow:inset 4px 0 0 var(--accent)} .vt th.mark-right{box-shadow:inset -4px 0 0 var(--accent)}
+.vt th.dragging{opacity:.4}
+.vt th.vcorner{border-top:1px solid var(--line);padding:4px 10px;min-width:200px;height:56px;box-sizing:border-box;vertical-align:top;font-size:11px;font-weight:600;color:var(--muted);
+  background:linear-gradient(to top right,transparent calc(50% - .6px),var(--line),transparent calc(50% + .6px)),var(--soft)}
+.vt th.vcorner span{display:block;white-space:nowrap} .vt th.vcorner .c-sol{text-align:right;margin-bottom:14px}
 .vt tbody th{font-weight:600;font-size:13px;color:var(--muted);white-space:nowrap;background:var(--soft)}
-.vt td{min-width:170px;max-width:260px;font-size:13px}
+/* alle Lösungsvarianten gleich breit (folgt dem Schieber «Grösse»); lange Texte brechen um */
+.vt{--vw:max(200px,calc(var(--cell-w)*1.15))}
+.vt td,.vt thead th[data-vh]{width:var(--vw);min-width:var(--vw);max-width:var(--vw);font-size:13px;overflow-wrap:anywhere}
+.vt thead th[data-vh]{white-space:normal}
 .vt td.pick{cursor:pointer}
 .vt td.pick:hover{outline:2px solid var(--accent);outline-offset:-2px}
 .vt td.lvl-g{background:var(--g-bg)} .vt td.lvl-y{background:var(--y-bg)} .vt td.lvl-r{background:var(--r-bg)}
 .vt td .pk{display:flex;align-items:center;gap:8px}
-.vt td .pk img{height:36px;width:48px;object-fit:contain;border-radius:4px;background:var(--soft);flex:0 0 48px}
+.vt td .pk img{height:calc(var(--img-h)*.36);width:calc(var(--img-h)*.48);object-fit:contain;border-radius:4px;background:var(--soft);flex:0 0 auto}
 .vt td .why{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
 .vt td.miss{color:var(--warn);font-style:italic}
 .vt tr.sep>*{border-top:2px solid var(--line)}
 .vt td .score{grid-template-columns:1fr 42px;margin:0}
 .vt td.note{white-space:pre-wrap;color:var(--muted)}
-.vt td.sk img{height:80px;max-width:160px;object-fit:contain;border-radius:4px;background:var(--soft);cursor:zoom-in;margin:2px}
+.vt td.sk img{height:calc(var(--img-h)*.8);max-width:calc(var(--cell-w)*.95);object-fit:contain;border-radius:4px;background:var(--soft);cursor:zoom-in;margin:2px}
 .vt td.sk.active{outline:2px solid var(--accent);outline-offset:-2px}
 
 /* Variantenskizzen */
@@ -198,7 +232,8 @@ textarea{resize:vertical;min-height:40px}
 .rating{border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px}
 .rhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
 .lights{display:flex;gap:6px}
-.light{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;opacity:.25;padding:0}
+.light{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;opacity:.25;padding:0;color:#fff;font-weight:800;font-size:13px;line-height:1}
+.light.y{color:#1d2330}
 .light.g{background:var(--g)} .light.y{background:var(--y)} .light.r{background:var(--r)}
 .light.on{opacity:1;border-color:var(--text)}
 .light.none{background:var(--field);border-color:var(--line);opacity:1;color:var(--muted);font-size:13px;line-height:1}
@@ -288,7 +323,7 @@ body.noside #side{display:none}
   #stage{overflow:visible;padding:0}
   .rowhead{position:static;box-shadow:none}
   .row.colhead{position:static}
-  .addvarcol,.addvar-empty,#varlist.empty{display:none!important}
+  .addvarcol,.addvar-empty,#varlist.empty,#varSortMenu,.vgrip,.cgrip{display:none!important}
   .cell.sel{outline:none}
   .cell:hover{transform:none;box-shadow:none}
   #printhead{display:block;margin-bottom:10px}
@@ -394,6 +429,8 @@ de:{
   xlSheetBox:'Kasten', xlSheetVariants:'Lösungsvarianten', xlSheetRatings:'Bewertungen', xlDistribution:'Verteilung', xlMissing:'Fehlt noch', xlHasRed:'Enthält Rot', xlVisible:'Sichtbar', xlYes:'Ja', xlNo:'Nein',
   xlColSubfn:'Teilfunktion', xlColSolution:'Teillösung', xlColLevel:'Ampel', xlColReason:'Begründung', xlColOverall:'Gesamt', xlColVariants:'In Lösungsvarianten', xlColImage:'Bild',
   xlInfoProject:'Projekt', xlInfoExported:'Exportiert am', xlInfoTool:'Erstellt mit', xlInfoView:'Ampel-Kriterium der Ansicht', xlInfoScale:'Bewertung in %', xlInfoCounts:'Umfang', xlInfoSubfns:'Teilfunktionen', xlInfoSolutions:'Teillösungen', xlInfoVariants:'Lösungsvarianten',
+  vSortT:'Lösungsvarianten neu anordnen (rückgängig mit Strg+Z)', vSortScore:'Nach Gesamtbewertung', vSortScoreHint:'Durchschnitt aller Kriterien – beste links', vSortRating:c=>`Nach Ampel-Kriterium «${c}»`, vSortRatingHint:'beste links', vSorted:'Lösungsvarianten sortiert – Strg+Z macht es rückgängig', moveVarT:'Ziehen zum Umordnen', moveCellT:'Ziehen zum Verschieben (auch in eine andere Teilfunktion)',
+  imgTypes:'PNG · JPG · WebP · GIF · SVG',
   hdrFunctions:'Teilfunktionen', hdrSolutions:'Teillösungen', coords:'Koordinaten', coordsT:'Koordinaten wie in Excel: Teilfunktionen 1, 2, 3 …, Teillösungen A, B, C … – z. B. «B2» (Taste K)',
   addVarT:'Neue Lösungsvariante anlegen', addFirstVar:'+ Lösungsvariante anlegen', xlColPos:'Pos.',
   sortPh:'Sortieren', sortT:'Teillösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'Nach Ampel', sortRatingHint:'grün → gelb → rot, aktuelles Ampel-Kriterium', sortScore:'Nach Gesamtbewertung', sortScoreHint:'Durchschnitt über alle Kriterien', sortAlpha:'Alphabetisch',  sorted:'Teillösungen sortiert – Strg+Z macht es rückgängig',
@@ -402,18 +439,18 @@ de:{
   imgInserted:k=>`Bild eingefügt (${k} KB)`, imgFail:'Bild konnte nicht gelesen werden',
   sketchesAdded:(n,name)=>`${n} Skizze(n) zu ${q(name)} hinzugefügt`, cellsFromImgs:n=>`${n} Teillösung(en) mit Bild angelegt`,
   overviewH:'Übersicht der Lösungsvarianten', overviewSub:c=>`Ampel nach ${q(c)} · Klick auf eine Teillösung springt zur Zelle`, hidden:'(ausgeblendet)',
-  sketches:'Skizzen', dropSketch:'Skizze hierher ziehen', missing:'– fehlt –', untitled:'ohne Titel', note:'Notiz',
+  sketches:'Skizzen', dropSketch:'Bild hierher ziehen<br>oder anklicken + Strg+V', missing:'– fehlt –', untitled:'ohne Titel', note:'Notiz',
   unsaved:'Änderungen sind noch nicht in einer Datei gespeichert', noName:'(ohne Name)', chipVis:'Ein-/ausblenden', chipEdit:'Klicken: Teillösungen für diese Lösungsvariante auswählen', addVar:'+ Lösungsvariante',
   banner:name=>`<b>${name}</b> zusammenstellen: pro Zeile eine Teillösung anklicken (nochmal klicken = abwählen).`, doneEsc:'Fertig (Esc)',
-  cellPh:'Bild hierher ziehen<br>oder auswählen + Strg+V', moveRow:'Zeile verschieben', subfnPh:'Teilfunktion', delRow:'Zeile löschen',
+  cellPh:'Bild hierher ziehen<br>oder anklicken + Strg+V', moveRow:'Zeile verschieben', subfnPh:'Teilfunktion', delRow:'Zeile löschen',
   addCellT:'Teillösung hinzufügen – oder Bilder hierher ziehen', addRow:'+ Teilfunktion',
-  back:'← Übersicht', title:'Titel', desc:'Beschreibung', imgDropHint:`Bild hierher ziehen,<br>${kb('Strg')}+${kb('V')} zum Einfügen<br>oder «Bild wählen…»`,
+  back:'← Übersicht', title:'Titel', desc:'Beschreibung', imgDropHint:'Bild hierher ziehen<br>oder Strg+V',
   chooseImg:'Bild wählen…', rmImg:'Bild entfernen', rating:'Bewertung', noRating:'Keine Bewertung', reasonPh:'Begründung …',
   keysHint:c=>`Tasten ${kb(1)} ${kb(2)} ${kb(3)} setzen Grün/Gelb/Rot, ${kb(0)} löscht – für ${q(c)}. Pfeiltasten wechseln die Zelle.`,
   inVariants:'In Lösungsvarianten', noVariants:'Noch keine Lösungsvarianten.', delCell:'Teillösung löschen',
   color:'Farbe', delVar:'Lösungsvariante löschen', visible:'sichtbar', done:'Fertig', pickSolutions:'Teillösungen auswählen',
   pctT:'Grün=100 %, Gelb=50 %, Rot=0 % (unbewertete zählen nicht)', stillMissing:'Fehlt noch: ', hasRed:'Enthält rot bewertete Teillösung(en)',
-  rmSketch:'Skizze entfernen', sketchHint:`Skizze hierher ziehen oder Karte anklicken + ${kb('Strg')}+${kb('V')} `, addSketch:'+ Skizze',
+  rmSketch:'Skizze entfernen', sketchHint:'Bild hierher ziehen<br>oder anklicken + Strg+V', addSketch:'Bild wählen…',
   notePh:'Notiz / Begründung der Lösungsvariante …', variantsH:'Lösungsvarianten',
   noVarsLong:'Noch keine Lösungsvarianten. Lege eine an und klicke dann pro Zeile eine Teillösung an.',
   criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s',
@@ -424,6 +461,7 @@ de:{
     <li><b>Lösungsvarianten</b>: Chip oben anklicken, dann pro Zeile eine Teillösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
     <li><b>Export</b> (oben): Excel-Datei mit Kasten, Lösungsvarianten, Bewertungen und allen Bildern – oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten.</li>
     <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung oder alphabetisch.</li>
+    <li><b>Lösungsvarianten umordnen</b>: in der Übersicht unten am Spaltenkopf (⠿) ziehen oder über «Sortieren» neben der Überschrift.</li>
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
@@ -463,6 +501,8 @@ en:{
   xlSheetBox:'Box', xlSheetVariants:'Solution variants', xlSheetRatings:'Ratings', xlDistribution:'distribution', xlMissing:'Still missing', xlHasRed:'Contains red', xlVisible:'Visible', xlYes:'Yes', xlNo:'No',
   xlColSubfn:'Sub-function', xlColSolution:'Partial solution', xlColLevel:'Rating', xlColReason:'Reason', xlColOverall:'Overall', xlColVariants:'In solution variants', xlColImage:'Image',
   xlInfoProject:'Project', xlInfoExported:'Exported on', xlInfoTool:'Created with', xlInfoView:'Rating criterion in view', xlInfoScale:'Score in %', xlInfoCounts:'Size', xlInfoSubfns:'sub-functions', xlInfoSolutions:'partial solutions', xlInfoVariants:'solution variants',
+  vSortT:'Reorder the solution variants (undo with Ctrl+Z)', vSortScore:'By overall score', vSortScoreHint:'average of all criteria – best on the left', vSortRating:c=>`By rating criterion “${c}”`, vSortRatingHint:'best on the left', vSorted:'Solution variants sorted – Ctrl+Z to undo', moveVarT:'Drag to reorder', moveCellT:'Drag to move (also into another sub-function)',
+  imgTypes:'PNG · JPG · WebP · GIF · SVG',
   hdrFunctions:'Sub-functions', hdrSolutions:'Partial solutions', coords:'Coordinates', coordsT:'Excel-like coordinates: sub-functions 1, 2, 3 …, partial solutions A, B, C … – e.g. “B2” (key K)',
   addVarT:'Create a new solution variant', addFirstVar:'+ Create a solution variant', xlColPos:'Pos.',
   sortPh:'Sort', sortT:'Reorder the partial solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'By rating', sortRatingHint:'green → yellow → red, current rating criterion', sortScore:'By overall score', sortScoreHint:'average over all criteria', sortAlpha:'Alphabetically',  sorted:'Partial solutions sorted – Ctrl+Z to undo',
@@ -471,18 +511,18 @@ en:{
   imgInserted:k=>`Image inserted (${k} KB)`, imgFail:'Could not read the image',
   sketchesAdded:(n,name)=>`${n} sketch(es) added to ${q(name)}`, cellsFromImgs:n=>`${n} partial solution(s) created from images`,
   overviewH:'Solution variant overview', overviewSub:c=>`Rating by ${q(c)} · click a partial solution to jump to its cell`, hidden:'(hidden)',
-  sketches:'Sketches', dropSketch:'Drop a sketch here', missing:'– missing –', untitled:'untitled', note:'Note',
+  sketches:'Sketches', dropSketch:'Drop an image here<br>or click + Ctrl+V', missing:'– missing –', untitled:'untitled', note:'Note',
   unsaved:'Changes are not saved to a file yet', noName:'(no name)', chipVis:'Show/hide', chipEdit:'Click: choose the partial solutions for this solution variant', addVar:'+ Solution variant',
   banner:name=>`Composing <b>${name}</b>: click one partial solution per row (click again to deselect).`, doneEsc:'Done (Esc)',
-  cellPh:'Drop an image here<br>or select + Ctrl+V', moveRow:'Move row', subfnPh:'Sub-function', delRow:'Delete row',
+  cellPh:'Drop an image here<br>or click + Ctrl+V', moveRow:'Move row', subfnPh:'Sub-function', delRow:'Delete row',
   addCellT:'Add a partial solution – or drop images here', addRow:'+ Sub-function',
-  back:'← Overview', title:'Title', desc:'Description', imgDropHint:`Drop an image here,<br>${kb('Ctrl')}+${kb('V')} to paste<br>or “Choose image…”`,
+  back:'← Overview', title:'Title', desc:'Description', imgDropHint:'Drop an image here<br>or Ctrl+V',
   chooseImg:'Choose image…', rmImg:'Remove image', rating:'Rating', noRating:'No rating', reasonPh:'Reason …',
   keysHint:c=>`Keys ${kb(1)} ${kb(2)} ${kb(3)} set green/yellow/red, ${kb(0)} clears – for ${q(c)}. Arrow keys move between cells.`,
   inVariants:'In solution variants', noVariants:'No solution variants yet.', delCell:'Delete partial solution',
   color:'Colour', delVar:'Delete solution variant', visible:'visible', done:'Done', pickSolutions:'Choose partial solutions',
   pctT:'Green=100 %, yellow=50 %, red=0 % (unrated ones are not counted)', stillMissing:'Still missing: ', hasRed:'Contains red-rated partial solution(s)',
-  rmSketch:'Remove sketch', sketchHint:`Drop a sketch here or click the card + ${kb('Ctrl')}+${kb('V')} `, addSketch:'+ Sketch',
+  rmSketch:'Remove sketch', sketchHint:'Drop an image here<br>or click + Ctrl+V', addSketch:'Choose image…',
   notePh:'Note / rationale for this solution variant …', variantsH:'Solution variants',
   noVarsLong:'No solution variants yet. Create one, then click one partial solution per row.',
   criteriaH:'Evaluation criteria', viewCritT:'Use as rating criterion', delCrit:'Delete criterion', addCrit:'+ Criterion', helpH:'How to use',
@@ -493,6 +533,7 @@ en:{
     <li><b>Solution variants</b>: click a chip at the top, then click one partial solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
     <li><b>Export</b> (top): Excel file with box, solution variants, ratings and all images – or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 solution variant overview.</li>
     <li><b>Sort</b> (top, under View): orders the partial solutions of every sub-function by rating, overall score or alphabetically.</li>
+    <li><b>Reorder solution variants</b>: drag a column header (⠿) in the overview below, or use “Sort” next to its heading.</li>
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
@@ -522,6 +563,10 @@ en:{
 }};
 const t=(k,...a)=>{ const v=L[LANG][k]??L.de[k]; return typeof v==='function'?v(...a):v; };
 const LV=l=>t(l||'n');
+const SYM={g:'✓',y:'!',r:'✕',n:''};
+// Einheitlicher Platzhalter für alle Bild-Ablageflächen (Zellen, Skizzen, Seitenleiste)
+const PH_ICON='<svg class="phicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>';
+const phHtml=key=>`<span class="ph">${PH_ICON}<span class="phtxt">${t(key)}<span class="phtypes">${t('imgTypes')}</span></span></span>`; // Ampel zusätzlich als Symbol (Farbschwäche, S/W-Druck)
 function applyStatic(){
   document.documentElement.lang=LANG==='de'?'de-CH':'en';
   $$('[data-i18n]').forEach(el=>{ el.innerHTML=t(el.dataset.i18n); });
@@ -680,11 +725,11 @@ function renderVarList(){
   el.classList.toggle('empty',!P.variants.length);
   if(!P.variants.length){ el.innerHTML=`<h2>${t('overviewH')}</h2><button class="addvar-empty" data-addvar>${t('addFirstVar')}</button>`; drawLines(); return; }
   const vs=P.variants, scores=vs.map(scoreVariant);
-  let h=`<h2>${t('overviewH')}</h2><div class="muted small sub">${esc(t('overviewSub',critName(ui.view)))}</div>`+
-    `<div class="vt-wrap"><table class="vt"><thead><tr><th></th>${vs.map(v=>`<th style="--c:${v.color}" class="${v.visible?'':'off'}" data-vh="${v.id}">${esc(v.name)||'?'}${v.visible?'':` <span class="muted small">${t('hidden')}</span>`}</th>`).join('')}</tr></thead><tbody>`+
-    `<tr><th>${t('sketches')}</th>${vs.map(v=>`<td class="sk vdrop ${ui.pasteVar===v.id?'active':''}" data-var="${v.id}" data-pv="${v.id}">${v.imgs.map(id=>imgSrc(id)?`<img src="${imgSrc(id)}" data-zoom="${id}" alt="">`:'').join('')}${v.imgs.length?'':`<span class="hint muted small">${t('dropSketch')}</span>`}</td>`).join('')}</tr>`;
-  for(const row of P.rows){
-    h+=`<tr><th>${esc(row.name)}</th>`;
+  let h=`<div class="vl-head"><h2>${t('overviewH')}</h2><span class="menu" id="varSortMenu"><button class="btn small" title="${esc(t('vSortT'))}" aria-haspopup="true">${t('sortPh')}</button><span class="menu-list" role="menu" hidden></span></span></div><div class="muted small sub">${esc(t('overviewSub',critName(ui.view)))}</div>`+
+    `<div class="vt-wrap"><table class="vt"><thead><tr><th class="vcorner"><span class="c-sol">${t('variantsLbl')} →</span><span class="c-fn">${t('hdrFunctions')} ↓</span></th>${vs.map(v=>`<th style="--c:${v.color}" class="${v.visible?'':'off'}" data-vh="${v.id}"><span class="vgrip" draggable="true" title="${esc(t('moveVarT'))}">⠿</span>${esc(v.name)||'?'}${v.visible?'':` <span class="muted small">${t('hidden')}</span>`}</th>`).join('')}</tr></thead><tbody>`+
+    `<tr><th>${t('sketches')}</th>${vs.map(v=>`<td class="sk vdrop ${ui.pasteVar===v.id?'active':''}" data-var="${v.id}" data-pv="${v.id}">${v.imgs.map(id=>imgSrc(id)?`<img src="${imgSrc(id)}" data-zoom="${id}" alt="">`:'').join('')}${v.imgs.length?'':phHtml('dropSketch')}</td>`).join('')}</tr>`;
+  for(const [ri,row] of P.rows.entries()){
+    h+=`<tr><th>${P.settings.coords?`<span class="rnum">${ri+1}</span> `:''}${esc(row.name)}</th>`;
     for(const v of vs){
       const c=row.cells.find(x=>x.id===v.picks[row.id]);
       if(!c){ h+=`<td class="miss">${t('missing')}</td>`; continue; }
@@ -698,6 +743,7 @@ function renderVarList(){
   });
   if(vs.some(v=>v.note)) h+=`<tr><th>${t('note')}</th>${vs.map(v=>`<td class="note">${esc(v.note)}</td>`).join('')}</tr>`;
   el.innerHTML=h+`</tbody></table><button class="addvarcol" data-addvar title="${t('addVarT')}">+</button></div>`;
+  setupMenu($('#varSortMenu'));
   drawLines();
 }
 const THEMES=['auto','light','dark'];
@@ -722,7 +768,7 @@ function renderToolbar(){
   $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').checked=!!P.settings.showDesc; $('#showcoords').checked=!!P.settings.coords;
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
     `<button class="vis" data-var="${v.id}" title="${t('chipVis')}">${v.visible?'●':'○'}</button>`+
-    `<button class="vedit" data-var="${v.id}" title="${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
+    `<button class="vedit" data-var="${v.id}" title="${esc(v.name)} – ${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
     `<button class="btn small" id="addVar" title="${t('addVarT')}">+</button>`;
   updateStatus();
 }
@@ -745,15 +791,15 @@ function tooltip(c){
 }
 function cellHtml(c,row){
   const lvl=(c.ratings[ui.view]||{}).level||'n';
-  const dots=P.criteria.map(k=>{const r=c.ratings[k.id];return `<span class="dot ${(r&&r.level)||'n'}"></span>`;}).join('');
+  const dots=P.criteria.map(k=>{const l=(c.ratings[k.id]||{}).level||'n';return `<span class="dot ${l}" title="${esc(k.name)}: ${LV(l)}">${SYM[l]}</span>`;}).join('');
   const ev=ui.editVar&&getVar(ui.editVar);
   const picked=ev&&ev.picks[row.id]===c.id;
   const src=imgSrc(c.img);
   const sd=P.settings.showDesc&&c.desc;
-  return `<div class="cell lvl-${lvl} ${ui.sel===c.id?'sel':''} ${picked?'picked':''} ${sd?'wd':''}" ${picked?`style="--vc:${ev.color}"`:''} draggable="true" data-cell="${c.id}" data-row="${row.id}" title="${esc(tooltip(c))}">`+
+  return `<div class="cell lvl-${lvl} ${ui.sel===c.id?'sel':''} ${picked?'picked':''} ${sd?'wd':''}" ${picked?`style="--vc:${ev.color}"`:''} data-cell="${c.id}" data-row="${row.id}" title="${esc(tooltip(c))}">`+
     (P.settings.coords?`<span class="cco">${coordOf(c,row)}</span>`:'')+
-    `<div class="img">${src?`<img src="${src}" draggable="false" alt="">`:`<span class="ph">${t('cellPh')}</span>`}</div>`+
-    `<div class="ctitle">${esc(c.title)||`<i>${t('untitled')}</i>`}</div>${sd?`<div class="cdesc">${esc(c.desc)}</div>`:''}<div class="dots">${dots}</div></div>`;
+    `<div class="img">${src?`<img src="${src}" draggable="false" alt="">`:phHtml('cellPh')}</div>`+
+    `<div class="ctext"><div class="ctitle"><span class="cgrip" draggable="true" title="${esc(t('moveCellT'))}">⠿</span>${esc(c.title)||`<i>${t('untitled')}</i>`}</div>${sd?`<div class="cdesc">${esc(c.desc)}</div>`:''}<div class="dots">${dots}</div></div></div>`;
 }
 function renderMatrix(){
   const co=P.settings.coords, maxCells=Math.max(0,...P.rows.map(r=>r.cells.length));
@@ -780,15 +826,18 @@ function drawLines(){
   svg.setAttribute('width',m.offsetWidth); svg.setAttribute('height',m.offsetHeight);
   const base=m.getBoundingClientRect();
   const vis=P.variants.filter(v=>v.visible);
-  const step=Math.min(9,36/Math.max(1,vis.length-1));
+  // Teilen sich mehrere Lösungsvarianten eine Teillösung, werden ihre Punkte gleichmässig über die Bildbreite verteilt
+  const share={}; vis.forEach(v=>Object.values(v.picks).forEach(cid=>(share[cid]=share[cid]||[]).push(v.id)));
   let out='';
-  vis.forEach((v,i)=>{
-    const off=(i-(vis.length-1)/2)*step, pts=[];
+  vis.forEach(v=>{
+    const pts=[]; let rad=9;
     for(const row of P.rows){
       const cid=v.picks[row.id]; if(!cid) continue;
       const el=m.querySelector(`.cell[data-cell="${cid}"]`); if(!el) continue;
-      const r=(el.querySelector('.img')||el).getBoundingClientRect(); // Bildmitte: unabhängig von Textlänge
-      pts.push([r.left-base.left+r.width/2+off, r.top-base.top+r.height/2]);
+      const r=(el.querySelector('.img')||el).getBoundingClientRect(); // Bildbereich: unabhängig von Textlänge
+      const list=share[cid]||[v.id], k=list.indexOf(v.id), n=list.length, gap=r.width/(n+1);
+      rad=Math.min(rad,Math.max(4,gap/2-2));
+      pts.push([r.left-base.left+gap*(k+1), r.top-base.top+r.height/2]);
     }
     if(!pts.length) return;
     const lop=P.settings.lineOp??0.55, active=ui.editVar===v.id, op=ui.editVar?(active?Math.max(lop,0.85):lop*0.3):lop;
@@ -809,7 +858,7 @@ function drawLines(){
       }
     }
     out+=`<g opacity="${op}"><path d="${d}" fill="none" stroke="${v.color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`+
-      pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="9" fill="${v.color}"/>`).join('')+arrow+`</g>`;
+      pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${rad.toFixed(1)}" fill="${v.color}"/>`).join('')+arrow+`</g>`;
   });
   svg.innerHTML=out;
 }
@@ -834,11 +883,11 @@ function cellEditor({row,cell}){
   return `<div class="sidetop"><button class="btn small" data-act="back">${t('back')}</button><span class="muted small">${P.settings.coords?`<b>${coordOf(cell,row)}</b> · `:''}${esc(row.name)}</span></div>
   <label class="f">${t('title')}<input type="text" data-edit="title" value="${esc(cell.title)}"></label>
   <label class="f">${t('desc')}<textarea data-edit="desc" rows="3">${esc(cell.desc)}</textarea></label>
-  <div class="imgdrop" id="imgdrop">${src?`<img src="${src}" data-zoom="${cell.img}" alt="">`:t('imgDropHint')}</div>
+  <div class="imgdrop" id="imgdrop">${src?`<img src="${src}" data-zoom="${cell.img}" alt="">`:phHtml('imgDropHint')}</div>
   <div class="btnrow"><button class="btn small" data-act="pickimg">${t('chooseImg')}</button>${cell.img?`<button class="btn small" data-act="rmimg">${t('rmImg')}</button>`:''}</div>
   <h3>${t('rating')}</h3>
   ${P.criteria.map(k=>{const r=cell.ratings[k.id]||{};return `<div class="rating"><div class="rhead"><b>${esc(k.name)}</b><span class="lights">`+
-    ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}"></button>`).join('')+
+    ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}">${SYM[l]}</button>`).join('')+
     `<button class="light none ${!r.level?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="" title="${t('noRating')}">–</button></span></div>`+
     `<textarea data-edit="reason" data-crit="${k.id}" rows="2" placeholder="${t('reasonPh')}">${esc(r.reason)}</textarea></div>`;}).join('')}
   <div class="muted small">${t('keysHint',esc(critName(ui.view)))}</div>
@@ -856,7 +905,7 @@ function overview(){
     ${s.missing.length?`<div class="warn">${t('stillMissing')}${s.missing.map(r=>esc(r.name)).join(', ')}</div>`:''}
     ${s.red?`<div class="warn red">${t('hasRed')}</div>`:''}
     <div class="vsk vdrop" data-var="${v.id}">${v.imgs.map(id=>imgSrc(id)?`<span class="th"><img src="${imgSrc(id)}" data-zoom="${id}" alt=""><button class="x" data-act="rmvimg" data-var="${v.id}" data-img="${id}" title="${t('rmSketch')}">✕</button></span>`:'').join('')}
-      <span class="hint">${v.imgs.length?'':t('sketchHint')}<button class="btn small" data-act="pickvimg" data-var="${v.id}">${t('addSketch')}</button></span></div>
+      ${v.imgs.length?'':phHtml('sketchHint')}<button class="btn small" data-act="pickvimg" data-var="${v.id}">${t('addSketch')}</button></div>
     <textarea data-edit="varnote" data-var="${v.id}" rows="2" placeholder="${t('notePh')}">${esc(v.note)}</textarea>
   </div>`;}).join('');
   return `<h3 style="margin-top:0">${t('variantsH')}</h3>
@@ -921,6 +970,27 @@ function loadSample(){
 }
 function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
 function closeHelp(){ $('#helpDlg').close(); }
+function variantScore(v,crit){ // Prozent 0..100; crit=null -> Durchschnitt über alle Kriterien
+  const s=scoreVariant(v), per=crit?s.per.filter(p=>p.k.id===crit):s.per, vals=per.map(p=>p.pct).filter(x=>x!=null);
+  return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:-1;
+}
+function sortVariants(mode){
+  const byName=(a,b)=>(a.name||'').localeCompare(b.name||'',t('dateLocale'),{numeric:true,sensitivity:'base'});
+  const cmp={score:(a,b)=>variantScore(b,null)-variantScore(a,null)||byName(a,b),
+    rating:(a,b)=>variantScore(b,ui.view)-variantScore(a,ui.view)||variantScore(b,null)-variantScore(a,null)||byName(a,b),
+    alpha:byName}[mode];
+  if(!cmp) return;
+  change(()=>P.variants.sort(cmp));
+  toast(t('vSorted'));
+}
+function moveVariant(id,targetId,after){
+  if(id===targetId) return;
+  change(()=>{
+    const i=P.variants.findIndex(v=>v.id===id); const [v]=P.variants.splice(i,1);
+    let j=P.variants.findIndex(x=>x.id===targetId); if(after) j++;
+    P.variants.splice(j,0,v);
+  });
+}
 function moveCell(cellId,rowId,targetId,after){
   const src=findCell(cellId), tRow=P.rows.find(r=>r.id===rowId);
   if(!src||!tRow||targetId===cellId) return;
@@ -1149,7 +1219,7 @@ async function buildXlsx(){
       const runs=[...(P.settings.coords?[{t:coordOf(c,row)+'  ',b:true,color:MUTED,sz:10}]:[]),{t:c.title||t('untitled'),b:true,sz:12}];
       if(c.desc) runs.push({t:'\n'+c.desc,color:SUB,sz:10});
       runs.push({t:'\n'});
-      P.criteria.forEach(k=>runs.push({t:'● ',color:DOT[lvl(c,k.id)],sz:12},{t:k.name+'   ',color:MUTED,sz:9}));
+      P.criteria.forEach(k=>runs.push({t:(SYM[lvl(c,k.id)]||'○')+' ',b:true,color:DOT[lvl(c,k.id)],sz:11},{t:k.name+'   ',color:MUTED,sz:9}));
       if(vs.length){ runs.push({t:'\n'}); vs.forEach(v=>runs.push({t:'■ ',color:argb(v.color),sz:13},{t:v.name+'   ',b:true,sz:10,color:argb(v.color)})); }
       sh1.cell(r+1,col,{rich:runs},S.style({fill:BG[l],border:'left,right,bottom'}));
       lines=Math.max(lines,1+textLines(c.desc,CW*1.2)+critLine+(vs.length?1:0));
@@ -1168,7 +1238,7 @@ async function buildXlsx(){
   if(!P.variants.length) sh2.cell(3,0,t('noVariants'));
   else{
     let q=3;
-    sh2.cell(q,0,null,lab);
+    sh2.cell(q,0,{rich:[{t:t('variantsLbl')+' →\n',b:true,color:MUTED,sz:9},{t:t('hdrFunctions')+' ↓',b:true,color:MUTED,sz:9}]},lab); sh2.height(q,30);
     P.variants.forEach((v,i)=>sh2.cell(q,i+1,v.name,S.style({b:true,sz:12,color:'FFFFFFFF',fill:argb(v.color),border:'all'})));
     q++;
     const anySk=P.variants.some(v=>v.imgs.some(id=>IMG[id])), SK_PT=anySk?120:18;
@@ -1181,7 +1251,7 @@ async function buildXlsx(){
     }
     q++;
     for(const row of P.rows){
-      sh2.cell(q,0,row.name,lab); let lines=1;
+      sh2.cell(q,0,(P.settings.coords?(P.rows.indexOf(row)+1)+'   ':'')+row.name,lab); let lines=1;
       P.variants.forEach((v,i)=>{
         const c=row.cells.find(x=>x.id===v.picks[row.id]);
         if(!c){ sh2.cell(q,i+1,t('missing'),S.style({i:true,color:'FF9A6A00',border:'all'})); return; }
@@ -1329,7 +1399,9 @@ const MENUS={
   viewMenu:{items:()=>P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),
     pick:k=>{ ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
-  sortMenu:{items:()=>tr([['rating','sortRating','sortRatingHint'],['score','sortScore','sortScoreHint'],['alpha','sortAlpha','']]), pick:k=>sortCells(k)}
+  sortMenu:{items:()=>tr([['rating','sortRating','sortRatingHint'],['score','sortScore','sortScoreHint'],['alpha','sortAlpha','']]), pick:k=>sortCells(k)},
+  varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')},{k:'alpha',label:t('sortAlpha'),hint:''}],
+    pick:k=>sortVariants(k)}
 };
 function closeMenus(){ $$('.menu-list').forEach(l=>l.hidden=true); }
 function openMenu(id){
@@ -1340,7 +1412,7 @@ function openMenu(id){
   if(list.getBoundingClientRect().right>innerWidth-8) list.classList.add('right'); // nicht über den Rand
   (list.querySelector('.chk .tick:not(:empty)')?.parentElement||list.querySelector('button')).focus();
 }
-$$('.menu').forEach(root=>{
+function setupMenu(root){
   root.querySelector('.btn').onclick=e=>{ e.stopPropagation(); const open=!root.querySelector('.menu-list').hidden; closeMenus(); if(!open) openMenu(root.id); };
   root.querySelector('.menu-list').onclick=e=>{ const b=e.target.closest('[data-k]'); if(!b) return; closeMenus(); MENUS[root.id].pick(b.dataset.k); };
   root.addEventListener('keydown',e=>{ // Pfeiltasten im offenen Menü, Esc schliesst
@@ -1351,7 +1423,8 @@ $$('.menu').forEach(root=>{
     else if(e.key==='Escape'){ e.stopPropagation(); closeMenus(); root.querySelector('.btn').focus(); }
     else if(e.key!=='Enter'&&e.key!==' '&&e.key!=='Tab') e.stopPropagation();
   });
-});
+}
+$$('.menu').forEach(setupMenu);
 document.addEventListener('click',e=>{ if(!e.target.closest('.menu')) closeMenus(); });
 
 $('#bar2').addEventListener('click',e=>{
@@ -1510,8 +1583,10 @@ document.addEventListener('dragstart',e=>{
   const h=e.target.closest&&e.target.closest('.handle');
   if(h){ const row=h.closest('.row'); drag={type:'row',id:row.dataset.row};
     e.dataTransfer.setData('text/plain','row'); e.dataTransfer.effectAllowed='move'; e.dataTransfer.setDragImage(row,20,20); return; }
-  const c=e.target.closest&&e.target.closest('.cell');
-  if(c){ drag={type:'cell',id:c.dataset.cell}; e.dataTransfer.setData('text/plain','cell'); e.dataTransfer.effectAllowed='move'; c.classList.add('dragging'); }
+  const vg=e.target.closest&&e.target.closest('.vgrip');
+  if(vg){ const vh=vg.closest('th[data-vh]'); drag={type:'var',id:vh.dataset.vh}; e.dataTransfer.setData('text/plain','variant'); e.dataTransfer.effectAllowed='move'; e.dataTransfer.setDragImage(vh,20,20); vh.classList.add('dragging'); return; }
+  const cg=e.target.closest&&e.target.closest('.cgrip'), c=cg&&cg.closest('.cell');
+  if(c){ e.dataTransfer.setDragImage(c,20,20); drag={type:'cell',id:c.dataset.cell}; e.dataTransfer.setData('text/plain','cell'); e.dataTransfer.effectAllowed='move'; c.classList.add('dragging'); }
 });
 document.addEventListener('dragend',()=>{ drag=null; clearMarks(); $$('.dragging').forEach(el=>el.classList.remove('dragging')); });
 document.addEventListener('dragleave',e=>{ if(!e.relatedTarget) clearMarks(); });
@@ -1520,6 +1595,12 @@ document.addEventListener('dragover',e=>{
   if(!drag&&!files) return;
   e.preventDefault(); clearMarks();
   const tg=e.target.closest?e.target:e.target.parentElement;
+  if(drag&&drag.type==='var'){
+    const th=tg.closest('th[data-vh]');
+    if(th){ const r=th.getBoundingClientRect(); th.classList.add(e.clientX<r.left+r.width/2?'mark-left':'mark-right'); e.dataTransfer.dropEffect='move'; }
+    else e.dataTransfer.dropEffect='none';
+    return;
+  }
   if(drag&&drag.type==='row'){
     const row=tg.closest('.row[data-row]');
     if(row){ const r=row.getBoundingClientRect(); row.classList.add(e.clientY<r.top+r.height/2?'mark-top':'mark-bottom'); e.dataTransfer.dropEffect='move'; }
@@ -1546,6 +1627,10 @@ document.addEventListener('drop',async e=>{
   const tg=e.target.closest?e.target:e.target.parentElement;
   if(drag){
     const d=drag; drag=null;
+    if(d.type==='var'){
+      const th=tg.closest('th[data-vh]'); if(!th) return;
+      const r=th.getBoundingClientRect(); moveVariant(d.id,th.dataset.vh,e.clientX>=r.left+r.width/2); return;
+    }
     if(d.type==='row'){
       const row=tg.closest('.row[data-row]'); if(!row) return;
       const r=row.getBoundingClientRect(); moveRow(d.id,row.dataset.row,e.clientY>=r.top+r.height/2);
