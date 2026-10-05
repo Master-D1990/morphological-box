@@ -6,12 +6,12 @@
 <meta name="google-site-verification" content="CMpy1IwkV7OehpOIVlcJwRe7iKpvw4_BXrHo-5FwKqg" />
 <title>Morphologischer Kasten online – Morphological Box (Zwicky box) tool</title>
 <meta name="description" content="Kostenloses Online-Tool für den morphologischen Kasten: Drag &amp; Drop, Skizzen, Ampelbewertung mit Begründung, Lösungsvarianten als farbige Linien. Free morphological box (Zwicky box) tool – runs in the browser, no sign-up, data stays local.">
-<link rel="canonical" href="https://master-d1990.github.io/morphological-box/">
+<link rel="canonical" id="canon" href="https://master-d1990.github.io/morphological-box/">
 <link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de">
 <link rel="alternate" hreflang="en" href="https://master-d1990.github.io/morphological-box/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://master-d1990.github.io/morphological-box/">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://master-d1990.github.io/morphological-box/">
+<meta property="og:url" id="ogurl" content="https://master-d1990.github.io/morphological-box/">
 <meta property="og:title" content="Morphological Box – Morphologischer Kasten online">
 <meta property="og:description" content="Free browser tool for morphological boxes: sketches, traffic-light ratings and solution variants as coloured lines. No sign-up, data stays local.">
 <meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/screenshot-en.png">
@@ -570,6 +570,9 @@ const PH_ICON='<svg class="phicon" viewBox="0 0 24 24" fill="none" stroke="curre
 const phHtml=key=>`<span class="ph">${PH_ICON}<span class="phtxt">${t(key)}<span class="phtypes">${t('imgTypes')}</span></span></span>`; // Ampel zusätzlich als Symbol (Farbschwäche, S/W-Druck)
 function applyStatic(){
   document.documentElement.lang=LANG==='de'?'de-CH':'en';
+  // Suchmaschinen: Sprachversion per ?lang= verweist auf sich selbst (sonst gilt sie als Kopie der Hauptadresse)
+  const ul=new URLSearchParams(location.search).get('lang'), base='https://master-d1990.github.io/morphological-box/';
+  if(ul==='de'||ul==='en'){ $('#canon').href=base+'?lang='+ul; $('#ogurl').content=base+'?lang='+ul; }
   $$('[data-i18n]').forEach(el=>{ el.innerHTML=t(el.dataset.i18n); });
   $$('[data-i18n-title]').forEach(el=>{ el.title=t(el.dataset.i18nTitle); });
   $$('#langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
