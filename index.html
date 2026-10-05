@@ -313,6 +313,26 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const COLORS=['#2f6fed','#f28c28','#8e44ad','#e84393','#00a3b4','#8d6e63','#34495e','#b8860b'];
 const FORMAT='morphologischer-kasten';
 
+/* ---------- Dateiformat-Versionen ----------
+   SCHEMA_VERSION erhöhen, sobald sich der Aufbau der gespeicherten Datei ändert,
+   und in MIGRATIONS einen Umbau-Schritt von der alten auf die neue Version ergänzen, z. B.:
+     1: d=>{ ...Daten von Version 1 auf 2 umbauen...; d.version=2; return d; },
+   Jeder Schritt bekommt die komplette Datei {format,version,project,images} und gibt sie zurück. */
+const SCHEMA_VERSION=1;
+const MIGRATIONS={};
+function migrate(d){
+  const from=Number.isInteger(d.version)?d.version:1;
+  if(from>SCHEMA_VERSION) return {newer:from};
+  d.version=from;
+  while(d.version<SCHEMA_VERSION){
+    const step=MIGRATIONS[d.version];
+    if(!step) throw new Error('Keine Migration für Version '+d.version);
+    const v=d.version; d=step(d);
+    if(d.version!==v+1) throw new Error('Migration '+v+' hat die Version nicht erhöht');
+  }
+  return {data:d,from};
+}
+
 /* ---------- Sprache (Deutsch Schweiz / Englisch) ---------- */
 let LANG='de';
 try{ const u=new URLSearchParams(location.search).get('lang'); const l=u==='en'||u==='de'?u:localStorage.getItem('mk-lang'); LANG=l==='en'||l==='de'?l:((navigator.language||'de').toLowerCase().startsWith('de')?'de':'en'); }catch(e){}
@@ -363,7 +383,10 @@ de:{
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Lösung(en) löschen?`, confirmDelCell:name=>`Lösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
   confirmDelVar:name=>`Variante ${q(name)} löschen?`, confirmRmSketch:'Skizze entfernen?',
-  invalidFile:'Keine gültige Kasten-Datei', opened:name=>'Geöffnet: '+name, saved:name=>'Gespeichert: '+name, downloaded:name=>'Datei heruntergeladen: '+name,
+  invalidFile:'Keine gültige Kasten-Datei',
+  fileTooNew:v=>`Diese Datei stammt aus einer neueren Version des Tools (Format ${v}) und kann hier nicht sicher geöffnet werden.\n\nBitte die aktuelle Version verwenden: https://master-d1990.github.io/morphological-box/`,
+  migrated:(a,b)=>`Datei aus älterer Version (Format ${a}) übernommen – beim Speichern wird sie ins aktuelle Format ${b} umgewandelt`,
+  cacheTooNew:'Zwischenspeicher aus einer neueren Version gefunden – er wurde gesichert, nicht überschrieben', opened:name=>'Geöffnet: '+name, saved:name=>'Gespeichert: '+name, downloaded:name=>'Datei heruntergeladen: '+name,
   openFail:'Öffnen fehlgeschlagen', autosaveFail:'Automatisches Zwischenspeichern nicht möglich – bitte manuell speichern',
   pasteSketch:'Strg+V fügt jetzt eine Skizze hinzu', pasteWhere:'Erst eine Zelle oder eine Variantenkarte anklicken, dann Strg+V',
   onlyImages:'Nur Bilddateien (oder eine Kasten-JSON) werden unterstützt', firstImgOnly:'Nur das erste Bild wurde verwendet – mehrere Bilder auf «+» ziehen',
@@ -420,7 +443,10 @@ en:{
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} solution(s)?`, confirmDelCell:name=>`Delete solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
   confirmDelVar:name=>`Delete variant ${q(name)}?`, confirmRmSketch:'Remove sketch?',
-  invalidFile:'Not a valid box file', opened:name=>'Opened: '+name, saved:name=>'Saved: '+name, downloaded:name=>'File downloaded: '+name,
+  invalidFile:'Not a valid box file',
+  fileTooNew:v=>`This file was created with a newer version of the tool (format ${v}) and cannot be opened safely here.\n\nPlease use the current version: https://master-d1990.github.io/morphological-box/`,
+  migrated:(a,b)=>`File from an older version (format ${a}) loaded – saving converts it to the current format ${b}`,
+  cacheTooNew:'Cached data from a newer version found – it was backed up, not overwritten', opened:name=>'Opened: '+name, saved:name=>'Saved: '+name, downloaded:name=>'File downloaded: '+name,
   openFail:'Opening failed', autosaveFail:'Automatic caching is not possible – please save manually',
   pasteSketch:'Ctrl+V now adds a sketch', pasteWhere:'Click a cell or a variant card first, then Ctrl+V',
   onlyImages:'Only image files (or a box JSON) are supported', firstImgOnly:'Only the first image was used – drop several images on “+”',
@@ -857,15 +883,19 @@ function moveSel(key){
 function serialize(){
   const used=new Set(); P.rows.forEach(r=>r.cells.forEach(c=>c.img&&used.add(c.img))); P.variants.forEach(v=>v.imgs.forEach(id=>used.add(id)));
   const images={}; used.forEach(id=>{if(IMG[id]) images[id]=IMG[id];});
-  return JSON.stringify({format:FORMAT,version:1,saved:new Date().toISOString(),project:P,images});
+  return JSON.stringify({format:FORMAT,version:SCHEMA_VERSION,saved:new Date().toISOString(),project:P,images});
 }
 function loadData(text,{quiet=false}={}){
   let d; try{ d=JSON.parse(text); }catch{ d=null; }
   if(!d||d.format!==FORMAT||!d.project){ toast(t('invalidFile')); return false; }
+  let m; try{ m=migrate(d); }catch(err){ console.error(err); toast(t('invalidFile')); return false; }
+  if(m.newer){ alert(t('fileTooNew',m.newer)); return false; }
+  d=m.data;
   clearBlobs(); P=normalize(d.project); IMG=d.images||{};
   resetHistory(); ui.sel=null; ui.editVar=null; ui.dirty=false;
   validateUi(); renderAll(); scheduleSave();
-  if(!quiet) toast(t('opened',P.title||t('appTitle')));
+  if(m.from<SCHEMA_VERSION){ ui.dirty=true; updateStatus(); toast(t('migrated',m.from,SCHEMA_VERSION)); }
+  else if(!quiet) toast(t('opened',P.title||t('appTitle')));
   return true;
 }
 const fileName=()=>((P.title||t('fileBase')).replace(/[\\/:*?"<>|]+/g,'').trim()||t('fileBase'))+'.kasten.json';
@@ -1185,7 +1215,12 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   const saved=await Promise.race([idbGet('current'),new Promise(r=>setTimeout(()=>r(null),2000))]);
   let restored=false;
   if(saved&&saved.data){
-    try{ const d=JSON.parse(saved.data); P=normalize(d.project); IMG=d.images||{}; ui.dirty=!!saved.dirty; restored=true; }catch(e){ console.warn(e); }
+    try{
+      const m=migrate(JSON.parse(saved.data));
+      if(m.newer){ // Zwischenspeicher einer neueren Version: sichern statt überschreiben
+        await idbSet('backup-newer-v'+m.newer,saved).catch(()=>{}); toast(t('cacheTooNew'));
+      }else{ P=normalize(m.data.project); IMG=m.data.images||{}; ui.dirty=!!saved.dirty||m.from<SCHEMA_VERSION; restored=true; }
+    }catch(e){ console.warn(e); }
   }
   if(!restored){ P=sampleProject(); IMG={}; }
   validateUi(); renderAll();
