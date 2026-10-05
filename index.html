@@ -3,7 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Morphologischer Kasten</title>
+<title>Morphologischer Kasten online – Morphological Box (Zwicky box) tool</title>
+<meta name="description" content="Kostenloses Online-Tool für den morphologischen Kasten: Drag &amp; Drop, Skizzen, Ampelbewertung mit Begründung, Lösungsvarianten als farbige Linien. Free morphological box (Zwicky box) tool – runs in the browser, no sign-up, data stays local.">
+<link rel="canonical" href="https://master-d1990.github.io/morphological-box/">
+<link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de">
+<link rel="alternate" hreflang="en" href="https://master-d1990.github.io/morphological-box/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://master-d1990.github.io/morphological-box/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://master-d1990.github.io/morphological-box/">
+<meta property="og:title" content="Morphological Box – Morphologischer Kasten online">
+<meta property="og:description" content="Free browser tool for morphological boxes: sketches, traffic-light ratings and solution variants as coloured lines. No sign-up, data stays local.">
+<meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/screenshot-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Morphological Box",
+"alternateName":["Morphologischer Kasten","Zwicky box","Morphological chart"],
+"description":"Free online tool for morphological boxes (Zwicky boxes): sub-functions and solutions with images and sketches, traffic-light ratings with reasons, solution variants drawn as coloured lines, variant comparison, print/PDF. Runs in the browser, no sign-up, data stays local.",
+"url":"https://master-d1990.github.io/morphological-box/","image":"https://master-d1990.github.io/morphological-box/docs/screenshot-en.png","applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)",
+"inLanguage":["de-CH","en"],"isAccessibleForFree":true,"license":"https://opensource.org/licenses/MIT",
+"offers":{"@type":"Offer","price":"0","priceCurrency":"CHF"},
+"codeRepository":"https://github.com/Master-D1990/morphological-box"}
+</script>
 <script>try{const t=localStorage.getItem('mk-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 <style>
 :root{
@@ -196,6 +216,8 @@ body.noside #side{display:none}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button.on{background:var(--accent-soft);color:var(--text);font-weight:600}
 .seg .ch{width:14px;height:14px;display:block}
+#bar2 input[type=range]{width:90px}
+#sortSel{max-width:120px}
 .grp{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -245,7 +267,8 @@ body.noside #side{display:none}
 </header>
 <div id="bar2">
   <span class="grp" data-i18n="viewGrp"></span>
-  <label><span data-i18n="viewBy"></span> <select id="view"></select></label>
+  <label data-i18n-title="viewByT"><span data-i18n="viewBy"></span> <select id="view"></select></label>
+  <select id="sortSel" data-i18n-title="sortT"></select>
   <label data-i18n-title="descT"><input type="checkbox" id="showdesc"> <span data-i18n="descs"></span></label>
   <label><span data-i18n="cellSize"></span> <input type="range" id="size" min="120" max="320" step="10"></label>
   <span class="sep"></span>
@@ -263,6 +286,7 @@ body.noside #side{display:none}
 <input type="file" id="varImgFile" accept="image/*" multiple hidden>
 <div id="lightbox" hidden><img alt=""></div>
 <div id="toast"></div>
+<noscript><h1>Morphological Box – Morphologischer Kasten</h1><p>Dieses Tool benötigt JavaScript. / This tool requires JavaScript. Free online tool for morphological boxes (Zwicky boxes): sketches, traffic-light ratings and solution variants.</p></noscript>
 
 <script>
 'use strict';
@@ -275,7 +299,7 @@ const FORMAT='morphologischer-kasten';
 
 /* ---------- Sprache (Deutsch Schweiz / Englisch) ---------- */
 let LANG='de';
-try{ const l=localStorage.getItem('mk-lang'); LANG=l==='en'||l==='de'?l:((navigator.language||'de').toLowerCase().startsWith('de')?'de':'en'); }catch(e){}
+try{ const u=new URLSearchParams(location.search).get('lang'); const l=u==='en'||u==='de'?u:localStorage.getItem('mk-lang'); LANG=l==='en'||l==='de'?l:((navigator.language||'de').toLowerCase().startsWith('de')?'de':'en'); }catch(e){}
 const q=s=>LANG==='de'?`«${s}»`:`“${s}”`;
 const kb=k=>`<kbd>${k}</kbd>`;
 const L={
@@ -285,12 +309,13 @@ de:{
   print:'PDF / Drucken', undoT:'Rückgängig (Strg+Z)', redoT:'Wiederholen (Strg+Y)',
   side:'◨ Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)', themeT:'Farbschema: Auto / Hell / Dunkel',
   themeAuto:'◐ Auto', themeLight:'☀ Hell', themeDark:'☾ Dunkel',
-  viewGrp:'Ansicht', viewBy:'Ampel-Kriterium', cellSize:'Zellgrösse', descs:'Beschreibungen', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Linientransparenz', linesT:'Transparenz der Variantenlinien (rechts = durchsichtiger)', variantsLbl:'Varianten',
+  viewGrp:'Ansicht', viewBy:'Ampel', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Texte', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Transparenz', linesT:'Transparenz der Variantenlinien (rechts = durchsichtiger)', variantsLbl:'Varianten',
+  sortPh:'Sortieren…', sortT:'Lösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'nach Ampel (aktuelles Kriterium)', sortScore:'nach Gesamtbewertung (alle Kriterien)', sortAlpha:'alphabetisch', sorted:'Lösungen sortiert – Strg+Z macht es rückgängig',
   g:'Grün', y:'Gelb', r:'Rot', n:'unbewertet',
   newBox:'Neuer Kasten', overall:'Gesamt', subfnN:n=>'Teilfunktion '+n, newSolution:'Neue Lösung', newSubfn:'Neue Teilfunktion', newCrit:'Neues Kriterium', variantN:x=>'Variante '+x,
   imgInserted:k=>`Bild eingefügt (${k} KB)`, imgFail:'Bild konnte nicht gelesen werden',
   sketchesAdded:(n,name)=>`${n} Skizze(n) zu ${q(name)} hinzugefügt`, cellsFromImgs:n=>`${n} Lösung(en) mit Bild angelegt`,
-  overviewH:'Variantenübersicht', overviewSub:c=>`Ampel-Kriterium: ${q(c)} · Klick auf eine Lösung springt zur Zelle`, hidden:'(ausgeblendet)',
+  overviewH:'Variantenübersicht', overviewSub:c=>`Ampel nach ${q(c)} · Klick auf eine Lösung springt zur Zelle`, hidden:'(ausgeblendet)',
   sketches:'Skizzen', dropSketch:'Skizze hierher ziehen', missing:'– fehlt –', untitled:'ohne Titel', note:'Notiz',
   unsaved:'● nicht in Datei gespeichert', noName:'(ohne Name)', chipVis:'Ein-/ausblenden', chipEdit:'Klicken: Lösungen für diese Variante auswählen', addVar:'+ Variante',
   banner:name=>`<b>${name}</b> zusammenstellen: pro Zeile eine Lösung anklicken (nochmal klicken = abwählen).`, doneEsc:'Fertig (Esc)',
@@ -310,7 +335,8 @@ de:{
     <li><b>Bild</b>: Datei auf eine Zelle ziehen oder Zelle wählen und ${kb('Strg')}+${kb('V')}. Bilder werden automatisch verkleinert.</li>
     <li><b>Mehrere Bilder</b> auf «+» ziehen: je eine neue Lösung.</li>
     <li><b>Verschieben</b>: Zellen ziehen (auch in andere Zeilen), Zeilen am ⠿ ziehen.</li>
-    <li><b>Varianten</b>: Chip oben anklicken, dann pro Zeile eine Lösung anklicken. ●/○ blendet die Linie ein/aus, «Linientransparenz» oben macht die Linien durchsichtiger.</li>
+    <li><b>Varianten</b>: Chip oben anklicken, dann pro Zeile eine Lösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
+    <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Lösungen jeder Teilfunktion nach Ampel, Gesamtbewertung oder alphabetisch.</li>
     <li><b>Skizzen zur Variante</b>: auf die Variantenkarte bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>`,
@@ -339,12 +365,13 @@ en:{
   print:'PDF / Print', undoT:'Undo (Ctrl+Z)', redoT:'Redo (Ctrl+Y)',
   side:'◨ Sidebar', sideT:'Show/hide sidebar (key S)', themeT:'Colour scheme: Auto / Light / Dark',
   themeAuto:'◐ Auto', themeLight:'☀ Light', themeDark:'☾ Dark',
-  viewGrp:'View', viewBy:'Rating criterion', cellSize:'Cell size', descs:'Descriptions', descT:'Show descriptions in the cells (key D)', lines:'Line transparency', linesT:'Transparency of the variant lines (right = more see-through)', variantsLbl:'Variants',
+  viewGrp:'View', viewBy:'Rating', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Texts', descT:'Show descriptions in the cells (key D)', lines:'Transparency', linesT:'Transparency of the variant lines (right = more see-through)', variantsLbl:'Variants',
+  sortPh:'Sort…', sortT:'Reorder the solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'by rating (current criterion)', sortScore:'by overall score (all criteria)', sortAlpha:'alphabetically', sorted:'Solutions sorted – Ctrl+Z to undo',
   g:'Green', y:'Yellow', r:'Red', n:'unrated',
   newBox:'New box', overall:'Overall', subfnN:n=>'Sub-function '+n, newSolution:'New solution', newSubfn:'New sub-function', newCrit:'New criterion', variantN:x=>'Variant '+x,
   imgInserted:k=>`Image inserted (${k} KB)`, imgFail:'Could not read the image',
   sketchesAdded:(n,name)=>`${n} sketch(es) added to ${q(name)}`, cellsFromImgs:n=>`${n} solution(s) created from images`,
-  overviewH:'Variant overview', overviewSub:c=>`Rating criterion: ${q(c)} · click a solution to jump to its cell`, hidden:'(hidden)',
+  overviewH:'Variant overview', overviewSub:c=>`Rating by ${q(c)} · click a solution to jump to its cell`, hidden:'(hidden)',
   sketches:'Sketches', dropSketch:'Drop a sketch here', missing:'– missing –', untitled:'untitled', note:'Note',
   unsaved:'● not saved to file', noName:'(no name)', chipVis:'Show/hide', chipEdit:'Click: choose the solutions for this variant', addVar:'+ Variant',
   banner:name=>`Composing <b>${name}</b>: click one solution per row (click again to deselect).`, doneEsc:'Done (Esc)',
@@ -364,7 +391,8 @@ en:{
     <li><b>Image</b>: drop a file on a cell, or select a cell and press ${kb('Ctrl')}+${kb('V')}. Images are scaled down automatically.</li>
     <li><b>Several images</b> dropped on “+” create one new solution each.</li>
     <li><b>Rearrange</b>: drag cells (also into other rows), drag rows by ⠿.</li>
-    <li><b>Variants</b>: click a chip at the top, then click one solution per row. ●/○ shows/hides the line, “Line transparency” at the top makes the lines more see-through.</li>
+    <li><b>Variants</b>: click a chip at the top, then click one solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
+    <li><b>Sort</b> (top, under View): orders the solutions of every sub-function by rating, overall score or alphabetically.</li>
     <li><b>Variant sketches</b>: drop them on the variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>`,
@@ -575,12 +603,13 @@ function applySize(){
 }
 function updateStatus(){
   $('#saveState').textContent=ui.dirty?t('unsaved'):'';
-  document.title=(ui.dirty?'• ':'')+(P.title||t('appTitle'));
+  document.title=(ui.dirty?'• ':'')+(P.title?P.title+' – ':'')+t('appTitle');
   $('#undo').disabled=!undoStack.length; $('#redo').disabled=!redoStack.length;
 }
 function renderToolbar(){
   const ti=$('#ptitle'); if(document.activeElement!==ti) ti.value=P.title;
   $('#view').innerHTML=P.criteria.map(k=>`<option value="${k.id}" ${k.id===ui.view?'selected':''}>${esc(k.name)||t('noName')}</option>`).join('');
+  $('#sortSel').innerHTML=['','rating','score','alpha'].map(v=>`<option value="${v}">${t({'':'sortPh',rating:'sortRating',score:'sortScore',alpha:'sortAlpha'}[v])}</option>`).join('');
   $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').checked=!!P.settings.showDesc;
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
     `<button class="vis" data-var="${v.id}" title="${t('chipVis')}">${v.visible?'●':'○'}</button>`+
@@ -641,7 +670,7 @@ function drawLines(){
     for(const row of P.rows){
       const cid=v.picks[row.id]; if(!cid) continue;
       const el=m.querySelector(`.cell[data-cell="${cid}"]`); if(!el) continue;
-      const r=el.getBoundingClientRect();
+      const r=(el.querySelector('.img')||el).getBoundingClientRect(); // Bildmitte: unabhängig von Textlänge
       pts.push([r.left-base.left+r.width/2+off, r.top-base.top+r.height/2]);
     }
     if(!pts.length) return;
@@ -752,6 +781,20 @@ function addVariant(){
   const v={id:uid(),name:t('variantN',String.fromCharCode(65+n%26)),color:COLORS[n%COLORS.length],visible:true,note:'',picks:{},imgs:[]};
   change(()=>P.variants.push(v));
   toggleEditVar(v.id);
+}
+const RANK={g:0,y:1,r:2};
+function cellScore(c){ // Mittel über alle bewerteten Kriterien: Grün=1, Gelb=0.5, Rot=0; unbewertet=-1
+  const ls=P.criteria.map(k=>(c.ratings[k.id]||{}).level).filter(Boolean);
+  return ls.length?ls.reduce((s,l)=>s+{g:1,y:0.5,r:0}[l],0)/ls.length:-1;
+}
+function sortCells(mode){
+  const byRating=(a,b)=>(RANK[(a.ratings[ui.view]||{}).level]??3)-(RANK[(b.ratings[ui.view]||{}).level]??3);
+  const byScore=(a,b)=>cellScore(b)-cellScore(a);
+  const cmp={rating:(a,b)=>byRating(a,b)||byScore(a,b), score:(a,b)=>byScore(a,b)||byRating(a,b),
+    alpha:(a,b)=>(a.title||'').localeCompare(b.title||'',t('dateLocale'),{numeric:true,sensitivity:'base'})}[mode];
+  if(!cmp) return;
+  change(()=>P.rows.forEach(r=>r.cells.sort(cmp)));
+  toast(t('sorted'));
 }
 function moveCell(cellId,rowId,targetId,after){
   const src=findCell(cellId), tRow=P.rows.find(r=>r.id===rowId);
@@ -877,6 +920,7 @@ $('#bTheme').onclick=()=>{
 $('#langSeg').onclick=e=>{ const b=e.target.closest('[data-lang]'); if(b&&b.dataset.lang!==LANG) setLang(b.dataset.lang); };
 applyStatic(); renderTheme();
 $('#bSide').onclick=()=>setSide(!sideVisible());
+$('#sortSel').onchange=e=>{ const m=e.target.value; e.target.value=''; e.target.blur(); sortCells(m); };
 $('#view').onchange=e=>{ ui.view=e.target.value; renderMatrix(); renderSide(); renderVarList(); };
 $('#bar2').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b) return;

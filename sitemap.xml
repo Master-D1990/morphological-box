@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://master-d1990.github.io/morphological-box/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://master-d1990.github.io/morphological-box/?lang=en"/>
+  </url>
+  <url><loc>https://master-d1990.github.io/morphological-box/?lang=de</loc></url>
+  <url><loc>https://master-d1990.github.io/morphological-box/?lang=en</loc></url>
+</urlset>
