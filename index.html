@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="google-site-verification" content="CMpy1IwkV7OehpOIVlcJwRe7iKpvw4_BXrHo-5FwKqg" />
-<title>Morphologischer Kasten online – Morphological Box (Zwicky box) tool</title>
-<meta name="description" content="Kostenloses Online-Tool für den morphologischen Kasten: Drag &amp; Drop, Skizzen, Ampelbewertung mit Begründung, Lösungsvarianten als farbige Linien. Free morphological box (Zwicky box) tool – runs in the browser, no sign-up, data stays local.">
+<title>Morphologischer Kasten online | Morphological Box (Zwicky box) tool</title>
+<meta name="description" content="Kostenloses Online-Tool für den morphologischen Kasten: Drag &amp; Drop, Skizzen, Ampelbewertung mit Begründung, Lösungsvarianten als farbige Linien. Free morphological box (Zwicky box) tool. Runs in the browser, no sign-up, data stays local.">
 <link rel="canonical" id="canon" href="https://master-d1990.github.io/morphological-box/">
 <link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de">
 <link rel="alternate" hreflang="en" href="https://master-d1990.github.io/morphological-box/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://master-d1990.github.io/morphological-box/">
 <meta property="og:type" content="website">
 <meta property="og:url" id="ogurl" content="https://master-d1990.github.io/morphological-box/">
-<meta property="og:title" content="Morphological Box – Morphologischer Kasten online">
+<meta property="og:title" content="Morphological Box | Morphologischer Kasten online">
 <meta property="og:description" content="Free browser tool for morphological boxes: sketches, traffic-light ratings and solution variants as coloured lines. No sign-up, data stays local.">
 <meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/screenshot-en.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -317,7 +317,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
 #toast.show{opacity:1;transform:translateX(-50%)}
 
-/* Handy: nur ansehen – eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
+/* Handy: nur ansehen, eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
 @media (max-width:760px){
   #bar{flex-wrap:nowrap;padding:6px 10px;gap:6px}
   #bar>*:not(#ptitle):not(#bOpen):not(#langSeg):not(#bHelp){display:none!important}
@@ -441,7 +441,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
 </dialog>
 <div id="toast"></div>
-<noscript><h1>Morphological Box – Morphologischer Kasten</h1><p>Dieses Tool benötigt JavaScript. / This tool requires JavaScript. Free online tool for morphological boxes (Zwicky boxes): sketches, traffic-light ratings and solution variants.</p></noscript>
+<noscript><h1>Morphological Box | Morphologischer Kasten</h1><p>Dieses Tool benötigt JavaScript. / This tool requires JavaScript. Free online tool for morphological boxes (Zwicky boxes): sketches, traffic-light ratings and solution variants.</p></noscript>
 
 <script>
 'use strict';
@@ -485,30 +485,30 @@ de:{
   side:'Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)',
   themeAuto:'Farbschema: automatisch', themeLight:'Farbschema: hell', themeDark:'Farbschema: dunkel',
   cellsGrp:'Zellen', rateGrp:'Bewertung', viewBy:'Ampel', critPre:'Kriterium:', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Beschreibung', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Linien-Transparenz', linesT:'Transparenz der Linien der Lösungsvarianten (rechts = durchsichtiger)', variantsLbl:'Lösungsvarianten',
-  exportPh:'Export', exportT:'Drucken / PDF, Excel-Datei (mit Bildern) oder CSV', exportPdfHint:'Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten', exportXlsxHint:'Kasten, Lösungsvarianten, Bewertungen – mit allen Bildern', exportCsvHint:'Bewertungstabelle als Text, ohne Bilder', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
+  exportPh:'Export', exportT:'Drucken / PDF, Excel-Datei (mit Bildern) oder CSV', exportPdfHint:'Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten', exportXlsxHint:'Kasten, Lösungsvarianten, Bewertungen, mit allen Bildern', exportCsvHint:'Bewertungstabelle als Text, ohne Bilder', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Excel-Datei wird erstellt …', exported:n=>'Exportiert: '+n, exportFail:'Export fehlgeschlagen',
   xlSheetBox:'Kasten', xlSheetVariants:'Lösungsvarianten', xlSheetRatings:'Bewertungen', xlDistribution:'Verteilung', xlMissing:'Fehlt noch', xlHasRed:'Enthält Rot', xlVisible:'Sichtbar', xlYes:'Ja', xlNo:'Nein',
   xlColSubfn:'Teilfunktion', xlColSolution:'Teillösung', xlColLevel:'Ampel', xlColReason:'Begründung', xlColOverall:'Gesamt', xlColVariants:'In Lösungsvarianten', xlColImage:'Bild',
   xlInfoProject:'Projekt', xlInfoExported:'Exportiert am', xlInfoTool:'Erstellt mit', xlInfoView:'Ampel-Kriterium der Ansicht', xlInfoScale:'Bewertung in %', xlInfoCounts:'Umfang', xlInfoSubfns:'Teilfunktionen', xlInfoSolutions:'Teillösungen', xlInfoVariants:'Lösungsvarianten',
-  vSortT:'Lösungsvarianten neu anordnen (rückgängig mit Strg+Z)', vSortScore:'Nach Gesamtbewertung', vSortScoreHint:'Durchschnitt aller Kriterien – beste links', vSortRating:c=>`Nach Ampel-Kriterium «${c}»`, vSortRatingHint:'beste links', vSorted:'Lösungsvarianten sortiert – Strg+Z macht es rückgängig', moveVarT:'Ziehen zum Umordnen', moveCellT:'Ziehen zum Verschieben (auch in eine andere Teilfunktion)',
+  vSortT:'Lösungsvarianten neu anordnen (rückgängig mit Strg+Z)', vSortScore:'Nach Gesamtbewertung', vSortScoreHint:'Durchschnitt aller Kriterien, beste links', vSortRating:c=>`Nach Ampel-Kriterium «${c}»`, vSortRatingHint:'beste links', vSorted:'Lösungsvarianten sortiert. Strg+Z macht es rückgängig', moveVarT:'Ziehen zum Umordnen', moveCellT:'Ziehen zum Verschieben (auch in eine andere Teilfunktion)',
   imgTypes:'PNG · JPG · WebP · GIF · SVG',
-  hdrFunctions:'Teilfunktionen', hdrSolutions:'Teillösungen', coords:'Koordinaten', coordsT:'Koordinaten wie in Excel: Teilfunktionen 1, 2, 3 …, Teillösungen A, B, C … – z. B. «B2» (Taste K)',
+  hdrFunctions:'Teilfunktionen', hdrSolutions:'Teillösungen', coords:'Koordinaten', coordsT:'Koordinaten wie in Excel: Teilfunktionen 1, 2, 3 …, Teillösungen A, B, C …, z. B. «B2» (Taste K)',
   addVarT:'Neue Lösungsvariante anlegen', addFirstVar:'+ Lösungsvariante anlegen', xlColPos:'Pos.',
-  sortPh:'Sortieren', sortT:'Teillösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'Nach Ampel', sortRatingHint:'grün → gelb → rot, aktuelles Ampel-Kriterium', sortScore:'Nach Gesamtbewertung', sortScoreHint:'Durchschnitt über alle Kriterien', sortAlpha:'Alphabetisch', sortVar:'Nach Lösungsvarianten', sortVarHint:'Teillösungen in der Reihenfolge der Übersicht nach vorne',  sorted:'Teillösungen sortiert – Strg+Z macht es rückgängig',
+  sortPh:'Sortieren', sortT:'Teillösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'Nach Ampel', sortRatingHint:'grün → gelb → rot, aktuelles Ampel-Kriterium', sortScore:'Nach Gesamtbewertung', sortScoreHint:'Durchschnitt über alle Kriterien', sortAlpha:'Alphabetisch', sortVar:'Nach Lösungsvarianten', sortVarHint:'Teillösungen in der Reihenfolge der Übersicht nach vorne',  sorted:'Teillösungen sortiert. Strg+Z macht es rückgängig',
   g:'Grün', y:'Gelb', r:'Rot', n:'unbewertet',
   newBox:'Neuer Kasten', overall:'Gesamt', subfnN:n=>'Teilfunktion '+n, newSolution:'Neue Teillösung', newSubfn:'Neue Teilfunktion', newCrit:'Neues Kriterium', variantN:x=>'Lösungsvariante '+x,
   imgInserted:k=>`Bild eingefügt (${k} KB)`, imgFail:'Bild konnte nicht gelesen werden',
   sketchesAdded:(n,name)=>`${n} Skizze(n) zu ${q(name)} hinzugefügt`, cellsFromImgs:n=>`${n} Teillösung(en) mit Bild angelegt`,
   overviewH:'Übersicht der Lösungsvarianten', overviewSub:c=>`${c===t('offView')?'Ampel aus':'Ampel nach '+q(c)} · Klick auf eine Teillösung springt zur Zelle`, hidden:'(ausgeblendet)',
-  sketches:'Skizzen', dropSketch:'Bild hierher ziehen<br>oder anklicken + Strg+V', missing:'– fehlt –', untitled:'ohne Titel', note:'Notiz',
+  sketches:'Skizzen', dropSketch:'Bild hierher ziehen<br>oder anklicken + Strg+V', missing:'(fehlt)', untitled:'ohne Titel', note:'Notiz',
   unsaved:'Änderungen sind noch nicht in einer Datei gespeichert', noName:'(ohne Name)', chipVis:'Ein-/ausblenden', chipEdit:'Klicken: Teillösungen für diese Lösungsvariante auswählen', addVar:'+ Lösungsvariante',
   banner:name=>`<b>${name}</b> zusammenstellen: pro Zeile eine Teillösung anklicken (nochmal klicken = abwählen).`, doneEsc:'Fertig (Esc)',
   cellPh:'Bild hierher ziehen<br>oder anklicken + Strg+V', moveRow:'Zeile verschieben', subfnPh:'Teilfunktion', delRow:'Zeile löschen',
-  addCellT:'Teillösung hinzufügen – oder Bilder hierher ziehen', addRow:'+ Teilfunktion',
+  addCellT:'Teillösung hinzufügen oder Bilder hierher ziehen', addRow:'+ Teilfunktion',
   back:'← Übersicht', title:'Titel', desc:'Beschreibung', imgDropHint:'Bild hierher ziehen<br>oder Strg+V',
   chooseImg:'Bild wählen…', rmImg:'Bild entfernen', rating:'Bewertung', noRating:'Keine Bewertung', reasonPh:'Begründung …',
-  overallView:'Alle Kriterien', overallViewHint:'schlechteste Ampel zählt', offView:'Aus', rateTglT:'Ampel ein/aus – beim Ideensammeln ausschalten, damit Bewertungen die Kreativität nicht bremsen (Taste B)', keysOff:'Ampel ist aus – zum Bewerten einschalten (Taste B)', keysHintAll:`Für die Tasten ${kb(1)} ${kb(2)} ${kb(3)} oben bei «Kriterium» ein einzelnes Kriterium wählen. Pfeiltasten wechseln die Zelle.`, keysAll:'Tasten 1/2/3 bewerten ein Kriterium – erst oben bei «Kriterium» eines wählen',
-  keysHint:c=>`Tasten ${kb(1)} ${kb(2)} ${kb(3)} setzen Grün/Gelb/Rot, ${kb(0)} löscht – für ${q(c)}. Pfeiltasten wechseln die Zelle.`,
+  overallView:'Alle Kriterien', overallViewHint:'schlechteste Ampel zählt', offView:'Aus', rateTglT:'Ampel ein/aus. Beim Ideensammeln ausschalten, damit Bewertungen die Kreativität nicht bremsen (Taste B)', keysOff:'Ampel ist aus. Zum Bewerten einschalten (Taste B)', keysHintAll:`Für die Tasten ${kb(1)} ${kb(2)} ${kb(3)} oben bei «Kriterium» ein einzelnes Kriterium wählen. Pfeiltasten wechseln die Zelle.`, keysAll:'Tasten 1/2/3 bewerten ein einzelnes Kriterium. Wähle zuerst oben bei «Kriterium» eines aus',
+  keysHint:c=>`Tasten ${kb(1)} ${kb(2)} ${kb(3)} setzen für ${q(c)} Grün/Gelb/Rot, ${kb(0)} löscht. Pfeiltasten wechseln die Zelle.`,
   inVariants:'In Lösungsvarianten', noVariants:'Noch keine Lösungsvarianten.', delCell:'Teillösung löschen',
   color:'Farbe', delVar:'Lösungsvariante löschen', visible:'sichtbar', done:'Fertig', pickSolutions:'Teillösungen auswählen',
   pctT:'Grün=100 %, Gelb=50 %, Rot=0 % (unbewertete zählen nicht)', stillMissing:'Fehlt noch: ', hasRed:'Enthält rot bewertete Teillösung(en)',
@@ -516,13 +516,13 @@ de:{
   notePh:'Notiz / Begründung der Lösungsvariante …', variantsH:'Lösungsvarianten',
   noVarsLong:'Noch keine Lösungsvarianten. Lege eine an und klicke dann pro Zeile eine Teillösung an.',
   criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s',
-  help:()=>`<li><b>Vorgehen</b>: erst Teillösungen sammeln und dabei noch nicht bewerten – den Schalter «Ampel» oben ausschalten (Taste ${kb('B')}) blendet alle Bewertungen aus. Erst wenn keine neuen Ideen mehr kommen, bewerten. «Alle Kriterien» färbt nach der schlechtesten Ampel: ein Rot macht die Teillösung rot.</li>
+  help:()=>`<li><b>Vorgehen</b>: erst Teillösungen sammeln und dabei noch nicht bewerten. Schaltest du oben die «Ampel» aus (Taste ${kb('B')}), sind alle Bewertungen ausgeblendet. Erst wenn keine neuen Ideen mehr kommen, bewerten. «Alle Kriterien» färbt nach der schlechtesten Ampel: ein Rot macht die Teillösung rot.</li>
     <li><b>Zelle anklicken</b>: rechts Titel, Bild, Ampel und Begründung bearbeiten.</li>
     <li><b>Bild</b>: Datei auf eine Zelle ziehen oder Zelle wählen und ${kb('Strg')}+${kb('V')}. Bilder werden automatisch verkleinert.</li>
     <li><b>Mehrere Bilder</b> auf «+» ziehen: je eine neue Teillösung.</li>
     <li><b>Verschieben</b>: Zellen ziehen (auch in andere Zeilen), Zeilen am ⠿ ziehen.</li>
     <li><b>Lösungsvarianten</b>: Chip oben anklicken, dann pro Zeile eine Teillösung anklicken. ●/○ blendet die Linie ein/aus, der Schieber «Linien-Transparenz» oben macht sie durchsichtiger.</li>
-    <li><b>Export</b> (oben): Excel-Datei mit Kasten, Lösungsvarianten, Bewertungen und allen Bildern – oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten.</li>
+    <li><b>Export</b> (oben): Excel-Datei mit Kasten, Lösungsvarianten, Bewertungen und allen Bildern, oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten.</li>
     <li><b>Sortieren</b> (oben, zwischen Bewertung und Lösungsvarianten): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung, alphabetisch oder nach Lösungsvarianten (Teillösung der ersten Lösungsvariante der Übersicht ganz links, dann die der zweiten usw.).</li>
     <li><b>Lösungsvarianten umordnen</b>: in der Übersicht unten am Spaltenkopf (⠿) ziehen oder über «Sortieren» neben der Überschrift.</li>
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
@@ -532,18 +532,18 @@ de:{
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
-  mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du Kästen ansehen – das Beispiel oder eine gespeicherte Datei über «Öffnen…» (seitwärts wischen, mit zwei Fingern zoomen). Zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
-  helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante – sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
+  mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du Kästen ansehen: das Beispiel oder eine gespeicherte Datei über «Öffnen…». Seitwärts wischen und mit zwei Fingern zoomen. Zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
+  helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante. Sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt. Speichere ihn vorher, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Teillösung(en) löschen?`, confirmDelCell:name=>`Teillösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
   confirmDelVar:name=>`Lösungsvariante ${q(name)} löschen?`, confirmRmSketch:'Skizze entfernen?',
   invalidFile:'Keine gültige Kasten-Datei',
   fileTooNew:v=>`Diese Datei stammt aus einer neueren Version des Tools (Format ${v}) und kann hier nicht sicher geöffnet werden.\n\nBitte die aktuelle Version verwenden: https://master-d1990.github.io/morphological-box/`,
-  migrated:(a,b)=>`Datei aus älterer Version (Format ${a}) übernommen – beim Speichern wird sie ins aktuelle Format ${b} umgewandelt`,
-  cacheTooNew:'Zwischenspeicher aus einer neueren Version gefunden – er wurde gesichert, nicht überschrieben', opened:name=>'Geöffnet: '+name, saved:name=>'Gespeichert: '+name, downloaded:name=>'Datei heruntergeladen: '+name,
-  openFail:'Öffnen fehlgeschlagen', autosaveFail:'Automatisches Zwischenspeichern nicht möglich – bitte manuell speichern',
+  migrated:(a,b)=>`Datei aus älterer Version (Format ${a}) übernommen. Beim Speichern wird sie ins aktuelle Format ${b} umgewandelt`,
+  cacheTooNew:'Zwischenspeicher aus einer neueren Version gefunden. Er wurde gesichert, nicht überschrieben', opened:name=>'Geöffnet: '+name, saved:name=>'Gespeichert: '+name, downloaded:name=>'Datei heruntergeladen: '+name,
+  openFail:'Öffnen fehlgeschlagen', autosaveFail:'Automatisches Zwischenspeichern nicht möglich. Bitte manuell speichern',
   pasteSketch:'Strg+V fügt jetzt eine Skizze hinzu', pasteWhere:'Erst eine Zelle oder eine Karte einer Lösungsvariante anklicken, dann Strg+V',
-  onlyImages:'Nur Bilddateien (oder eine Kasten-JSON) werden unterstützt', firstImgOnly:'Nur das erste Bild wurde verwendet – mehrere Bilder auf «+» ziehen',
+  onlyImages:'Nur Bilddateien (oder eine Kasten-JSON) werden unterstützt', firstImgOnly:'Nur das erste Bild wurde verwendet. Mehrere Bilder auf «+» ziehen',
   dropWhere:'Bild auf eine Zelle oder auf «+» einer Zeile ziehen', restored:'Letzter Stand wiederhergestellt', fileBase:'kasten',
   sample:{title:'Beispiel: Antriebseinheit',k1:'Machbarkeit',k2:'Kosten',
     rows:[
@@ -560,30 +560,30 @@ en:{
   side:'Sidebar', sideT:'Show/hide sidebar (key S)',
   themeAuto:'Colour scheme: automatic', themeLight:'Colour scheme: light', themeDark:'Colour scheme: dark',
   cellsGrp:'Cells', rateGrp:'Rating', viewBy:'Traffic light', critPre:'Criterion:', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Description', descT:'Show descriptions in the cells (key D)', lines:'Line transparency', linesT:'Transparency of the solution variant lines (right = more see-through)', variantsLbl:'Solution variants',
-  exportPh:'Export', exportT:'Print / PDF, Excel file (with images) or CSV', exportPdfHint:'Page 1 box, page 2 solution variant overview', exportXlsxHint:'Box, solution variants, ratings – with all images', exportCsvHint:'Ratings table as text, no images', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
+  exportPh:'Export', exportT:'Print / PDF, Excel file (with images) or CSV', exportPdfHint:'Page 1 box, page 2 solution variant overview', exportXlsxHint:'Box, solution variants, ratings, with all images', exportCsvHint:'Ratings table as text, no images', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Creating Excel file …', exported:n=>'Exported: '+n, exportFail:'Export failed',
   xlSheetBox:'Box', xlSheetVariants:'Solution variants', xlSheetRatings:'Ratings', xlDistribution:'distribution', xlMissing:'Still missing', xlHasRed:'Contains red', xlVisible:'Visible', xlYes:'Yes', xlNo:'No',
   xlColSubfn:'Sub-function', xlColSolution:'Partial solution', xlColLevel:'Rating', xlColReason:'Reason', xlColOverall:'Overall', xlColVariants:'In solution variants', xlColImage:'Image',
   xlInfoProject:'Project', xlInfoExported:'Exported on', xlInfoTool:'Created with', xlInfoView:'Rating criterion in view', xlInfoScale:'Score in %', xlInfoCounts:'Size', xlInfoSubfns:'sub-functions', xlInfoSolutions:'partial solutions', xlInfoVariants:'solution variants',
-  vSortT:'Reorder the solution variants (undo with Ctrl+Z)', vSortScore:'By overall score', vSortScoreHint:'average of all criteria – best on the left', vSortRating:c=>`By rating criterion “${c}”`, vSortRatingHint:'best on the left', vSorted:'Solution variants sorted – Ctrl+Z to undo', moveVarT:'Drag to reorder', moveCellT:'Drag to move (also into another sub-function)',
+  vSortT:'Reorder the solution variants (undo with Ctrl+Z)', vSortScore:'By overall score', vSortScoreHint:'average of all criteria, best on the left', vSortRating:c=>`By rating criterion “${c}”`, vSortRatingHint:'best on the left', vSorted:'Solution variants sorted. Ctrl+Z to undo', moveVarT:'Drag to reorder', moveCellT:'Drag to move (also into another sub-function)',
   imgTypes:'PNG · JPG · WebP · GIF · SVG',
-  hdrFunctions:'Sub-functions', hdrSolutions:'Partial solutions', coords:'Coordinates', coordsT:'Excel-like coordinates: sub-functions 1, 2, 3 …, partial solutions A, B, C … – e.g. “B2” (key K)',
+  hdrFunctions:'Sub-functions', hdrSolutions:'Partial solutions', coords:'Coordinates', coordsT:'Excel-like coordinates: sub-functions 1, 2, 3 …, partial solutions A, B, C …, e.g. “B2” (key K)',
   addVarT:'Create a new solution variant', addFirstVar:'+ Create a solution variant', xlColPos:'Pos.',
-  sortPh:'Sort', sortT:'Reorder the partial solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'By rating', sortRatingHint:'green → yellow → red, current rating criterion', sortScore:'By overall score', sortScoreHint:'average over all criteria', sortAlpha:'Alphabetically', sortVar:'By solution variants', sortVarHint:'partial solutions to the front in overview order',  sorted:'Partial solutions sorted – Ctrl+Z to undo',
+  sortPh:'Sort', sortT:'Reorder the partial solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'By rating', sortRatingHint:'green → yellow → red, current rating criterion', sortScore:'By overall score', sortScoreHint:'average over all criteria', sortAlpha:'Alphabetically', sortVar:'By solution variants', sortVarHint:'partial solutions to the front in overview order',  sorted:'Partial solutions sorted. Ctrl+Z to undo',
   g:'Green', y:'Yellow', r:'Red', n:'unrated',
   newBox:'New box', overall:'Overall', subfnN:n=>'Sub-function '+n, newSolution:'New partial solution', newSubfn:'New sub-function', newCrit:'New criterion', variantN:x=>'Solution variant '+x,
   imgInserted:k=>`Image inserted (${k} KB)`, imgFail:'Could not read the image',
   sketchesAdded:(n,name)=>`${n} sketch(es) added to ${q(name)}`, cellsFromImgs:n=>`${n} partial solution(s) created from images`,
   overviewH:'Solution variant overview', overviewSub:c=>`${c===t('offView')?'Rating off':'Rating by '+q(c)} · click a partial solution to jump to its cell`, hidden:'(hidden)',
-  sketches:'Sketches', dropSketch:'Drop an image here<br>or click + Ctrl+V', missing:'– missing –', untitled:'untitled', note:'Note',
+  sketches:'Sketches', dropSketch:'Drop an image here<br>or click + Ctrl+V', missing:'(missing)', untitled:'untitled', note:'Note',
   unsaved:'Changes are not saved to a file yet', noName:'(no name)', chipVis:'Show/hide', chipEdit:'Click: choose the partial solutions for this solution variant', addVar:'+ Solution variant',
   banner:name=>`Composing <b>${name}</b>: click one partial solution per row (click again to deselect).`, doneEsc:'Done (Esc)',
   cellPh:'Drop an image here<br>or click + Ctrl+V', moveRow:'Move row', subfnPh:'Sub-function', delRow:'Delete row',
-  addCellT:'Add a partial solution – or drop images here', addRow:'+ Sub-function',
+  addCellT:'Add a partial solution or drop images here', addRow:'+ Sub-function',
   back:'← Overview', title:'Title', desc:'Description', imgDropHint:'Drop an image here<br>or Ctrl+V',
   chooseImg:'Choose image…', rmImg:'Remove image', rating:'Rating', noRating:'No rating', reasonPh:'Reason …',
-  overallView:'All criteria', overallViewHint:'worst rating counts', offView:'Off', rateTglT:'Traffic light on/off – switch it off while collecting ideas so ratings don’t hold back creativity (key B)', keysOff:'Traffic light is off – switch it on to rate (key B)', keysHintAll:`To use the keys ${kb(1)} ${kb(2)} ${kb(3)}, choose a single criterion under “Criterion” at the top. Arrow keys move between cells.`, keysAll:'Keys 1/2/3 rate one criterion – choose one under “Criterion” at the top first',
-  keysHint:c=>`Keys ${kb(1)} ${kb(2)} ${kb(3)} set green/yellow/red, ${kb(0)} clears – for ${q(c)}. Arrow keys move between cells.`,
+  overallView:'All criteria', overallViewHint:'worst rating counts', offView:'Off', rateTglT:'Traffic light on/off. Switch it off while collecting ideas so ratings don’t hold back creativity (key B)', keysOff:'Traffic light is off. Switch it on to rate (key B)', keysHintAll:`To use the keys ${kb(1)} ${kb(2)} ${kb(3)}, choose a single criterion under “Criterion” at the top. Arrow keys move between cells.`, keysAll:'Keys 1/2/3 rate a single criterion. Choose one under “Criterion” at the top first',
+  keysHint:c=>`Keys ${kb(1)} ${kb(2)} ${kb(3)} set green/yellow/red for ${q(c)}, ${kb(0)} clears. Arrow keys move between cells.`,
   inVariants:'In solution variants', noVariants:'No solution variants yet.', delCell:'Delete partial solution',
   color:'Colour', delVar:'Delete solution variant', visible:'visible', done:'Done', pickSolutions:'Choose partial solutions',
   pctT:'Green=100 %, yellow=50 %, red=0 % (unrated ones are not counted)', stillMissing:'Still missing: ', hasRed:'Contains red-rated partial solution(s)',
@@ -591,13 +591,13 @@ en:{
   notePh:'Note / rationale for this solution variant …', variantsH:'Solution variants',
   noVarsLong:'No solution variants yet. Create one, then click one partial solution per row.',
   criteriaH:'Evaluation criteria', viewCritT:'Use as rating criterion', delCrit:'Delete criterion', addCrit:'+ Criterion', helpH:'How to use',
-  help:()=>`<li><b>Approach</b>: first collect partial solutions without rating them – switching off “Traffic light” at the top (key ${kb('B')}) hides all ratings. Only rate once no new ideas come up. “All criteria” colours by the worst rating: one red makes the partial solution red.</li>
+  help:()=>`<li><b>Approach</b>: first collect partial solutions without rating them. Switching off “Traffic light” at the top (key ${kb('B')}) hides all ratings. Only rate once no new ideas come up. “All criteria” colours by the worst rating: one red makes the partial solution red.</li>
     <li><b>Click a cell</b> to edit its title, image, rating and reason on the right.</li>
     <li><b>Image</b>: drop a file on a cell, or select a cell and press ${kb('Ctrl')}+${kb('V')}. Images are scaled down automatically.</li>
     <li><b>Several images</b> dropped on “+” create one new partial solution each.</li>
     <li><b>Rearrange</b>: drag cells (also into other rows), drag rows by ⠿.</li>
     <li><b>Solution variants</b>: click a chip at the top, then click one partial solution per row. ●/○ shows/hides the line, the “Line transparency” slider at the top makes them more see-through.</li>
-    <li><b>Export</b> (top): Excel file with box, solution variants, ratings and all images – or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 solution variant overview.</li>
+    <li><b>Export</b> (top): Excel file with box, solution variants, ratings and all images, or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 solution variant overview.</li>
     <li><b>Sort</b> (top, between Rating and Solution variants): orders the partial solutions of every sub-function by rating, overall score, alphabetically or by solution variants (the first solution variant’s partial solution on the far left, then the second’s, and so on).</li>
     <li><b>Reorder solution variants</b>: drag a column header (⠿) in the overview below, or use “Sort” next to its heading.</li>
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
@@ -607,18 +607,18 @@ en:{
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
-  mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can view boxes – the example or a saved file via “Open…” (swipe sideways, pinch to zoom). To edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
-  helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant – it is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
+  mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can view boxes: the example or a saved file via “Open…”. Swipe sideways and pinch to zoom. To edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
+  helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant. It is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced. Save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} partial solution(s)?`, confirmDelCell:name=>`Delete partial solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
   confirmDelVar:name=>`Delete solution variant ${q(name)}?`, confirmRmSketch:'Remove sketch?',
   invalidFile:'Not a valid box file',
   fileTooNew:v=>`This file was created with a newer version of the tool (format ${v}) and cannot be opened safely here.\n\nPlease use the current version: https://master-d1990.github.io/morphological-box/`,
-  migrated:(a,b)=>`File from an older version (format ${a}) loaded – saving converts it to the current format ${b}`,
-  cacheTooNew:'Cached data from a newer version found – it was backed up, not overwritten', opened:name=>'Opened: '+name, saved:name=>'Saved: '+name, downloaded:name=>'File downloaded: '+name,
-  openFail:'Opening failed', autosaveFail:'Automatic caching is not possible – please save manually',
+  migrated:(a,b)=>`File from an older version (format ${a}) loaded. Saving converts it to the current format ${b}`,
+  cacheTooNew:'Cached data from a newer version found. It was backed up, not overwritten', opened:name=>'Opened: '+name, saved:name=>'Saved: '+name, downloaded:name=>'File downloaded: '+name,
+  openFail:'Opening failed', autosaveFail:'Automatic caching is not possible. Please save manually',
   pasteSketch:'Ctrl+V now adds a sketch', pasteWhere:'Click a cell or a solution variant card first, then Ctrl+V',
-  onlyImages:'Only image files (or a box JSON) are supported', firstImgOnly:'Only the first image was used – drop several images on “+”',
+  onlyImages:'Only image files (or a box JSON) are supported', firstImgOnly:'Only the first image was used. Drop several images on “+”',
   dropWhere:'Drop the image on a cell or on the “+” of a row', restored:'Last state restored', fileBase:'box',
   sample:{title:'Example: drive unit',k1:'Feasibility',k2:'Cost',
     rows:[
@@ -844,7 +844,7 @@ function applySize(){
 function updateStatus(){
   $('#saveState').textContent=ui.dirty?'●':''; $('#saveState').title=ui.dirty?t('unsaved'):''; $('#bSave').classList.toggle('dirty',ui.dirty);
   // unverändertes Beispiel (= was Suchmaschinen sehen): Tool-Titel aus dem HTML behalten, sonst Kastenname im Tab
-  document.title=ui.sample&&!ui.dirty?PAGE_TITLE:(ui.dirty?'• ':'')+(P.title?P.title+' – ':'')+t('appTitle');
+  document.title=ui.sample&&!ui.dirty?PAGE_TITLE:(ui.dirty?'• ':'')+(P.title?P.title+' | ':'')+t('appTitle');
   $('#undo').disabled=!undoStack.length; $('#redo').disabled=!redoStack.length;
 }
 function renderToolbar(){
@@ -855,7 +855,7 @@ function renderToolbar(){
   $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').setAttribute('aria-pressed',!!P.settings.showDesc); $('#showcoords').setAttribute('aria-pressed',!!P.settings.coords);
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
     `<button class="vis" data-var="${v.id}" title="${t('chipVis')}">${v.visible?'●':'○'}</button>`+
-    `<button class="vedit" data-var="${v.id}" title="${esc(v.name)} – ${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
+    `<button class="vedit" data-var="${v.id}" title="${esc(v.name)}: ${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
     `<button class="btn small" id="addVar" title="${t('addVarT')}">+</button>`;
   updateStatus();
 }
@@ -880,7 +880,7 @@ function tooltip(c){
   const f=P.settings.coords&&findCell(c.id);
   const lines=[(f?coordOf(c,f.row)+' · ':'')+(c.title||`(${t('untitled')})`)];
   if(c.desc) lines.push(c.desc);
-  P.criteria.forEach(k=>{const r=c.ratings[k.id]; if(r&&(r.level||r.reason)) lines.push(`${k.name}: ${LV(r.level)}${r.reason?' – '+r.reason:''}`);});
+  P.criteria.forEach(k=>{const r=c.ratings[k.id]; if(r&&(r.level||r.reason)) lines.push(`${k.name}: ${LV(r.level)}${r.reason?' · '+r.reason:''}`);});
   return lines.join('\n');
 }
 function cellHtml(c,row){
@@ -1014,7 +1014,7 @@ function overview(){
 }
 function renderPrintHead(){
   $('#printhead').innerHTML=`<h1>${esc(P.title)}</h1><div class="legend">`+
-    P.variants.filter(v=>v.visible).map(v=>`<span><i style="background:${v.color}"></i><b>${esc(v.name)}</b>${v.note?' – '+esc(v.note):''}</span>`).join('')+
+    P.variants.filter(v=>v.visible).map(v=>`<span><i style="background:${v.color}"></i><b>${esc(v.name)}</b>${v.note?': '+esc(v.note):''}</span>`).join('')+
     `<span class="muted">${t('printRating')}${esc(critName(ui.view))} · ${new Date().toLocaleDateString(t('dateLocale'))}</span></div>`;
 }
 
@@ -1302,7 +1302,7 @@ async function buildXlsx(){
   sh1.width(0,26); for(let c=1;c<=maxCells;c++) sh1.width(c,CW);
   sh1.cell(0,0,P.title||t('appTitle'),head1);
   sh1.cell(1,0,`${t('printRating')}${critName(ui.view)} · ${today}`,headSub);
-  if(P.variants.length) sh1.cell(2,0,{rich:P.variants.flatMap(v=>[{t:'■ ',color:argb(v.color),sz:13},{t:v.name+(v.note?' – '+v.note:'')+'     ',b:true}])},S.style({wrap:false}));
+  if(P.variants.length) sh1.cell(2,0,{rich:P.variants.flatMap(v=>[{t:'■ ',color:argb(v.color),sz:13},{t:v.name+(v.note?': '+v.note:'')+'     ',b:true}])},S.style({wrap:false}));
   if(P.settings.coords) for(let c=0;c<maxCells;c++) sh1.cell(3,c+1,colName(c),S.style({b:true,color:MUTED,h:'center',wrap:false}));
   const critLine=Math.ceil(P.criteria.reduce((n,k)=>n+k.name.length+4,0)/(CW*1.1));
   let r=4;
@@ -1366,7 +1366,7 @@ async function buildXlsx(){
       scores.forEach((s,i)=>{ const p=s.per[ki], l=p.pct==null?'n':p.pct>=75?'g':p.pct>=50?'y':'r';
         sh2.cell(q,i+1,p.pct==null?'–':p.pct/100,S.style({pct:true,b:true,fill:BG[l],border:'all',h:'center'})); });
       q++;
-      sh2.cell(q,0,`${k.name} – ${t('xlDistribution')}`,S.style({fill:GREY,border:'all',color:MUTED,sz:9}));
+      sh2.cell(q,0,`${k.name}: ${t('xlDistribution')}`,S.style({fill:GREY,border:'all',color:MUTED,sz:9}));
       scores.forEach((s,i)=>{ const n=s.per[ki].cnt; sh2.cell(q,i+1,`${LV('g')} ${n.g} · ${LV('y')} ${n.y} · ${LV('r')} ${n.r} · ${LV('n')} ${n.n}`,S.style({border:'all',color:MUTED,sz:9})); });
       q++;
     });
@@ -1379,7 +1379,7 @@ async function buildXlsx(){
 
   /* Blatt 3: Bewertungen (flache Liste, filterbar) */
   const sh3=new XSheet(t('xlSheetRatings')); sheets.push(sh3);
-  const head=[t('xlColPos'),t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name} – ${t('xlColLevel')}`,`${k.name} – ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants'),t('xlColImage')];
+  const head=[t('xlColPos'),t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name}: ${t('xlColLevel')}`,`${k.name}: ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants'),t('xlColImage')];
   [7,22,24,40,...P.criteria.flatMap(()=>[12,36]),11,20,16].forEach((w,i)=>sh3.width(i,w));
   const hs=S.style({b:true,fill:GREY,border:'all',v:'center'});
   head.forEach((h,i)=>sh3.cell(0,i,h,hs)); sh3.height(0,32);
@@ -1438,7 +1438,7 @@ async function buildXlsx(){
 }
 function buildCsv(){
   const sep=LANG==='de'?';':',', cq=v=>{ const s=String(v??''); return /[";,\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-  const head=[t('xlColPos'),t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name} – ${t('xlColLevel')}`,`${k.name} – ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants')];
+  const head=[t('xlColPos'),t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name}: ${t('xlColLevel')}`,`${k.name}: ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants')];
   const lines=[head.map(cq).join(sep)];
   for(const row of P.rows) for(const c of row.cells){
     const sc=cellScore(c);

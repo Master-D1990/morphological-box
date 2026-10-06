@@ -1,6 +1,6 @@
 # Morphological Box
 
-**A free, simple tool for the morphological box (Zwicky box) – right in your browser.**
+**A free, simple tool for the morphological box (Zwicky box), right in your browser.**
 No installation, no account, no data upload.
 
 👉 **Open the tool: https://master-d1990.github.io/morphological-box/**
@@ -27,7 +27,7 @@ Many people do this in Excel, but sketches, ratings and comparisons quickly get 
 
 - **Grid of sub-functions and partial solutions:** add, rename and rearrange them by drag & drop. Excel-like **coordinates** (e.g. “B2”) make it easy to talk about a cell in a team.
 - **Images and sketches:** drag a picture onto a box, or select a box and paste with `Ctrl+V` (e.g. a screenshot or a photo of a hand sketch). Images are scaled down automatically.
-- **Traffic-light rating with reasons:** rate every partial solution green / yellow / red, with a written reason, for as many criteria as you like (e.g. feasibility, cost, weight). “All criteria” colours each cell by its worst rating – one red is a knock-out.
+- **Traffic-light rating with reasons:** rate every partial solution green / yellow / red, with a written reason, for as many criteria as you like (e.g. feasibility, cost, weight). “All criteria” colours each cell by its worst rating, so one red is a knock-out.
 - **Ideas first, rating later:** switch the **traffic light** off to hide all ratings while you collect ideas, so judging doesn’t slow down creativity. New boxes start that way.
 - **Solution variants as coloured lines:** pick one partial solution per row, and the solution variant is drawn as a see-through coloured line across the box. Several solution variants can be compared side by side.
 - **Solution variant overview:** a table below the box compares all solution variants, with scores per criterion, notes and sketches of each overall concept.
@@ -103,7 +103,7 @@ Viele machen das in Excel, aber mit Skizzen, Bewertungen und Vergleichen wird es
 
 - **Raster aus Teilfunktionen und Teillösungen:** hinzufügen, umbenennen und per Drag & Drop umsortieren. **Koordinaten** wie in Excel (z. B. «B2») erleichtern die Abstimmung im Team.
 - **Bilder und Skizzen:** Bild auf ein Feld ziehen oder ein Feld anklicken und mit `Strg+V` einfügen (z. B. einen Screenshot oder ein Handyfoto einer Handskizze). Bilder werden automatisch verkleinert.
-- **Ampelbewertung mit Begründung:** jede Teillösung grün / gelb / rot bewerten, mit schriftlicher Begründung, für beliebig viele Kriterien (z. B. Machbarkeit, Kosten, Gewicht). «Alle Kriterien» färbt jede Zelle nach ihrer schlechtesten Ampel – ein Rot ist ein K.-o.-Kriterium.
+- **Ampelbewertung mit Begründung:** jede Teillösung grün / gelb / rot bewerten, mit schriftlicher Begründung, für beliebig viele Kriterien (z. B. Machbarkeit, Kosten, Gewicht). «Alle Kriterien» färbt jede Zelle nach ihrer schlechtesten Ampel. Ein Rot ist ein K.-o.-Kriterium.
 - **Erst Ideen, dann bewerten:** Mit dem Schalter **Ampel** blendest du beim Ideensammeln alle Bewertungen aus, damit das Urteilen die Kreativität nicht bremst. Neue Kästen starten so.
 - **Lösungsvarianten als farbige Linien:** pro Zeile eine Teillösung anklicken, und die Lösungsvariante wird als durchsichtige farbige Linie über den Kasten gezeichnet. Mehrere Lösungsvarianten lassen sich direkt vergleichen.
 - **Übersicht der Lösungsvarianten:** Eine Tabelle unter dem Kasten vergleicht alle Lösungsvarianten, mit Bewertung pro Kriterium, Notizen und Skizzen des jeweiligen Gesamtkonzepts.
