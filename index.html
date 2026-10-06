@@ -67,6 +67,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .spacer{flex:1}
 .sep{width:1px;height:24px;background:var(--line);margin:0 4px}
 .btn{border:1px solid var(--line);background:var(--field);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+a.btn{color:var(--text);text-decoration:none;display:inline-block}
 .btn:hover{background:var(--hover)}
 .btn:disabled{opacity:.35;cursor:default}
 .btn.small{padding:3px 9px;font-size:13px}
@@ -307,6 +308,8 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #helpDlg .dlg-head,#mobileDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 #helpDlg .intro,#mobileDlg .intro{color:var(--muted);margin:0 0 12px}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
+#helpDlg .repo{margin:14px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
+#helpDlg .repo a{color:var(--accent)}
 #helpDlg .help li{margin-bottom:7px}
 #bHelp{font-weight:600}
 #bar2>.g{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
@@ -439,6 +442,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   <p class="intro" data-i18n="helpIntro"></p>
   <ul class="help" id="helpList"></ul>
   <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
+  <p class="repo" data-i18n="repoNote"></p>
 </dialog>
 <div id="toast"></div>
 <noscript><h1>Morphological Box | Morphologischer Kasten</h1><p>Dieses Tool benötigt JavaScript. / This tool requires JavaScript. Free online tool for morphological boxes (Zwicky boxes): sketches, traffic-light ratings and solution variants.</p></noscript>
@@ -531,6 +535,7 @@ de:{
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
+  repoNote:`Open Source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Quellcode und Rückmeldungen auf GitHub</a>`, repoT:'Quellcode, Fehler melden und Ideen auf GitHub',
   confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
   mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du Kästen ansehen: das Beispiel oder eine gespeicherte Datei über «Öffnen…». Seitwärts wischen und mit zwei Fingern zoomen. Zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
   helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante. Sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt. Speichere ihn vorher, falls du ihn behalten willst.',
@@ -606,6 +611,7 @@ en:{
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
+  repoNote:`Open source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Source code and feedback on GitHub</a>`, repoT:'Source code, bug reports and ideas on GitHub',
   confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
   mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can view boxes: the example or a saved file via “Open…”. Swipe sideways and pinch to zoom. To edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
   helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant. It is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced. Save it first if you want to keep it.',
@@ -654,7 +660,7 @@ function setLang(l){
 let P=null;            // Projekt (ohne Bilddaten)
 let IMG={};            // Bild-ID -> dataURL
 let BLOB={};           // Bild-ID -> blob:URL (Anzeige-Cache)
-const PAGE_TITLE=document.title;
+const PAGE_TITLE=document.title, REPO='https://github.com/Master-D1990/morphological-box';
 const ui={sample:false,sel:null,editVar:null,view:null,handle:null,dirty:false,autosaveOk:true,pasteVar:null,pickVar:null};
 let undoStack=[],redoStack=[],editSnap=null;
 
@@ -1010,7 +1016,7 @@ function overview(){
   ${P.criteria.map(k=>`<div class="crit"><button class="eye ${ui.view===k.id?'on':''}" data-act="viewcrit" data-crit="${k.id}" title="${t('viewCritT')}">◉</button><input type="text" data-edit="critname" data-crit="${k.id}" value="${esc(k.name)}"><button class="icon" data-act="delcrit" data-crit="${k.id}" title="${t('delCrit')}">✕</button></div>`).join('')}
   <button class="btn small" data-act="addcrit">${t('addCrit')}</button>
   <h3>${t('helpH')}</h3>
-  <div class="btnrow"><button class="btn small" data-act="help">${t('helpBtn')}</button><button class="btn small" data-act="loadsample">${t('loadSample')}</button></div>`;
+  <div class="btnrow"><button class="btn small" data-act="help">${t('helpBtn')}</button><button class="btn small" data-act="loadsample">${t('loadSample')}</button><a class="btn small" href="${REPO}" target="_blank" rel="noopener" title="${esc(t('repoT'))}">GitHub</a></div>`;
 }
 function renderPrintHead(){
   $('#printhead').innerHTML=`<h1>${esc(P.title)}</h1><div class="legend">`+
