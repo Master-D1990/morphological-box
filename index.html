@@ -194,6 +194,7 @@ main{flex:1;display:flex;min-height:0}
 .vt thead th[data-vh]{white-space:normal}
 .vt td.pick{cursor:pointer}
 .vt td.pick:hover{outline:2px solid var(--accent);outline-offset:-2px}
+.rating-off .dots,.rating-off .rate-sec,.rating-off .rt,.rating-off .vt .why{display:none!important}
 .vt td.lvl-g{background:var(--g-bg)} .vt td.lvl-y{background:var(--y-bg)} .vt td.lvl-r{background:var(--r-bg)}
 .vt td .pk{display:flex;align-items:center;gap:8px}
 .vt td .pk img{height:calc(var(--img-h)*.36);width:calc(var(--img-h)*.48);object-fit:contain;border-radius:4px;background:var(--soft);flex:0 0 auto}
@@ -262,7 +263,6 @@ textarea{resize:vertical;min-height:40px}
 kbd{font:11px ui-monospace,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:var(--soft)}
 
 body.noside #side{display:none}
-#bSide.on{background:var(--accent-soft);border-color:var(--accent)}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .seg button{border:0;background:var(--field);padding:5px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
 .seg button+button{border-left:1px solid var(--line)}
@@ -273,12 +273,21 @@ body.noside #side{display:none}
 #addVar:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 /* Eigene Aufklapp-Menüs (statt <select>, das je nach Browser/Darkmode unsauber aussieht) */
 @media (min-width:1200px){ #bar{flex-wrap:nowrap} #bar>*{flex-shrink:0} #bar>#ptitle{flex-shrink:1} }
-#bTheme svg{width:16px;height:16px;display:block}
+#themeSeg svg{width:16px;height:16px;display:block}
+#themeSeg button{padding:5px 8px}
 #saveState{color:var(--accent);font-size:14px;cursor:help;margin-left:-4px}
 #bSave.dirty{border-color:var(--accent);color:var(--accent);font-weight:600}
 .menu{position:relative;display:inline-block}
 .menu>.btn::after{content:" ▾";font-size:11px;color:var(--muted)}
-#bar2 .menu>.btn{padding:3px 9px;font-size:13px}
+#bar2 .menu>.btn,#bar2 .btn.tgl{padding:3px 9px;font-size:13px}
+/* Kippschalter: Schiene + Knopf, gleitet beim Umschalten nach rechts */
+.btn.tgl,#bar2 .btn.tgl{position:relative;padding-left:40px}
+.btn.tgl::before{content:"";position:absolute;left:8px;top:50%;width:26px;height:14px;margin-top:-7px;border-radius:7px;background:var(--empty2);transition:background .2s}
+.btn.tgl::after{content:"";position:absolute;left:10px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .2s}
+.btn.tgl[aria-pressed=true]::before{background:var(--accent)}
+.btn.tgl[aria-pressed=true]::after{transform:translateX(12px)}
+@media (prefers-reduced-motion:reduce){ .btn.tgl::before,.btn.tgl::after{transition:none} }
+#bRate+.menu{margin-left:-4px}
 .menu-list{position:absolute;top:calc(100% + 4px);left:0;min-width:230px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:4px;z-index:40}
 .menu-list[hidden]{display:none}
 .menu-list.right{left:auto;right:0}
@@ -286,7 +295,7 @@ body.noside #side{display:none}
 .menu-list button:hover,.menu-list button:focus-visible{background:var(--hover);outline:none}
 .menu-list button.chk{padding-left:28px;position:relative}
 .menu-list .tick{position:absolute;left:9px;color:var(--accent);font-weight:700}
-#viewBtn{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#viewBtn{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .menu-list button small{display:block;font-size:11.5px;color:var(--muted)}
 #helpDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 #helpDlg::backdrop{background:rgba(0,0,0,.45)}
@@ -296,6 +305,10 @@ body.noside #side{display:none}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
 #helpDlg .help li{margin-bottom:7px}
 #bHelp{font-weight:600}
+.g{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.g+.g{border-left:1px solid var(--line);padding-left:12px;margin-left:4px}
+.g.gvar{flex-wrap:wrap}
+#viewBtn .pre{color:var(--muted);font-weight:400}
 .grp{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -348,22 +361,33 @@ body.noside #side{display:none}
   <button class="btn" id="bSaveAs" data-i18n="saveAs" data-i18n-title="saveAsT"></button>
   <span class="menu" id="exportMenu"><button class="btn" data-i18n="exportPh" data-i18n-title="exportT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
   <span class="sep"></span>
-  <button class="btn" id="bSide" data-i18n="side" data-i18n-title="sideT"></button>
-  <button class="btn" id="bTheme" data-i18n-title="themeT"></button>
-  <button class="btn" id="bHelp" data-i18n="helpBtn" data-i18n-title="helpBtnT"></button>
+  <button class="btn tgl" id="bSide" aria-pressed="true" data-i18n="side" data-i18n-title="sideT"></button>
+  <span class="sep"></span>
+  <span class="seg" id="themeSeg"><button data-th="auto"></button><button data-th="light"></button><button data-th="dark"></button></span>
   <span class="seg" id="langSeg"><button data-lang="de" title="Deutsch (Schweiz)">DE-CH</button><button data-lang="en" title="English">EN</button></span>
+  <button class="btn" id="bHelp" data-i18n="helpBtn" data-i18n-title="helpBtnT"></button>
 </header>
 <div id="bar2">
-  <span class="grp" data-i18n="viewGrp"></span>
-  <label data-i18n-title="viewByT"><span data-i18n="viewBy"></span></label>
-  <span class="menu" id="viewMenu"><button class="btn" id="viewBtn" data-i18n-title="viewByT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
-  <span class="menu" id="sortMenu"><button class="btn" data-i18n="sortPh" data-i18n-title="sortT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
-  <label data-i18n-title="descT"><input type="checkbox" id="showdesc"> <span data-i18n="descs"></span></label>
-  <label data-i18n-title="coordsT"><input type="checkbox" id="showcoords"> <span data-i18n="coords"></span></label>
-  <label><span data-i18n="cellSize"></span> <input type="range" id="size" min="120" max="320" step="10"></label>
-  <label><span data-i18n="lines"></span> <input type="range" id="lineop" min="0" max="0.9" step="0.05" data-i18n-title="linesT"></label>
-  <span class="sep"></span>
-  <span id="chips" class="chips"></span>
+  <!-- Gruppen in der Reihenfolge der Methode: Zellen (Ideen sammeln) → Bewertung → Sortieren → Lösungsvarianten -->
+  <span class="g">
+    <span class="grp" data-i18n="cellsGrp"></span>
+    <button class="btn tgl" id="showdesc" aria-pressed="false" data-i18n="descs" data-i18n-title="descT"></button>
+    <button class="btn tgl" id="showcoords" aria-pressed="false" data-i18n="coords" data-i18n-title="coordsT"></button>
+    <label><span data-i18n="cellSize"></span> <input type="range" id="size" min="120" max="320" step="10"></label>
+  </span>
+  <span class="g">
+    <span class="grp" data-i18n="rateGrp"></span>
+    <button class="btn tgl" id="bRate" aria-pressed="true" data-i18n="viewBy" data-i18n-title="rateTglT"></button>
+    <span class="menu" id="viewMenu"><button class="btn" id="viewBtn" data-i18n-title="viewByT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
+  </span>
+  <span class="g">
+    <span class="menu" id="sortMenu"><button class="btn" data-i18n="sortPh" data-i18n-title="sortT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
+  </span>
+  <span class="g gvar">
+    <span class="grp" data-i18n="variantsLbl"></span>
+    <span id="chips" class="chips"></span>
+    <label><span data-i18n="lines"></span> <input type="range" id="lineop" min="0" max="0.9" step="0.05" data-i18n-title="linesT"></label>
+  </span>
 </div>
 <div id="banner" hidden></div>
 <main>
@@ -422,9 +446,9 @@ de:{
   appTitle:'Morphologischer Kasten', ptitleT:'Projekttitel', ctrl:'Strg',
   new:'Neu', open:'Öffnen…', openT:'Strg+O', save:'Speichern', saveT:'Strg+S', saveAs:'Speichern unter…', saveAsT:'Strg+Umschalt+S',
   print:'PDF / Drucken', undoT:'Rückgängig (Strg+Z)', redoT:'Wiederholen (Strg+Y)',
-  side:'◨ Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)', themeT:'Farbschema wechseln: automatisch (wie System) → hell → dunkel',
+  side:'Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)',
   themeAuto:'Farbschema: automatisch', themeLight:'Farbschema: hell', themeDark:'Farbschema: dunkel',
-  viewGrp:'Ansicht', viewBy:'Ampel', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Texte', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Transparenz', linesT:'Transparenz der Linien der Lösungsvarianten (rechts = durchsichtiger)', variantsLbl:'Lösungsvarianten',
+  cellsGrp:'Zellen', rateGrp:'Bewertung', viewBy:'Ampel', critPre:'Kriterium:', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Beschreibung', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Linien-Transparenz', linesT:'Transparenz der Linien der Lösungsvarianten (rechts = durchsichtiger)', variantsLbl:'Lösungsvarianten',
   exportPh:'Export', exportT:'Drucken / PDF, Excel-Datei (mit Bildern) oder CSV', exportPdfHint:'Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten', exportXlsxHint:'Kasten, Lösungsvarianten, Bewertungen – mit allen Bildern', exportCsvHint:'Bewertungstabelle als Text, ohne Bilder', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Excel-Datei wird erstellt …', exported:n=>'Exportiert: '+n, exportFail:'Export fehlgeschlagen',
   xlSheetBox:'Kasten', xlSheetVariants:'Lösungsvarianten', xlSheetRatings:'Bewertungen', xlDistribution:'Verteilung', xlMissing:'Fehlt noch', xlHasRed:'Enthält Rot', xlVisible:'Sichtbar', xlYes:'Ja', xlNo:'Nein',
@@ -439,7 +463,7 @@ de:{
   newBox:'Neuer Kasten', overall:'Gesamt', subfnN:n=>'Teilfunktion '+n, newSolution:'Neue Teillösung', newSubfn:'Neue Teilfunktion', newCrit:'Neues Kriterium', variantN:x=>'Lösungsvariante '+x,
   imgInserted:k=>`Bild eingefügt (${k} KB)`, imgFail:'Bild konnte nicht gelesen werden',
   sketchesAdded:(n,name)=>`${n} Skizze(n) zu ${q(name)} hinzugefügt`, cellsFromImgs:n=>`${n} Teillösung(en) mit Bild angelegt`,
-  overviewH:'Übersicht der Lösungsvarianten', overviewSub:c=>`Ampel nach ${q(c)} · Klick auf eine Teillösung springt zur Zelle`, hidden:'(ausgeblendet)',
+  overviewH:'Übersicht der Lösungsvarianten', overviewSub:c=>`${c===t('offView')?'Ampel aus':'Ampel nach '+q(c)} · Klick auf eine Teillösung springt zur Zelle`, hidden:'(ausgeblendet)',
   sketches:'Skizzen', dropSketch:'Bild hierher ziehen<br>oder anklicken + Strg+V', missing:'– fehlt –', untitled:'ohne Titel', note:'Notiz',
   unsaved:'Änderungen sind noch nicht in einer Datei gespeichert', noName:'(ohne Name)', chipVis:'Ein-/ausblenden', chipEdit:'Klicken: Teillösungen für diese Lösungsvariante auswählen', addVar:'+ Lösungsvariante',
   banner:name=>`<b>${name}</b> zusammenstellen: pro Zeile eine Teillösung anklicken (nochmal klicken = abwählen).`, doneEsc:'Fertig (Esc)',
@@ -447,6 +471,7 @@ de:{
   addCellT:'Teillösung hinzufügen – oder Bilder hierher ziehen', addRow:'+ Teilfunktion',
   back:'← Übersicht', title:'Titel', desc:'Beschreibung', imgDropHint:'Bild hierher ziehen<br>oder Strg+V',
   chooseImg:'Bild wählen…', rmImg:'Bild entfernen', rating:'Bewertung', noRating:'Keine Bewertung', reasonPh:'Begründung …',
+  overallView:'Alle Kriterien', overallViewHint:'schlechteste Ampel zählt', offView:'Aus', rateTglT:'Ampel ein/aus – beim Ideensammeln ausschalten, damit Bewertungen die Kreativität nicht bremsen (Taste B)', keysOff:'Ampel ist aus – zum Bewerten einschalten (Taste B)', keysHintAll:`Für die Tasten ${kb(1)} ${kb(2)} ${kb(3)} oben bei «Kriterium» ein einzelnes Kriterium wählen. Pfeiltasten wechseln die Zelle.`, keysAll:'Tasten 1/2/3 bewerten ein Kriterium – erst oben bei «Kriterium» eines wählen',
   keysHint:c=>`Tasten ${kb(1)} ${kb(2)} ${kb(3)} setzen Grün/Gelb/Rot, ${kb(0)} löscht – für ${q(c)}. Pfeiltasten wechseln die Zelle.`,
   inVariants:'In Lösungsvarianten', noVariants:'Noch keine Lösungsvarianten.', delCell:'Teillösung löschen',
   color:'Farbe', delVar:'Lösungsvariante löschen', visible:'sichtbar', done:'Fertig', pickSolutions:'Teillösungen auswählen',
@@ -455,16 +480,17 @@ de:{
   notePh:'Notiz / Begründung der Lösungsvariante …', variantsH:'Lösungsvarianten',
   noVarsLong:'Noch keine Lösungsvarianten. Lege eine an und klicke dann pro Zeile eine Teillösung an.',
   criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s',
-  help:()=>`<li><b>Zelle anklicken</b>: rechts Titel, Bild, Ampel und Begründung bearbeiten.</li>
+  help:()=>`<li><b>Vorgehen</b>: erst Teillösungen sammeln und dabei noch nicht bewerten – den Schalter «Ampel» oben ausschalten (Taste ${kb('B')}) blendet alle Bewertungen aus. Erst wenn keine neuen Ideen mehr kommen, bewerten. «Alle Kriterien» färbt nach der schlechtesten Ampel: ein Rot macht die Teillösung rot.</li>
+    <li><b>Zelle anklicken</b>: rechts Titel, Bild, Ampel und Begründung bearbeiten.</li>
     <li><b>Bild</b>: Datei auf eine Zelle ziehen oder Zelle wählen und ${kb('Strg')}+${kb('V')}. Bilder werden automatisch verkleinert.</li>
     <li><b>Mehrere Bilder</b> auf «+» ziehen: je eine neue Teillösung.</li>
     <li><b>Verschieben</b>: Zellen ziehen (auch in andere Zeilen), Zeilen am ⠿ ziehen.</li>
-    <li><b>Lösungsvarianten</b>: Chip oben anklicken, dann pro Zeile eine Teillösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
+    <li><b>Lösungsvarianten</b>: Chip oben anklicken, dann pro Zeile eine Teillösung anklicken. ●/○ blendet die Linie ein/aus, der Schieber «Linien-Transparenz» oben macht sie durchsichtiger.</li>
     <li><b>Export</b> (oben): Excel-Datei mit Kasten, Lösungsvarianten, Bewertungen und allen Bildern – oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten.</li>
-    <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung, alphabetisch oder nach Lösungsvarianten (Teillösung der ersten Lösungsvariante der Übersicht ganz links, dann die der zweiten usw.).</li>
+    <li><b>Sortieren</b> (oben, zwischen Bewertung und Lösungsvarianten): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung, alphabetisch oder nach Lösungsvarianten (Teillösung der ersten Lösungsvariante der Übersicht ganz links, dann die der zweiten usw.).</li>
     <li><b>Lösungsvarianten umordnen</b>: in der Übersicht unten am Spaltenkopf (⠿) ziehen oder über «Sortieren» neben der Überschrift.</li>
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
@@ -494,9 +520,9 @@ en:{
   appTitle:'Morphological Box', ptitleT:'Project title', ctrl:'Ctrl',
   new:'New', open:'Open…', openT:'Ctrl+O', save:'Save', saveT:'Ctrl+S', saveAs:'Save as…', saveAsT:'Ctrl+Shift+S',
   print:'PDF / Print', undoT:'Undo (Ctrl+Z)', redoT:'Redo (Ctrl+Y)',
-  side:'◨ Sidebar', sideT:'Show/hide sidebar (key S)', themeT:'Switch colour scheme: automatic (system) → light → dark',
+  side:'Sidebar', sideT:'Show/hide sidebar (key S)',
   themeAuto:'Colour scheme: automatic', themeLight:'Colour scheme: light', themeDark:'Colour scheme: dark',
-  viewGrp:'View', viewBy:'Rating', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Texts', descT:'Show descriptions in the cells (key D)', lines:'Transparency', linesT:'Transparency of the solution variant lines (right = more see-through)', variantsLbl:'Solution variants',
+  cellsGrp:'Cells', rateGrp:'Rating', viewBy:'Traffic light', critPre:'Criterion:', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Description', descT:'Show descriptions in the cells (key D)', lines:'Line transparency', linesT:'Transparency of the solution variant lines (right = more see-through)', variantsLbl:'Solution variants',
   exportPh:'Export', exportT:'Print / PDF, Excel file (with images) or CSV', exportPdfHint:'Page 1 box, page 2 solution variant overview', exportXlsxHint:'Box, solution variants, ratings – with all images', exportCsvHint:'Ratings table as text, no images', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Creating Excel file …', exported:n=>'Exported: '+n, exportFail:'Export failed',
   xlSheetBox:'Box', xlSheetVariants:'Solution variants', xlSheetRatings:'Ratings', xlDistribution:'distribution', xlMissing:'Still missing', xlHasRed:'Contains red', xlVisible:'Visible', xlYes:'Yes', xlNo:'No',
@@ -511,7 +537,7 @@ en:{
   newBox:'New box', overall:'Overall', subfnN:n=>'Sub-function '+n, newSolution:'New partial solution', newSubfn:'New sub-function', newCrit:'New criterion', variantN:x=>'Solution variant '+x,
   imgInserted:k=>`Image inserted (${k} KB)`, imgFail:'Could not read the image',
   sketchesAdded:(n,name)=>`${n} sketch(es) added to ${q(name)}`, cellsFromImgs:n=>`${n} partial solution(s) created from images`,
-  overviewH:'Solution variant overview', overviewSub:c=>`Rating by ${q(c)} · click a partial solution to jump to its cell`, hidden:'(hidden)',
+  overviewH:'Solution variant overview', overviewSub:c=>`${c===t('offView')?'Rating off':'Rating by '+q(c)} · click a partial solution to jump to its cell`, hidden:'(hidden)',
   sketches:'Sketches', dropSketch:'Drop an image here<br>or click + Ctrl+V', missing:'– missing –', untitled:'untitled', note:'Note',
   unsaved:'Changes are not saved to a file yet', noName:'(no name)', chipVis:'Show/hide', chipEdit:'Click: choose the partial solutions for this solution variant', addVar:'+ Solution variant',
   banner:name=>`Composing <b>${name}</b>: click one partial solution per row (click again to deselect).`, doneEsc:'Done (Esc)',
@@ -519,6 +545,7 @@ en:{
   addCellT:'Add a partial solution – or drop images here', addRow:'+ Sub-function',
   back:'← Overview', title:'Title', desc:'Description', imgDropHint:'Drop an image here<br>or Ctrl+V',
   chooseImg:'Choose image…', rmImg:'Remove image', rating:'Rating', noRating:'No rating', reasonPh:'Reason …',
+  overallView:'All criteria', overallViewHint:'worst rating counts', offView:'Off', rateTglT:'Traffic light on/off – switch it off while collecting ideas so ratings don’t hold back creativity (key B)', keysOff:'Traffic light is off – switch it on to rate (key B)', keysHintAll:`To use the keys ${kb(1)} ${kb(2)} ${kb(3)}, choose a single criterion under “Criterion” at the top. Arrow keys move between cells.`, keysAll:'Keys 1/2/3 rate one criterion – choose one under “Criterion” at the top first',
   keysHint:c=>`Keys ${kb(1)} ${kb(2)} ${kb(3)} set green/yellow/red, ${kb(0)} clears – for ${q(c)}. Arrow keys move between cells.`,
   inVariants:'In solution variants', noVariants:'No solution variants yet.', delCell:'Delete partial solution',
   color:'Colour', delVar:'Delete solution variant', visible:'visible', done:'Done', pickSolutions:'Choose partial solutions',
@@ -527,16 +554,17 @@ en:{
   notePh:'Note / rationale for this solution variant …', variantsH:'Solution variants',
   noVarsLong:'No solution variants yet. Create one, then click one partial solution per row.',
   criteriaH:'Evaluation criteria', viewCritT:'Use as rating criterion', delCrit:'Delete criterion', addCrit:'+ Criterion', helpH:'How to use',
-  help:()=>`<li><b>Click a cell</b> to edit its title, image, rating and reason on the right.</li>
+  help:()=>`<li><b>Approach</b>: first collect partial solutions without rating them – switching off “Traffic light” at the top (key ${kb('B')}) hides all ratings. Only rate once no new ideas come up. “All criteria” colours by the worst rating: one red makes the partial solution red.</li>
+    <li><b>Click a cell</b> to edit its title, image, rating and reason on the right.</li>
     <li><b>Image</b>: drop a file on a cell, or select a cell and press ${kb('Ctrl')}+${kb('V')}. Images are scaled down automatically.</li>
     <li><b>Several images</b> dropped on “+” create one new partial solution each.</li>
     <li><b>Rearrange</b>: drag cells (also into other rows), drag rows by ⠿.</li>
-    <li><b>Solution variants</b>: click a chip at the top, then click one partial solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
+    <li><b>Solution variants</b>: click a chip at the top, then click one partial solution per row. ●/○ shows/hides the line, the “Line transparency” slider at the top makes them more see-through.</li>
     <li><b>Export</b> (top): Excel file with box, solution variants, ratings and all images – or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 solution variant overview.</li>
-    <li><b>Sort</b> (top, under View): orders the partial solutions of every sub-function by rating, overall score, alphabetically or by solution variants (the first solution variant’s partial solution on the far left, then the second’s, and so on).</li>
+    <li><b>Sort</b> (top, between Rating and Solution variants): orders the partial solutions of every sub-function by rating, overall score, alphabetically or by solution variants (the first solution variant’s partial solution on the far left, then the second’s, and so on).</li>
     <li><b>Reorder solution variants</b>: drag a column header (⠿) in the overview below, or use “Sort” next to its heading.</li>
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
@@ -591,7 +619,13 @@ let undoStack=[],redoStack=[],editSnap=null;
 /* ---------- Modell ---------- */
 const newCell=(title='')=>({id:uid(),title,desc:'',img:null,ratings:{}});
 const getVar=id=>P.variants.find(v=>v.id===id);
-const critName=id=>(P.criteria.find(k=>k.id===id)||{}).name||'';
+const ALL='*', OFF='-'; // Ampel-Ansicht «Alle Kriterien» bzw. «Aus» (Ideenphase) statt eines einzelnen Kriteriums
+const critName=id=>id===ALL?t('overallView'):id===OFF?t('offView'):(P.criteria.find(k=>k.id===id)||{}).name||'';
+function viewLvl(c,crit=ui.view){ // Ampelfarbe einer Teillösung in der Ansicht; «Alle Kriterien»: die schlechteste zählt (Rot = K.O.)
+  if(crit===OFF) return 'n';
+  if(crit!==ALL) return (c.ratings[crit]||{}).level||'n';
+  return P.criteria.map(k=>(c.ratings[k.id]||{}).level).filter(Boolean).reduce((w,l)=>w==='n'||RANK[l]>RANK[w]?l:w,'n');
+}
 function findCell(id){
   for(const row of P.rows){const i=row.cells.findIndex(c=>c.id===id); if(i>=0) return {row,cell:row.cells[i],i};}
   return null;
@@ -650,7 +684,7 @@ function afterHistory(){ editSnap=null; ui.dirty=true; validateUi(); renderAll()
 function resetHistory(){ undoStack=[]; redoStack=[]; editSnap=null; }
 function validateUi(){
   if(ui.sel&&!findCell(ui.sel)) ui.sel=null;
-  if(!P.criteria.some(k=>k.id===ui.view)) ui.view=P.criteria[0].id;
+  if(ui.view!==ALL&&ui.view!==OFF&&!P.criteria.some(k=>k.id===ui.view)) ui.view=P.criteria[0].id;
   if(ui.editVar&&!getVar(ui.editVar)) ui.editVar=null;
 }
 
@@ -738,24 +772,27 @@ function renderVarList(){
       const c=row.cells.find(x=>x.id===v.picks[row.id]);
       if(!c){ h+=`<td class="miss">${t('missing')}</td>`; continue; }
       const r=c.ratings[ui.view]||{}, src=imgSrc(c.img);
-      h+=`<td class="pick lvl-${r.level||'n'}" data-goto="${c.id}" title="${esc(tooltip(c))}"><div class="pk">${src?`<img src="${src}" alt="">`:''}<div>${P.settings.coords?`<span class="co">${coordOf(c,row)}</span>`:''}<b>${esc(c.title)||`<i>${t('untitled')}</i>`}</b>${r.reason?`<span class="why">${esc(r.reason)}</span>`:''}</div></div></td>`;
+      h+=`<td class="pick lvl-${viewLvl(c)}" data-goto="${c.id}" title="${esc(tooltip(c))}"><div class="pk">${src?`<img src="${src}" alt="">`:''}<div>${P.settings.coords?`<span class="co">${coordOf(c,row)}</span>`:''}<b>${esc(c.title)||`<i>${t('untitled')}</i>`}</b>${r.reason?`<span class="why">${esc(r.reason)}</span>`:''}</div></div></td>`;
     }
     h+='</tr>';
   }
   P.criteria.forEach((k,i)=>{
-    h+=`<tr class="${i?'':'sep'}"><th>${esc(k.name)}</th>`+scores.map(s=>`<td><div class="score">${scoreBar(s.per[i])}</div></td>`).join('')+'</tr>';
+    h+=`<tr class="rt ${i?'':'sep'}"><th>${esc(k.name)}</th>`+scores.map(s=>`<td><div class="score">${scoreBar(s.per[i])}</div></td>`).join('')+'</tr>';
   });
   if(vs.some(v=>v.note)) h+=`<tr><th>${t('note')}</th>${vs.map(v=>`<td class="note">${esc(v.note)}</td>`).join('')}</tr>`;
   el.innerHTML=h+`</tbody></table><button class="addvarcol" data-addvar title="${t('addVarT')}">+</button></div>`;
   setupMenu($('#varSortMenu'));
   drawLines();
 }
-const THEMES=['auto','light','dark'];
 const THEME_ICON={ // automatisch (halb gefüllt), hell (Sonne), dunkel (Mond)
   auto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>',
   light:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
   dark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>'};
-function renderTheme(){ const th=document.documentElement.dataset.theme||'auto'; const b=$('#bTheme'); b.innerHTML=THEME_ICON[th]; b.setAttribute('aria-label',t({auto:'themeAuto',light:'themeLight',dark:'themeDark'}[th])); }
+function renderTheme(){ // Farbschema als Segment-Schalter wie die Sprache: automatisch | hell | dunkel
+  const th=document.documentElement.dataset.theme||'auto';
+  $$('#themeSeg button').forEach(b=>{ const k=b.dataset.th, l=t({auto:'themeAuto',light:'themeLight',dark:'themeDark'}[k]);
+    b.innerHTML=THEME_ICON[k]; b.title=l; b.setAttribute('aria-label',l); b.setAttribute('aria-pressed',k===th); b.classList.toggle('on',k===th); });
+}
 function applySize(){
   const w=P.settings.cellW||170;
   document.documentElement.style.setProperty('--cell-w',w+'px');
@@ -768,8 +805,10 @@ function updateStatus(){
 }
 function renderToolbar(){
   const ti=$('#ptitle'); if(document.activeElement!==ti) ti.value=P.title;
-  $('#viewBtn').textContent=critName(ui.view)||t('noName');
-  $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').checked=!!P.settings.showDesc; $('#showcoords').checked=!!P.settings.coords;
+  $('#viewBtn').innerHTML=`<span class="pre">${t('critPre')}</span> ${esc(critName(ui.view===OFF?onView():ui.view)||t('noName'))}`;
+  const off=ui.view===OFF; document.documentElement.classList.toggle('rating-off',off);
+  $('#bRate').setAttribute('aria-pressed',!off); $('#viewBtn').disabled=off;
+  $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').setAttribute('aria-pressed',!!P.settings.showDesc); $('#showcoords').setAttribute('aria-pressed',!!P.settings.coords);
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
     `<button class="vis" data-var="${v.id}" title="${t('chipVis')}">${v.visible?'●':'○'}</button>`+
     `<button class="vedit" data-var="${v.id}" title="${esc(v.name)} – ${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
@@ -785,7 +824,14 @@ function renderBanner(){
 // Koordinaten wie in Excel: Lösung (Spalte) als Buchstabe, Teilfunktion (Zeile) als Zahl, z. B. B2
 function coordOf(c,row){ return colName(row.cells.indexOf(c))+(P.rows.indexOf(row)+1); }
 function coordById(id){ const f=findCell(id); return f?coordOf(f.cell,f.row):''; }
-function toggleCoords(on){ P.settings.coords=on; $('#showcoords').checked=on; renderMatrix(); renderSide(); renderVarList(); }
+const onView=()=>ui.lastView===ALL||P.criteria.some(k=>k.id===ui.lastView)?ui.lastView:P.criteria[0].id; // Kriterium beim Wiedereinschalten
+function toggleRating(){ // Ampel aus = Ideenphase; beim Einschalten zurück zum zuletzt gewählten Kriterium
+  if(ui.view===OFF) ui.view=onView();
+  else { ui.lastView=ui.view; ui.view=OFF; }
+  renderAll();
+}
+function toggleDesc(){ P.settings.showDesc=!P.settings.showDesc; renderToolbar(); renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); }
+function toggleCoords(on){ P.settings.coords=on; $('#showcoords').setAttribute('aria-pressed',on); renderMatrix(); renderSide(); renderVarList(); }
 function tooltip(c){
   const f=P.settings.coords&&findCell(c.id);
   const lines=[(f?coordOf(c,f.row)+' · ':'')+(c.title||`(${t('untitled')})`)];
@@ -794,7 +840,7 @@ function tooltip(c){
   return lines.join('\n');
 }
 function cellHtml(c,row){
-  const lvl=(c.ratings[ui.view]||{}).level||'n';
+  const lvl=viewLvl(c);
   const dots=P.criteria.map(k=>{const l=(c.ratings[k.id]||{}).level||'n';return `<span class="dot ${l}" title="${esc(k.name)}: ${LV(l)}">${SYM[l]}</span>`;}).join('');
   const ev=ui.editVar&&getVar(ui.editVar);
   const picked=ev&&ev.picks[row.id]===c.id;
@@ -831,16 +877,17 @@ function drawLines(){
   const base=m.getBoundingClientRect();
   const vis=P.variants.filter(v=>v.visible);
   // Teilen sich mehrere Lösungsvarianten eine Teillösung, werden ihre Punkte gleichmässig über die Bildbreite verteilt
+  const lf=(P.settings.cellW||170)/170; // Linien, Punkte und Pfeil wachsen mit der Zellgrösse (Standard 170 px → 7 px Linie)
   const share={}; vis.forEach(v=>Object.values(v.picks).forEach(cid=>(share[cid]=share[cid]||[]).push(v.id)));
   let out='';
   vis.forEach(v=>{
-    const pts=[]; let rad=9;
+    const pts=[]; let rad=9*lf;
     for(const row of P.rows){
       const cid=v.picks[row.id]; if(!cid) continue;
       const el=m.querySelector(`.cell[data-cell="${cid}"]`); if(!el) continue;
       const r=(el.querySelector('.img')||el).getBoundingClientRect(); // Bildbereich: unabhängig von Textlänge
       const list=share[cid]||[v.id], k=list.indexOf(v.id), n=list.length, gap=r.width/(n+1);
-      rad=Math.min(rad,Math.max(4,gap/2-2));
+      rad=Math.min(rad,Math.max(4*lf,gap/2-2));
       pts.push([r.left-base.left+gap*(k+1), r.top-base.top+r.height/2]);
     }
     if(!pts.length) return;
@@ -858,10 +905,10 @@ function drawLines(){
       const x1=r.left-base.left+r.width/2, y1=r.top-base.top-2, ym=(y0+y1)/2;
       if(y1>y0){
         d+=` C${x0.toFixed(1)} ${ym.toFixed(1)} ${x1.toFixed(1)} ${ym.toFixed(1)} ${x1.toFixed(1)} ${(y1-10).toFixed(1)}`;
-        arrow=`<path d="M${(x1-9).toFixed(1)} ${(y1-12).toFixed(1)} L${(x1+9).toFixed(1)} ${(y1-12).toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${v.color}"/>`;
+        const a=9*lf; arrow=`<path d="M${(x1-a).toFixed(1)} ${(y1-a-3).toFixed(1)} L${(x1+a).toFixed(1)} ${(y1-a-3).toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${v.color}"/>`;
       }
     }
-    out+=`<g opacity="${op}"><path d="${d}" fill="none" stroke="${v.color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`+
+    out+=`<g opacity="${op}"><path d="${d}" fill="none" stroke="${v.color}" stroke-width="${(7*lf).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`+
       pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${rad.toFixed(1)}" fill="${v.color}"/>`).join('')+arrow+`</g>`;
   });
   svg.innerHTML=out;
@@ -889,12 +936,12 @@ function cellEditor({row,cell}){
   <label class="f">${t('desc')}<textarea data-edit="desc" rows="3">${esc(cell.desc)}</textarea></label>
   <div class="imgdrop" id="imgdrop">${src?`<img src="${src}" data-zoom="${cell.img}" alt="">`:phHtml('imgDropHint')}</div>
   <div class="btnrow"><button class="btn small" data-act="pickimg">${t('chooseImg')}</button>${cell.img?`<button class="btn small" data-act="rmimg">${t('rmImg')}</button>`:''}</div>
-  <h3>${t('rating')}</h3>
+  <div class="rate-sec"><h3>${t('rating')}</h3>
   ${P.criteria.map(k=>{const r=cell.ratings[k.id]||{};return `<div class="rating"><div class="rhead"><b>${esc(k.name)}</b><span class="lights">`+
     ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}">${SYM[l]}</button>`).join('')+
     `<button class="light none ${!r.level?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="" title="${t('noRating')}">–</button></span></div>`+
     `<textarea data-edit="reason" data-crit="${k.id}" rows="2" placeholder="${t('reasonPh')}">${esc(r.reason)}</textarea></div>`;}).join('')}
-  <div class="muted small">${t('keysHint',esc(critName(ui.view)))}</div>
+  <div class="muted small">${ui.view===ALL?t('keysHintAll'):t('keysHint',esc(critName(ui.view)))}</div></div>
   <h3>${t('inVariants')}</h3>
   ${P.variants.length?P.variants.map(v=>`<label class="vpick"><input type="checkbox" data-act="pick" data-var="${v.id}" ${v.picks[row.id]===cell.id?'checked':''}><span class="sw" style="background:${v.color}"></span>${esc(v.name)}</label>`).join(''):`<div class="muted small">${t('noVariants')}</div>`}
   <h3>&nbsp;</h3>
@@ -905,9 +952,9 @@ function overview(){
     <div class="vtop"><input type="color" data-edit="varcolor" data-var="${v.id}" value="${v.color}" title="${t('color')}"><input type="text" data-edit="varname" data-var="${v.id}" value="${esc(v.name)}"><button class="icon" data-act="delvar" data-var="${v.id}" title="${t('delVar')}">✕</button></div>
     <div class="btnrow"><label class="vpick"><input type="checkbox" data-act="varvis" data-var="${v.id}" ${v.visible?'checked':''}> ${t('visible')}</label><span class="spacer"></span>
       <button class="btn small ${ui.editVar===v.id?'primary':''}" data-act="editvar" data-var="${v.id}">${ui.editVar===v.id?t('done'):t('pickSolutions')}</button></div>
-    ${s.per.map(p=>`<div class="score"><span title="${esc(p.k.name)}">${esc(p.k.name)}</span>${scoreBar(p)}</div>`).join('')}
+    ${s.per.map(p=>`<div class="score rt"><span title="${esc(p.k.name)}">${esc(p.k.name)}</span>${scoreBar(p)}</div>`).join('')}
     ${s.missing.length?`<div class="warn">${t('stillMissing')}${s.missing.map(r=>esc(r.name)).join(', ')}</div>`:''}
-    ${s.red?`<div class="warn red">${t('hasRed')}</div>`:''}
+    ${s.red?`<div class="warn red rt">${t('hasRed')}</div>`:''}
     <div class="vsk vdrop" data-var="${v.id}">${v.imgs.map(id=>imgSrc(id)?`<span class="th"><img src="${imgSrc(id)}" data-zoom="${id}" alt=""><button class="x" data-act="rmvimg" data-var="${v.id}" data-img="${id}" title="${t('rmSketch')}">✕</button></span>`:'').join('')}
       ${v.imgs.length?'':phHtml('sketchHint')}<button class="btn small" data-act="pickvimg" data-var="${v.id}">${t('addSketch')}</button></div>
     <textarea data-edit="varnote" data-var="${v.id}" rows="2" placeholder="${t('notePh')}">${esc(v.note)}</textarea>
@@ -929,7 +976,7 @@ function renderPrintHead(){
 
 /* ---------- Aktionen ---------- */
 function setSide(show){
-  document.body.classList.toggle('noside',!show); $('#bSide').classList.toggle('on',show);
+  document.body.classList.toggle('noside',!show); $('#bSide').setAttribute('aria-pressed',show);
   try{ localStorage.setItem('mk-side',show?'1':'0'); }catch(e){}
   drawLines();
 }
@@ -958,7 +1005,7 @@ function cellScore(c){ // Mittel über alle bewerteten Kriterien: Grün=1, Gelb=
   return ls.length?ls.reduce((s,l)=>s+{g:1,y:0.5,r:0}[l],0)/ls.length:-1;
 }
 function sortCells(mode){
-  const byRating=(a,b)=>(RANK[(a.ratings[ui.view]||{}).level]??3)-(RANK[(b.ratings[ui.view]||{}).level]??3);
+  const byRating=(a,b)=>(RANK[viewLvl(a)]??3)-(RANK[viewLvl(b)]??3);
   const byScore=(a,b)=>cellScore(b)-cellScore(a);
   const cmp={rating:(a,b)=>byRating(a,b)||byScore(a,b), score:(a,b)=>byScore(a,b)||byRating(a,b),
     alpha:(a,b)=>(a.title||'').localeCompare(b.title||'',t('dateLocale'),{numeric:true,sensitivity:'base'})}[mode];
@@ -978,7 +1025,7 @@ function loadSample(){
 function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
 function closeHelp(){ $('#helpDlg').close(); }
 function variantScore(v,crit){ // Prozent 0..100; crit=null -> Durchschnitt über alle Kriterien
-  const s=scoreVariant(v), per=crit?s.per.filter(p=>p.k.id===crit):s.per, vals=per.map(p=>p.pct).filter(x=>x!=null);
+  const s=scoreVariant(v), per=crit&&crit!==ALL&&crit!==OFF?s.per.filter(p=>p.k.id===crit):s.per, vals=per.map(p=>p.pct).filter(x=>x!=null);
   return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:-1;
 }
 function sortVariants(mode){
@@ -1200,7 +1247,7 @@ async function buildXlsx(){
   const argb=hex=>'FF'+String(hex||'#888888').replace('#','').toUpperCase().slice(0,6).padEnd(6,'0');
   const GREY='FFF3F4F7', MUTED='FF6B7280', SUB='FF4B5563';
   const today=new Date().toLocaleDateString(t('dateLocale'));
-  const lvl=(c,k)=>(c.ratings[k]||{}).level||'n';
+  const lvl=viewLvl;
   const varsOf=(row,c)=>P.variants.filter(v=>v.picks[row.id]===c.id);
   const head1=S.style({b:true,sz:16,wrap:false}), headSub=S.style({color:MUTED,wrap:false});
   const lab=S.style({b:true,fill:GREY,border:'all'}), box=S.style({border:'all'});
@@ -1377,17 +1424,19 @@ function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add(
 $('#bNew').onclick=()=>{
   if(!confirmDiscard()) return;
   if(!ui.dirty&&!confirm(t('confirmNew'))) return;
-  clearBlobs(); P=emptyProject(); IMG={}; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  clearBlobs(); P=emptyProject(); IMG={}; ui.lastView=ui.view===OFF?ui.lastView:ui.view; ui.view=OFF; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave();
 };
 $('#bOpen').onclick=openFile;
+$('#bRate').onclick=toggleRating;
+$('#showdesc').onclick=toggleDesc;
+$('#showcoords').onclick=()=>{ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); };
 $('#bSave').onclick=()=>saveFile(false);
 $('#bSaveAs').onclick=()=>saveFile(true);
 
 $('#undo').onclick=undo; $('#redo').onclick=redo;
-$('#bTheme').onclick=()=>{
-  const cur=document.documentElement.dataset.theme||'auto';
-  const next=THEMES[(THEMES.indexOf(cur)+1)%THEMES.length];
+$('#themeSeg').onclick=e=>{
+  const b=e.target.closest('[data-th]'); if(!b) return; const next=b.dataset.th;
   if(next==='auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=next;
   try{ localStorage.setItem('mk-theme',next); }catch(e){}
   renderTheme();
@@ -1403,11 +1452,11 @@ $('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-
 /* Aufklapp-Menüs: Einträge werden beim Öffnen in der aktuellen Sprache erzeugt */
 const tr=list=>list.map(([k,label,hint])=>({k,label:t(label),hint:hint?t(hint):''}));
 const MENUS={
-  viewMenu:{items:()=>P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),
+  viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL}],
     pick:k=>{ ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
-  sortMenu:{items:()=>tr([['rating','sortRating','sortRatingHint'],['score','sortScore','sortScoreHint'],['alpha','sortAlpha',''],['variants','sortVar','sortVarHint']]), pick:k=>sortCells(k)},
-  varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')},{k:'alpha',label:t('sortAlpha'),hint:''}],
+  sortMenu:{items:()=>tr([...(ui.view===OFF?[]:[['rating','sortRating','sortRatingHint']]),['score','sortScore','sortScoreHint'],['alpha','sortAlpha',''],['variants','sortVar','sortVarHint']]), pick:k=>sortCells(k)},
+  varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},...(ui.view===ALL||ui.view===OFF?[]:[{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')}]),{k:'alpha',label:t('sortAlpha'),hint:''}],
     pick:k=>sortVariants(k)}
 };
 function closeMenus(){ $$('.menu-list').forEach(l=>l.hidden=true); }
@@ -1527,10 +1576,8 @@ $('#side').addEventListener('change',e=>{
 document.addEventListener('focusin',e=>{ if(e.target.matches('input,textarea')) editSnap=snapshot(); });
 document.addEventListener('input',e=>{
   const tg=e.target;
-  const dirty=()=>{ ui.dirty=true; updateStatus(); scheduleSave(); if(!['size','lineop','ptitle','showdesc','showcoords'].includes(tg.id)) renderVarList(); };
+  const dirty=()=>{ ui.dirty=true; updateStatus(); scheduleSave(); if(!['size','lineop','ptitle'].includes(tg.id)) renderVarList(); };
   if(tg.id==='size'){ P.settings.cellW=+tg.value; applySize(); drawLines(); return dirty(); }
-  if(tg.id==='showdesc'){ P.settings.showDesc=tg.checked; renderMatrix(); return dirty(); }
-  if(tg.id==='showcoords'){ toggleCoords(tg.checked); return dirty(); }
   if(tg.id==='lineop'){ P.settings.lineOp=Math.round((1-tg.value)*100)/100; drawLines(); return dirty(); }
   if(tg.id==='ptitle'){ beginEdit(); P.title=tg.value; return dirty(); }
   if(tg.classList.contains('rowname')){ beginEdit(); P.rows.find(r=>r.id===tg.dataset.row).name=tg.value; return dirty(); }
@@ -1564,8 +1611,11 @@ document.addEventListener('keydown',e=>{
   if(e.key==='?'||e.key==='F1'){ e.preventDefault(); openHelp(); return; }
   if(key==='s'){ setSide(!sideVisible()); return; }
   if(key==='k'){ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); return; }
-  if(key==='d'){ P.settings.showDesc=!P.settings.showDesc; $('#showdesc').checked=P.settings.showDesc; renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); return; }
+  if(key==='d'){ toggleDesc(); return; }
+  if(key==='b'){ toggleRating(); return; }
   if(ui.sel&&['1','2','3','0'].includes(e.key)){
+    if(ui.view===OFF){ toast(t('keysOff')); return; }
+    if(ui.view===ALL){ toast(t('keysAll')); return; }
     const f=findCell(ui.sel); change(()=>setRating(f.cell,ui.view,{1:'g',2:'y',3:'r',0:''}[e.key])); return;
   }
   if(ui.sel&&e.key.startsWith('Arrow')){ e.preventDefault(); moveSel(e.key); }
