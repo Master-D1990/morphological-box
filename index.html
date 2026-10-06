@@ -99,6 +99,7 @@ main{flex:1;display:flex;min-height:0}
 .rowhead{position:sticky;left:0;z-index:5;flex:0 0 var(--head-w);width:var(--head-w);display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 4px;margin-right:12px;box-shadow:4px 0 10px -6px rgba(0,0,0,.18)}
 .handle{cursor:grab;color:var(--faint);padding:4px 3px;user-select:none;font-size:16px}
 .rowname{flex:1;min-width:0;border:1px solid transparent;border-radius:4px;padding:4px 5px;font-weight:650;background:transparent}
+.rowname-ro{display:none}
 .rowname:hover,.rowname:focus{border-color:var(--line);background:var(--field);outline:none}
 .icon{border:0;background:transparent;color:var(--faint);cursor:pointer;padding:3px 6px;border-radius:4px}
 .icon:hover{color:var(--r);background:var(--r-bg)}
@@ -133,6 +134,8 @@ main{flex:1;display:flex;min-height:0}
 .cell.wd .ctitle{height:auto}
 .dot{width:14px;height:14px;border-radius:50%;background:var(--empty);display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;line-height:1;color:#fff}
 .dot.y{color:#1d2330}
+.dot svg{width:10px;height:10px;display:block}
+.light svg{width:15px;height:15px;display:block;margin:auto}
 .dot.g{background:var(--g)} .dot.y{background:var(--y)} .dot.r{background:var(--r)}
 .cell.lvl-g{border-color:var(--g);box-shadow:inset 0 0 0 2px var(--g);background:var(--g-bg)}
 .cell.lvl-y{border-color:var(--y);box-shadow:inset 0 0 0 2px var(--y);background:var(--y-bg)}
@@ -297,22 +300,48 @@ body.noside #side{display:none}
 .menu-list .tick{position:absolute;left:9px;color:var(--accent);font-weight:700}
 #viewBtn{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .menu-list button small{display:block;font-size:11.5px;color:var(--muted)}
-#helpDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-#helpDlg::backdrop{background:rgba(0,0,0,.45)}
-#helpDlg h2{margin:0;font-size:19px}
-#helpDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-#helpDlg .intro{color:var(--muted);margin:0 0 12px}
+#helpDlg,#mobileDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#helpDlg::backdrop,#mobileDlg::backdrop{background:rgba(0,0,0,.45)}
+#helpDlg h2,#mobileDlg h2{margin:0;font-size:19px}
+#helpDlg .dlg-head,#mobileDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+#helpDlg .intro,#mobileDlg .intro{color:var(--muted);margin:0 0 12px}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
 #helpDlg .help li{margin-bottom:7px}
 #bHelp{font-weight:600}
-.g{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
-.g+.g{border-left:1px solid var(--line);padding-left:12px;margin-left:4px}
-.g.gvar{flex-wrap:wrap}
+#bar2>.g{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+#bar2>.g+.g{border-left:1px solid var(--line);padding-left:12px;margin-left:4px}
+#bar2>.g.gvar{flex-wrap:wrap}
 #viewBtn .pre{color:var(--muted);font-weight:400}
 .grp{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
 #toast.show{opacity:1;transform:translateX(-50%)}
 
+/* Handy: nur ansehen – eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
+@media (max-width:760px){
+  #bar{flex-wrap:nowrap;padding:6px 10px;gap:6px}
+  #bar>*:not(#ptitle):not(#langSeg):not(#bHelp){display:none!important}
+  #ptitle{flex:1 1 auto;min-width:0;font-size:15px;pointer-events:none}
+  #bar2,#side,.addcell,#addrow,.handle,.delrow,.cgrip,.vgrip,.addvarcol,.addvar-empty,#varSortMenu{display:none!important}
+  #stage{padding:10px}
+  /* Teilfunktionen: Titel hochkant in schmaler Spalte, nicht festgehalten (wie in der Übersicht) */
+  :root{--head-w:40px}
+  .rowhead,.row.colhead{position:static;box-shadow:none}
+  .rowhead{flex-direction:column;justify-content:center;gap:4px;padding:6px 2px;margin-right:8px}
+  .row.colhead .rowhead.corner{visibility:hidden;min-height:0;height:30px;padding:0!important}
+  .cells{gap:8px} .row{margin-bottom:8px}
+  .cell .cdesc{display:none}
+  .vt{--vw:150px;border-spacing:8px 0;margin-left:-8px}
+  .vt th,.vt td{padding:5px 7px}
+  .vt th.vcorner{min-width:0;width:96px}
+  .vt th.vcorner span{white-space:normal}
+  .vt tbody th{white-space:normal;font-size:11.5px;width:96px;hyphens:auto;-webkit-hyphens:auto}
+  .vt td,.vt thead th[data-vh]{font-size:12px}
+  #matrix .rowname{display:none}
+  .rowname-ro{display:block!important;writing-mode:vertical-rl;transform:rotate(180deg);max-height:100%;overflow:hidden;font-weight:650;font-size:12.5px;line-height:1.2;white-space:nowrap;text-overflow:ellipsis}
+  .seg button{white-space:nowrap}
+  #langSeg,#bHelp{flex-shrink:0}
+  #mobileDlg .btnrow{flex-direction:column;align-items:stretch}
+}
 @media print{
   @page{size:A4 landscape;margin:8mm}
   :root,:root[data-theme="dark"],:root:not([data-theme="light"]){
@@ -325,7 +354,7 @@ body.noside #side{display:none}
   }
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html,body{height:auto;overflow:visible;background:#fff;display:block}
-  #bar,#bar2,#banner,#side,#toast,#lightbox,#helpDlg,.addcell,#addrow,.handle,.delrow,.sk .hint,.ph,#varlist .sub{display:none!important}
+  #bar,#bar2,#banner,#side,#toast,#lightbox,#helpDlg,#mobileDlg,.addcell,#addrow,.handle,.delrow,.sk .hint,.ph,#varlist .sub{display:none!important}
   #canvas,#matrix{display:block;min-width:0} /* inline-block lässt sich nicht auf Seiten umbrechen */
   #matrix{padding-bottom:0}
   .row{break-inside:avoid}
@@ -398,6 +427,11 @@ body.noside #side{display:none}
 <input type="file" id="openFile" accept=".json,application/json" hidden>
 <input type="file" id="varImgFile" accept="image/*" multiple hidden>
 <div id="lightbox" hidden><img alt=""></div>
+<dialog id="mobileDlg">
+  <div class="dlg-head"><h2 data-i18n="mobileH"></h2></div>
+  <p class="intro" data-i18n="mobileIntro"></p>
+  <div class="btnrow" style="margin-top:14px"><button class="btn primary" id="mobileShare" data-i18n="mobileShare"></button><button class="btn" id="mobileView" data-i18n="mobileView"></button></div>
+</dialog>
 <dialog id="helpDlg">
   <div class="dlg-head"><h2 data-i18n="helpH"></h2><button class="icon" id="helpClose" aria-label="Close">✕</button></div>
   <p class="intro" data-i18n="helpIntro"></p>
@@ -496,6 +530,7 @@ de:{
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
+  mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du das Beispiel ansehen (seitwärts wischen, mit zwei Fingern zoomen) – zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
   helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante – sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Teillösung(en) löschen?`, confirmDelCell:name=>`Teillösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
@@ -570,6 +605,7 @@ en:{
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
+  mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can look at the example (swipe sideways, pinch to zoom) – to edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
   helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant – it is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} partial solution(s)?`, confirmDelCell:name=>`Delete partial solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
@@ -592,7 +628,10 @@ en:{
 }};
 const t=(k,...a)=>{ const v=L[LANG][k]??L.de[k]; return typeof v==='function'?v(...a):v; };
 const LV=l=>t(l||'n');
-const SYM={g:'✓',y:'!',r:'✕',n:''};
+const SYM={g:'✓',y:'!',r:'✕',n:''}; // als Text (Excel)
+// in der App gezeichnet statt als Schriftzeichen: ✓ ist je nach Schrift breiter als der Kreis und sitzt dann schief
+const ICO=(()=>{ const sv=b=>`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${b}</svg>`;
+  return {g:sv('<path d="M3.8 8.4l2.8 2.8 5.6-6"/>'),y:sv('<path d="M8 3.4v5.4"/><circle cx="8" cy="12.2" r="0.6" fill="currentColor"/>'),r:sv('<path d="M4.8 4.8l6.4 6.4M11.2 4.8l-6.4 6.4"/>'),n:''}; })();
 // Einheitlicher Platzhalter für alle Bild-Ablageflächen (Zellen, Skizzen, Seitenleiste)
 const PH_ICON='<svg class="phicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>';
 const phHtml=key=>`<span class="ph">${PH_ICON}<span class="phtxt">${t(key)}<span class="phtypes">${t('imgTypes')}</span></span></span>`; // Ampel zusätzlich als Symbol (Farbschwäche, S/W-Druck)
@@ -793,8 +832,9 @@ function renderTheme(){ // Farbschema als Segment-Schalter wie die Sprache: auto
   $$('#themeSeg button').forEach(b=>{ const k=b.dataset.th, l=t({auto:'themeAuto',light:'themeLight',dark:'themeDark'}[k]);
     b.innerHTML=THEME_ICON[k]; b.title=l; b.setAttribute('aria-label',l); b.setAttribute('aria-pressed',k===th); b.classList.toggle('on',k===th); });
 }
+const narrow=()=>matchMedia('(max-width:760px)').matches;
 function applySize(){
-  const w=P.settings.cellW||170;
+  const w=narrow()?Math.min(P.settings.cellW||170,130):P.settings.cellW||170; // Handy: kleinere Zellen, ohne die Einstellung zu ändern
   document.documentElement.style.setProperty('--cell-w',w+'px');
   document.documentElement.style.setProperty('--img-h',Math.round(w*0.6)+'px');
 }
@@ -841,7 +881,7 @@ function tooltip(c){
 }
 function cellHtml(c,row){
   const lvl=viewLvl(c);
-  const dots=P.criteria.map(k=>{const l=(c.ratings[k.id]||{}).level||'n';return `<span class="dot ${l}" title="${esc(k.name)}: ${LV(l)}">${SYM[l]}</span>`;}).join('');
+  const dots=P.criteria.map(k=>{const l=(c.ratings[k.id]||{}).level||'n';return `<span class="dot ${l}" title="${esc(k.name)}: ${LV(l)}">${ICO[l]}</span>`;}).join('');
   const ev=ui.editVar&&getVar(ui.editVar);
   const picked=ev&&ev.picks[row.id]===c.id;
   const src=imgSrc(c.img);
@@ -858,7 +898,7 @@ function renderMatrix(){
   for(const [ri,row] of P.rows.entries()){
     h+=`<div class="row" data-row="${row.id}"><div class="rowhead">`+
       `<span class="handle" draggable="true" title="${t('moveRow')}">⠿</span>`+(co?`<span class="rnum">${ri+1}</span>`:'')+
-      `<input class="rowname" type="text" value="${esc(row.name)}" data-row="${row.id}" placeholder="${t('subfnPh')}" spellcheck="false">`+
+      `<input class="rowname" type="text" value="${esc(row.name)}" data-row="${row.id}" placeholder="${t('subfnPh')}" spellcheck="false"><span class="rowname-ro">${esc(row.name)}</span>`+
       `<button class="icon delrow" data-row="${row.id}" title="${t('delRow')}">✕</button></div>`+
       `<div class="cells" data-row="${row.id}">${row.cells.map(c=>cellHtml(c,row)).join('')}`+
       `<button class="addcell" data-row="${row.id}" title="${t('addCellT')}">+</button></div></div>`;
@@ -877,7 +917,7 @@ function drawLines(){
   const base=m.getBoundingClientRect();
   const vis=P.variants.filter(v=>v.visible);
   // Teilen sich mehrere Lösungsvarianten eine Teillösung, werden ihre Punkte gleichmässig über die Bildbreite verteilt
-  const lf=(P.settings.cellW||170)/170; // Linien, Punkte und Pfeil wachsen mit der Zellgrösse (Standard 170 px → 7 px Linie)
+  const lf=(parseFloat(document.documentElement.style.getPropertyValue('--cell-w'))||170)/170; // Linien, Punkte und Pfeil wachsen mit der Zellgrösse (Standard 170 px → 7 px Linie)
   const share={}; vis.forEach(v=>Object.values(v.picks).forEach(cid=>(share[cid]=share[cid]||[]).push(v.id)));
   let out='';
   vis.forEach(v=>{
@@ -938,7 +978,7 @@ function cellEditor({row,cell}){
   <div class="btnrow"><button class="btn small" data-act="pickimg">${t('chooseImg')}</button>${cell.img?`<button class="btn small" data-act="rmimg">${t('rmImg')}</button>`:''}</div>
   <div class="rate-sec"><h3>${t('rating')}</h3>
   ${P.criteria.map(k=>{const r=cell.ratings[k.id]||{};return `<div class="rating"><div class="rhead"><b>${esc(k.name)}</b><span class="lights">`+
-    ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}">${SYM[l]}</button>`).join('')+
+    ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}">${ICO[l]}</button>`).join('')+
     `<button class="light none ${!r.level?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="" title="${t('noRating')}">–</button></span></div>`+
     `<textarea data-edit="reason" data-crit="${k.id}" rows="2" placeholder="${t('reasonPh')}">${esc(r.reason)}</textarea></div>`;}).join('')}
   <div class="muted small">${ui.view===ALL?t('keysHintAll'):t('keysHint',esc(critName(ui.view)))}</div></div>
@@ -1445,6 +1485,15 @@ $('#langSeg').onclick=e=>{ const b=e.target.closest('[data-lang]'); if(b&&b.data
 applyStatic(); renderTheme();
 $('#bSide').onclick=()=>setSide(!sideVisible());
 $('#bHelp').onclick=openHelp;
+// Handy (schmal + Finger): einmalig Hinweis statt Hilfe; Link per Teilen-Menü an sich selbst schicken
+const isPhone=()=>matchMedia('(max-width:760px) and (pointer:coarse)').matches;
+$('#mobileView').onclick=()=>$('#mobileDlg').close();
+$('#mobileDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-mobile-seen','1'); }catch(e){} });
+$('#mobileShare').onclick=async()=>{
+  const url=location.href.split('#')[0];
+  try{ if(navigator.share){ await navigator.share({title:document.title,url}); return; } await navigator.clipboard.writeText(url); toast(t('linkCopied')); }
+  catch(e){ /* Teilen abgebrochen */ }
+};
 $('#helpClose').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
 $('#dlgSample').onclick=()=>{ if(loadSample()) closeHelp(); };
 $('#helpDlg').addEventListener('click',e=>{ if(e.target.id==='helpDlg') closeHelp(); }); // Klick auf Hintergrund
@@ -1601,7 +1650,7 @@ document.addEventListener('keydown',e=>{
   const mod=e.ctrlKey||e.metaKey, key=e.key.toLowerCase();
   if(mod&&key==='s'){ e.preventDefault(); saveFile(e.shiftKey); return; }
   if(mod&&key==='o'){ e.preventDefault(); openFile(); return; }
-  if($('#helpDlg').open) return; // Dialog offen: Tastenkürzel nicht an den Kasten weitergeben
+  if($('#helpDlg').open||$('#mobileDlg').open) return; // Dialog offen: Tastenkürzel nicht an den Kasten weitergeben
   if(e.target.matches?.('input,textarea,select')){ if(e.key==='Escape') e.target.blur(); return; }
   if(mod&&key==='z'&&!e.shiftKey){ e.preventDefault(); undo(); return; }
   if(mod&&(key==='y'||(key==='z'&&e.shiftKey))){ e.preventDefault(); redo(); return; }
@@ -1737,7 +1786,7 @@ function endPrint(){
 }
 window.addEventListener('beforeprint',preparePrint);
 window.addEventListener('afterprint',endPrint);
-window.addEventListener('resize',()=>drawLines());
+window.addEventListener('resize',()=>{ applySize(); drawLines(); });
 window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.preventDefault(); e.returnValue=''; } });
 
 /* ---------- Start ---------- */
@@ -1756,7 +1805,8 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
-  { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
+  if(isPhone()){ let seen=null; try{ seen=localStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
+  else { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
 })();
 </script>
