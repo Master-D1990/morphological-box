@@ -434,7 +434,7 @@ de:{
   imgTypes:'PNG · JPG · WebP · GIF · SVG',
   hdrFunctions:'Teilfunktionen', hdrSolutions:'Teillösungen', coords:'Koordinaten', coordsT:'Koordinaten wie in Excel: Teilfunktionen 1, 2, 3 …, Teillösungen A, B, C … – z. B. «B2» (Taste K)',
   addVarT:'Neue Lösungsvariante anlegen', addFirstVar:'+ Lösungsvariante anlegen', xlColPos:'Pos.',
-  sortPh:'Sortieren', sortT:'Teillösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'Nach Ampel', sortRatingHint:'grün → gelb → rot, aktuelles Ampel-Kriterium', sortScore:'Nach Gesamtbewertung', sortScoreHint:'Durchschnitt über alle Kriterien', sortAlpha:'Alphabetisch',  sorted:'Teillösungen sortiert – Strg+Z macht es rückgängig',
+  sortPh:'Sortieren', sortT:'Teillösungen in allen Teilfunktionen neu anordnen (rückgängig mit Strg+Z)', sortRating:'Nach Ampel', sortRatingHint:'grün → gelb → rot, aktuelles Ampel-Kriterium', sortScore:'Nach Gesamtbewertung', sortScoreHint:'Durchschnitt über alle Kriterien', sortAlpha:'Alphabetisch', sortVar:'Nach Lösungsvarianten', sortVarHint:'Teillösungen in der Reihenfolge der Übersicht nach vorne',  sorted:'Teillösungen sortiert – Strg+Z macht es rückgängig',
   g:'Grün', y:'Gelb', r:'Rot', n:'unbewertet',
   newBox:'Neuer Kasten', overall:'Gesamt', subfnN:n=>'Teilfunktion '+n, newSolution:'Neue Teillösung', newSubfn:'Neue Teilfunktion', newCrit:'Neues Kriterium', variantN:x=>'Lösungsvariante '+x,
   imgInserted:k=>`Bild eingefügt (${k} KB)`, imgFail:'Bild konnte nicht gelesen werden',
@@ -461,7 +461,7 @@ de:{
     <li><b>Verschieben</b>: Zellen ziehen (auch in andere Zeilen), Zeilen am ⠿ ziehen.</li>
     <li><b>Lösungsvarianten</b>: Chip oben anklicken, dann pro Zeile eine Teillösung anklicken. ●/○ blendet die Linie ein/aus, «Transparenz» oben macht die Linien durchsichtiger.</li>
     <li><b>Export</b> (oben): Excel-Datei mit Kasten, Lösungsvarianten, Bewertungen und allen Bildern – oder CSV (nur Text), und <b>PDF / Drucken</b>: Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten.</li>
-    <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung oder alphabetisch.</li>
+    <li><b>Sortieren</b> (oben bei Ansicht): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung, alphabetisch oder nach Lösungsvarianten (Teillösung der ersten Lösungsvariante der Übersicht ganz links, dann die der zweiten usw.).</li>
     <li><b>Lösungsvarianten umordnen</b>: in der Übersicht unten am Spaltenkopf (⠿) ziehen oder über «Sortieren» neben der Überschrift.</li>
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
@@ -506,7 +506,7 @@ en:{
   imgTypes:'PNG · JPG · WebP · GIF · SVG',
   hdrFunctions:'Sub-functions', hdrSolutions:'Partial solutions', coords:'Coordinates', coordsT:'Excel-like coordinates: sub-functions 1, 2, 3 …, partial solutions A, B, C … – e.g. “B2” (key K)',
   addVarT:'Create a new solution variant', addFirstVar:'+ Create a solution variant', xlColPos:'Pos.',
-  sortPh:'Sort', sortT:'Reorder the partial solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'By rating', sortRatingHint:'green → yellow → red, current rating criterion', sortScore:'By overall score', sortScoreHint:'average over all criteria', sortAlpha:'Alphabetically',  sorted:'Partial solutions sorted – Ctrl+Z to undo',
+  sortPh:'Sort', sortT:'Reorder the partial solutions in all sub-functions (undo with Ctrl+Z)', sortRating:'By rating', sortRatingHint:'green → yellow → red, current rating criterion', sortScore:'By overall score', sortScoreHint:'average over all criteria', sortAlpha:'Alphabetically', sortVar:'By solution variants', sortVarHint:'partial solutions to the front in overview order',  sorted:'Partial solutions sorted – Ctrl+Z to undo',
   g:'Green', y:'Yellow', r:'Red', n:'unrated',
   newBox:'New box', overall:'Overall', subfnN:n=>'Sub-function '+n, newSolution:'New partial solution', newSubfn:'New sub-function', newCrit:'New criterion', variantN:x=>'Solution variant '+x,
   imgInserted:k=>`Image inserted (${k} KB)`, imgFail:'Could not read the image',
@@ -533,7 +533,7 @@ en:{
     <li><b>Rearrange</b>: drag cells (also into other rows), drag rows by ⠿.</li>
     <li><b>Solution variants</b>: click a chip at the top, then click one partial solution per row. ●/○ shows/hides the line, “Transparency” at the top makes the lines more see-through.</li>
     <li><b>Export</b> (top): Excel file with box, solution variants, ratings and all images – or CSV (text only), and <b>PDF / Print</b>: page 1 box, page 2 solution variant overview.</li>
-    <li><b>Sort</b> (top, under View): orders the partial solutions of every sub-function by rating, overall score or alphabetically.</li>
+    <li><b>Sort</b> (top, under View): orders the partial solutions of every sub-function by rating, overall score, alphabetically or by solution variants (the first solution variant’s partial solution on the far left, then the second’s, and so on).</li>
     <li><b>Reorder solution variants</b>: drag a column header (⠿) in the overview below, or use “Sort” next to its heading.</li>
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
@@ -962,8 +962,11 @@ function sortCells(mode){
   const byScore=(a,b)=>cellScore(b)-cellScore(a);
   const cmp={rating:(a,b)=>byRating(a,b)||byScore(a,b), score:(a,b)=>byScore(a,b)||byRating(a,b),
     alpha:(a,b)=>(a.title||'').localeCompare(b.title||'',t('dateLocale'),{numeric:true,sensitivity:'base'})}[mode];
-  if(!cmp) return;
-  change(()=>P.rows.forEach(r=>r.cells.sort(cmp)));
+  // Nach Lösungsvarianten: Rang = Position der ersten Lösungsvariante (Übersicht), die die Teillösung wählt; der Rest behält seine Reihenfolge
+  const byVar=r=>{ const rk=c=>{ const i=P.variants.findIndex(v=>v.picks[r.id]===c.id); return i<0?P.variants.length:i; }; return (a,b)=>rk(a)-rk(b); };
+  if(mode==='variants') change(()=>P.rows.forEach(r=>r.cells.sort(byVar(r))));
+  else if(cmp) change(()=>P.rows.forEach(r=>r.cells.sort(cmp)));
+  else return;
   toast(t('sorted'));
 }
 function loadSample(){
@@ -1403,7 +1406,7 @@ const MENUS={
   viewMenu:{items:()=>P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),
     pick:k=>{ ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
-  sortMenu:{items:()=>tr([['rating','sortRating','sortRatingHint'],['score','sortScore','sortScoreHint'],['alpha','sortAlpha','']]), pick:k=>sortCells(k)},
+  sortMenu:{items:()=>tr([['rating','sortRating','sortRatingHint'],['score','sortScore','sortScoreHint'],['alpha','sortAlpha',''],['variants','sortVar','sortVarHint']]), pick:k=>sortCells(k)},
   varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')},{k:'alpha',label:t('sortAlpha'),hint:''}],
     pick:k=>sortVariants(k)}
 };
