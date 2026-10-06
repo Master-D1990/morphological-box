@@ -290,6 +290,7 @@ body.noside #side{display:none}
 .btn.tgl[aria-pressed=true]::before{background:var(--accent)}
 .btn.tgl[aria-pressed=true]::after{transform:translateX(12px)}
 @media (prefers-reduced-motion:reduce){ .btn.tgl::before,.btn.tgl::after{transition:none} }
+html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:none} /* beim Laden nicht von «aus» nach «ein» gleiten */
 #bRate+.menu{margin-left:-4px}
 .menu-list{position:absolute;top:calc(100% + 4px);left:0;min-width:230px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:4px;z-index:40}
 .menu-list[hidden]{display:none}
@@ -1809,6 +1810,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   if(isPhone()){ let seen=null; try{ seen=localStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
   else { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.add('ready')));
 })();
 </script>
 </body>
