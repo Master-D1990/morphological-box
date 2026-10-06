@@ -1489,10 +1489,10 @@ $('#langSeg').onclick=e=>{ const b=e.target.closest('[data-lang]'); if(b&&b.data
 applyStatic(); renderTheme();
 $('#bSide').onclick=()=>setSide(!sideVisible());
 $('#bHelp').onclick=openHelp;
-// Handy (schmal + Finger): einmalig Hinweis statt Hilfe; Link per Teilen-Menü an sich selbst schicken
+// Handy (schmal + Finger): Hinweis bei jedem Besuch (pro Sitzung) statt Hilfe; Link per Teilen-Menü an sich selbst schicken
 const isPhone=()=>matchMedia('(max-width:760px) and (pointer:coarse)').matches;
 $('#mobileView').onclick=()=>$('#mobileDlg').close();
-$('#mobileDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-mobile-seen','1'); }catch(e){} });
+$('#mobileDlg').addEventListener('close',()=>{ try{ sessionStorage.setItem('mk-mobile-seen','1'); }catch(e){} });
 $('#mobileShare').onclick=async()=>{
   const url=location.href.split('#')[0];
   try{ if(navigator.share){ await navigator.share({title:document.title,url}); return; } await navigator.clipboard.writeText(url); toast(t('linkCopied')); }
@@ -1809,7 +1809,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
-  if(isPhone()){ let seen=null; try{ seen=localStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
+  if(isPhone()){ let seen=null; try{ seen=sessionStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
   else { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.add('ready')));
