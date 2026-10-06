@@ -319,7 +319,7 @@ body.noside #side{display:none}
 /* Handy: nur ansehen – eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
 @media (max-width:760px){
   #bar{flex-wrap:nowrap;padding:6px 10px;gap:6px}
-  #bar>*:not(#ptitle):not(#langSeg):not(#bHelp){display:none!important}
+  #bar>*:not(#ptitle):not(#bOpen):not(#langSeg):not(#bHelp){display:none!important}
   #ptitle{flex:1 1 auto;min-width:0;font-size:15px;pointer-events:none}
   #bar2,#side,.addcell,#addrow,.handle,.delrow,.cgrip,.vgrip,.addvarcol,.addvar-empty,#varSortMenu{display:none!important}
   #stage{padding:10px}
@@ -339,7 +339,8 @@ body.noside #side{display:none}
   #matrix .rowname{display:none}
   .rowname-ro{display:block!important;writing-mode:vertical-rl;transform:rotate(180deg);max-height:100%;overflow:hidden;font-weight:650;font-size:12.5px;line-height:1.2;white-space:nowrap;text-overflow:ellipsis}
   .seg button{white-space:nowrap}
-  #langSeg,#bHelp{flex-shrink:0}
+  #bOpen,#langSeg,#bHelp{flex-shrink:0}
+  #bar .btn,#bar .seg button{padding:5px 8px}
   #mobileDlg .btnrow{flex-direction:column;align-items:stretch}
 }
 @media print{
@@ -530,7 +531,7 @@ de:{
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
-  mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du das Beispiel ansehen (seitwärts wischen, mit zwei Fingern zoomen) – zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
+  mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du Kästen ansehen – das Beispiel oder eine gespeicherte Datei über «Öffnen…» (seitwärts wischen, mit zwei Fingern zoomen). Zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
   helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante – sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt – vorher speichern, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Teillösung(en) löschen?`, confirmDelCell:name=>`Teillösung ${q(name)} löschen?`,
   minCrit:'Mindestens ein Kriterium wird benötigt', confirmDelCrit:name=>`Kriterium ${q(name)} und alle zugehörigen Bewertungen löschen?`,
@@ -605,7 +606,7 @@ en:{
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
-  mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can look at the example (swipe sideways, pinch to zoom) – to edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
+  mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can view boxes – the example or a saved file via “Open…” (swipe sideways, pinch to zoom). To edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
   helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant – it is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced – save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} partial solution(s)?`, confirmDelCell:name=>`Delete partial solution ${q(name)}?`,
   minCrit:'At least one criterion is required', confirmDelCrit:name=>`Delete criterion ${q(name)} and all its ratings?`,
