@@ -654,7 +654,8 @@ function setLang(l){
 let P=null;            // Projekt (ohne Bilddaten)
 let IMG={};            // Bild-ID -> dataURL
 let BLOB={};           // Bild-ID -> blob:URL (Anzeige-Cache)
-const ui={sel:null,editVar:null,view:null,handle:null,dirty:false,autosaveOk:true,pasteVar:null,pickVar:null};
+const PAGE_TITLE=document.title;
+const ui={sample:false,sel:null,editVar:null,view:null,handle:null,dirty:false,autosaveOk:true,pasteVar:null,pickVar:null};
 let undoStack=[],redoStack=[],editSnap=null;
 
 /* ---------- Modell ---------- */
@@ -842,7 +843,8 @@ function applySize(){
 }
 function updateStatus(){
   $('#saveState').textContent=ui.dirty?'●':''; $('#saveState').title=ui.dirty?t('unsaved'):''; $('#bSave').classList.toggle('dirty',ui.dirty);
-  document.title=(ui.dirty?'• ':'')+(P.title?P.title+' – ':'')+t('appTitle');
+  // unverändertes Beispiel (= was Suchmaschinen sehen): Tool-Titel aus dem HTML behalten, sonst Kastenname im Tab
+  document.title=ui.sample&&!ui.dirty?PAGE_TITLE:(ui.dirty?'• ':'')+(P.title?P.title+' – ':'')+t('appTitle');
   $('#undo').disabled=!undoStack.length; $('#redo').disabled=!redoStack.length;
 }
 function renderToolbar(){
@@ -1061,7 +1063,7 @@ function sortCells(mode){
 function loadSample(){
   if(!confirmDiscard()) return false;
   if(!ui.dirty&&!confirm(t('confirmSample'))) return false;
-  clearBlobs(); P=sampleProject(); IMG={}; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  clearBlobs(); P=sampleProject(); IMG={}; ui.sample=true; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave(); return true;
 }
 function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
@@ -1130,7 +1132,7 @@ function loadData(text,{quiet=false}={}){
   let m; try{ m=migrate(d); }catch(err){ console.error(err); toast(t('invalidFile')); return false; }
   if(m.newer){ alert(t('fileTooNew',m.newer)); return false; }
   d=m.data;
-  clearBlobs(); P=normalize(d.project); IMG=d.images||{};
+  clearBlobs(); P=normalize(d.project); IMG=d.images||{}; ui.sample=false;
   resetHistory(); ui.sel=null; ui.editVar=null; ui.dirty=false;
   validateUi(); renderAll(); scheduleSave();
   if(m.from<SCHEMA_VERSION){ ui.dirty=true; updateStatus(); toast(t('migrated',m.from,SCHEMA_VERSION)); }
@@ -1466,7 +1468,7 @@ function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add(
 $('#bNew').onclick=()=>{
   if(!confirmDiscard()) return;
   if(!ui.dirty&&!confirm(t('confirmNew'))) return;
-  clearBlobs(); P=emptyProject(); IMG={}; ui.lastView=ui.view===OFF?ui.lastView:ui.view; ui.view=OFF; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; ui.lastView=ui.view===OFF?ui.lastView:ui.view; ui.view=OFF; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave();
 };
 $('#bOpen').onclick=openFile;
@@ -1803,7 +1805,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
       }else{ P=normalize(m.data.project); IMG=m.data.images||{}; ui.dirty=!!saved.dirty||m.from<SCHEMA_VERSION; restored=true; }
     }catch(e){ console.warn(e); }
   }
-  if(!restored){ P=sampleProject(); IMG={}; }
+  if(!restored){ P=sampleProject(); IMG={}; ui.sample=true; }
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
