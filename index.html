@@ -335,7 +335,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #toast.show{opacity:1;transform:translateX(-50%)}
 
 /* Handy: nur ansehen, eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
-@media (max-width:760px){
+@media screen and (max-width:760px){ /* nur Bildschirm: im Druck wäre die Papierbreite sonst ein «Handy» */
   #dlOffline{display:none!important}
   #bar{flex-wrap:nowrap;padding:6px 10px;gap:6px}
   #bar>*:not(#ptitle):not(#bOpen):not(#langSeg):not(#bHelp){display:none!important}
@@ -874,7 +874,7 @@ function renderTheme(){ // Farbschema als Segment-Schalter wie die Sprache: auto
   $$('#themeSeg button').forEach(b=>{ const k=b.dataset.th, l=t({auto:'themeAuto',light:'themeLight',dark:'themeDark'}[k]);
     b.innerHTML=THEME_ICON[k]; b.title=l; b.setAttribute('aria-label',l); b.setAttribute('aria-pressed',k===th); b.classList.toggle('on',k===th); });
 }
-const narrow=()=>matchMedia('(max-width:760px)').matches;
+const narrow=()=>matchMedia('screen and (max-width:760px)').matches;
 function applySize(){
   const w=narrow()?Math.min(P.settings.cellW||170,130):P.settings.cellW||170; // Handy: kleinere Zellen, ohne die Einstellung zu ändern
   document.documentElement.style.setProperty('--cell-w',w+'px');
