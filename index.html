@@ -277,7 +277,8 @@ body.noside #side{display:none}
 #addVar{border-style:dashed;color:var(--muted);font-size:16px;line-height:1;padding:3px 10px}
 #addVar:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 /* Eigene Aufklapp-Menüs (statt <select>, das je nach Browser/Darkmode unsauber aussieht) */
-@media (min-width:1320px){ #bar{flex-wrap:nowrap} #bar>*{flex-shrink:0} #bar>#ptitle{flex-shrink:1} }
+#bOpen{display:none} /* Handy-Ersatz für das Datei-Menü */
+@media (min-width:1200px){ #bar{flex-wrap:nowrap} #bar>*{flex-shrink:0} #bar>#ptitle{flex-shrink:1} }
 #themeSeg svg{width:16px;height:16px;display:block}
 #themeSeg button{padding:5px 8px}
 #saveState{color:var(--accent);font-size:14px;cursor:help;margin-left:-4px}
@@ -302,6 +303,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 .menu-list button.chk{padding-left:28px;position:relative}
 .menu-list .tick{position:absolute;left:9px;color:var(--accent);font-weight:700}
 #viewBtn{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu-list hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
 .menu-list button small{display:block;font-size:11.5px;color:var(--muted)}
 #helpDlg,#mobileDlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);max-width:660px;width:calc(100% - 32px);padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 #helpDlg::backdrop,#mobileDlg::backdrop{background:rgba(0,0,0,.45)}
@@ -345,6 +347,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   #matrix .rowname{display:none}
   .rowname-ro{display:block!important;writing-mode:vertical-rl;transform:rotate(180deg);max-height:100%;overflow:hidden;font-weight:650;font-size:12.5px;line-height:1.2;white-space:nowrap;text-overflow:ellipsis}
   .seg button{white-space:nowrap}
+  #bOpen{display:inline-block}
   #bOpen,#langSeg,#bHelp{flex-shrink:0}
   #bar .btn,#bar .seg button{padding:5px 8px}
   #mobileDlg .btnrow{flex-direction:column;align-items:stretch}
@@ -391,11 +394,9 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   <button class="btn" id="undo" data-i18n-title="undoT">↶</button>
   <button class="btn" id="redo" data-i18n-title="redoT">↷</button>
   <span class="sep"></span>
-  <button class="btn" id="bNew" data-i18n="new"></button>
+  <span class="menu" id="fileMenu"><button class="btn" data-i18n="file" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
   <button class="btn" id="bOpen" data-i18n="open" data-i18n-title="openT"></button>
-  <button class="btn" id="bImport" data-i18n="import" data-i18n-title="importT"></button>
   <button class="btn" id="bSave" data-i18n="save" data-i18n-title="saveT"></button>
-  <button class="btn" id="bSaveAs" data-i18n="saveAs" data-i18n-title="saveAsT"></button>
   <span class="menu" id="exportMenu"><button class="btn" data-i18n="exportPh" data-i18n-title="exportT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
   <span class="sep"></span>
   <button class="btn tgl" id="bSide" aria-pressed="true" data-i18n="side" data-i18n-title="sideT"></button>
@@ -490,7 +491,7 @@ const kb=k=>`<kbd>${k}</kbd>`;
 const L={
 de:{
   appTitle:'Morphologischer Kasten', ptitleT:'Projekttitel', ctrl:'Strg',
-  new:'Neu', open:'Öffnen…', openT:'Strg+O', import:'Importieren…', importT:'Teillösungen, Kriterien und Lösungsvarianten aus einer anderen Kasten-Datei in diesen Kasten übernehmen', save:'Speichern', saveT:'Strg+S', saveAs:'Speichern unter…', saveAsT:'Strg+Umschalt+S',
+  new:'Neu', open:'Öffnen…', openT:'Strg+O', import:'Importieren…', importHint:'Andere Kasten-Datei in diesen einfügen', file:'Datei', save:'Speichern', saveT:'Strg+S', saveAs:'Speichern unter…', saveAsT:'Strg+Umschalt+S',
   print:'PDF / Drucken', undoT:'Rückgängig (Strg+Z)', redoT:'Wiederholen (Strg+Y)',
   side:'Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)',
   themeAuto:'Farbschema: automatisch', themeLight:'Farbschema: hell', themeDark:'Farbschema: dunkel',
@@ -539,7 +540,7 @@ de:{
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>
-    <li><b>Importieren</b> (oben): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>`,
+    <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   repoNote:`Open Source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Quellcode und Rückmeldungen auf GitHub</a>`, repoT:'Quellcode, Fehler melden und Ideen auf GitHub',
@@ -567,7 +568,7 @@ de:{
 },
 en:{
   appTitle:'Morphological Box', ptitleT:'Project title', ctrl:'Ctrl',
-  new:'New', open:'Open…', openT:'Ctrl+O', import:'Import…', importT:'Add the partial solutions, criteria and solution variants of another box file to this box', save:'Save', saveT:'Ctrl+S', saveAs:'Save as…', saveAsT:'Ctrl+Shift+S',
+  new:'New', open:'Open…', openT:'Ctrl+O', import:'Import…', importHint:'Add another box file to this one', file:'File', save:'Save', saveT:'Ctrl+S', saveAs:'Save as…', saveAsT:'Ctrl+Shift+S',
   print:'PDF / Print', undoT:'Undo (Ctrl+Z)', redoT:'Redo (Ctrl+Y)',
   side:'Sidebar', sideT:'Show/hide sidebar (key S)',
   themeAuto:'Colour scheme: automatic', themeLight:'Colour scheme: light', themeDark:'Colour scheme: dark',
@@ -616,7 +617,7 @@ en:{
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>
-    <li><b>Import</b> (top): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>`,
+    <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   repoNote:`Open source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Source code and feedback on GitHub</a>`, repoT:'Source code, bug reports and ideas on GitHub',
@@ -1526,19 +1527,17 @@ let toastT;
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2400); }
 
 /* ---------- Events: Toolbar ---------- */
-$('#bNew').onclick=()=>{
+function newBox(){
   if(!confirmDiscard()) return;
   if(!ui.dirty&&!confirm(t('confirmNew'))) return;
   clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; ui.lastView=ui.view===OFF?ui.lastView:ui.view; ui.view=OFF; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave();
-};
-$('#bOpen').onclick=openFile;
-$('#bImport').onclick=importFile;
+}
+$('#bOpen').onclick=openFile; // nur auf dem Handy sichtbar, am Computer im Datei-Menü
 $('#bRate').onclick=toggleRating;
 $('#showdesc').onclick=toggleDesc;
 $('#showcoords').onclick=()=>{ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); };
 $('#bSave').onclick=()=>saveFile(false);
-$('#bSaveAs').onclick=()=>saveFile(true);
 
 $('#undo').onclick=undo; $('#redo').onclick=redo;
 $('#themeSeg').onclick=e=>{
@@ -1567,6 +1566,8 @@ $('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-
 /* Aufklapp-Menüs: Einträge werden beim Öffnen in der aktuellen Sprache erzeugt */
 const tr=list=>list.map(([k,label,hint])=>({k,label:t(label),hint:hint?t(hint):''}));
 const MENUS={
+  fileMenu:{items:()=>[...tr([['new','new',''],['open','open','openT'],['import','import','importHint']]),{sep:true},...tr([['saveAs','saveAs','saveAsT']])],
+    pick:k=>({new:newBox,open:openFile,import:importFile,saveAs:()=>saveFile(true)})[k]()},
   viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL}],
     pick:k=>{ ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
@@ -1578,7 +1579,7 @@ function closeMenus(){ $$('.menu-list').forEach(l=>l.hidden=true); }
 function openMenu(id){
   const root=$('#'+id), list=root.querySelector('.menu-list');
   const items=MENUS[id].items(), check=items.some(it=>'checked' in it);
-  list.innerHTML=items.map(it=>`<button type="button" role="menuitem" data-k="${esc(it.k)}"${check?' class="chk"':''}>${check?`<span class="tick">${it.checked?'✓':''}</span>`:''}${esc(it.label)}${it.hint?`<small>${esc(it.hint)}</small>`:''}</button>`).join('');
+  list.innerHTML=items.map(it=>it.sep?'<hr>':`<button type="button" role="menuitem" data-k="${esc(it.k)}"${check?' class="chk"':''}>${check?`<span class="tick">${it.checked?'✓':''}</span>`:''}${esc(it.label)}${it.hint?`<small>${esc(it.hint)}</small>`:''}</button>`).join('');
   list.classList.remove('right'); list.hidden=false;
   if(list.getBoundingClientRect().right>innerWidth-8) list.classList.add('right'); // nicht über den Rand
   (list.querySelector('.chk .tick:not(:empty)')?.parentElement||list.querySelector('button')).focus();

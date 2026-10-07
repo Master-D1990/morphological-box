@@ -38,10 +38,10 @@ Many people do this in Excel, but sketches, ratings and comparisons quickly get 
 ### How to use it
 
 1. **Open the tool** using the link above. It runs in any modern browser (Chrome, Firefox, Edge, Safari).
-2. The first time you open it, you see an **example** and a short guide. Have a look around, then click **New** to start your own box. You can bring the example back any time via **? Help → Open example**.
+2. The first time you open it, you see an **example** and a short guide. Have a look around, then click **File → New** to start your own box. You can bring the example back any time via **? Help → Open example**.
 3. **Click a box** to edit its title, description, image and rating in the sidebar on the right.
 4. **Create a solution variant** with the **+** button, then click one partial solution per row. Click **Done** when you are finished.
-5. **Save** your work as a file with **Save**. You can open it again later with **Open…**, or send it to someone else.
+5. **Save** your work as a file with **Save**. You can open it again later with **File → Open…**, or send it to someone else.
 6. **Export** (top) prints the box as PDF or creates an Excel or CSV file.
 
 Click **? Help** (top right) for a short guide with all keyboard shortcuts.
@@ -55,9 +55,9 @@ Click **? Help** (top right) for a short guide with all keyboard shortcuts.
 
 ### Working together
 
-Save the file to a shared folder (e.g. OneDrive, Google Drive, Dropbox, Syncthing). Others open it with **Open…**, make their changes and save again.
+Save the file to a shared folder (e.g. OneDrive, Google Drive, Dropbox, Syncthing). Others open it with **File → Open…**, make their changes and save again.
 
-To combine boxes that were worked on separately, use **Import…**: it adds another box file to the open one. Partial solutions go into the sub-function with the same name, new sub-functions are added at the bottom and solution variants on the right.
+To combine boxes that were worked on separately, use **File → Import…**: it adds another box file to the open one. Partial solutions go into the sub-function with the same name, new sub-functions are added at the bottom and solution variants on the right.
 
 Only one person should edit the file at a time. Otherwise the last person to save overwrites the others' changes.
 
@@ -68,7 +68,7 @@ You can also download [`index.html`](index.html) and double-click it. The tool t
 ### FAQ
 
 **My box is gone!**
-The browser cache was probably cleared, or you opened the tool in a different browser or a private window. Open your last saved `.kasten.json` with **Open…**. This is why regular saving matters.
+The browser cache was probably cleared, or you opened the tool in a different browser or a private window. Open your last saved `.kasten.json` with **File → Open…**. This is why regular saving matters.
 
 **Can I open the Excel export without Microsoft Excel?**
 Yes, for example with the free LibreOffice Calc, including the images.
@@ -116,10 +116,10 @@ Viele machen das in Excel, aber mit Skizzen, Bewertungen und Vergleichen wird es
 ### So geht's
 
 1. **Tool öffnen** über den Link oben. Es läuft in jedem aktuellen Browser (Chrome, Firefox, Edge, Safari).
-2. Beim ersten Öffnen siehst du ein **Beispiel** und eine kurze Anleitung. Schau dich um und klicke dann auf **Neu**, um deinen eigenen Kasten anzulegen. Das Beispiel holst du jederzeit über **? Hilfe → Beispiel öffnen** zurück.
+2. Beim ersten Öffnen siehst du ein **Beispiel** und eine kurze Anleitung. Schau dich um und klicke dann auf **Datei → Neu**, um deinen eigenen Kasten anzulegen. Das Beispiel holst du jederzeit über **? Hilfe → Beispiel öffnen** zurück.
 3. **Ein Feld anklicken**, um Titel, Beschreibung, Bild und Bewertung in der Seitenleiste rechts zu bearbeiten.
 4. **Lösungsvariante anlegen** mit dem **+**-Knopf, dann pro Zeile eine Teillösung anklicken. Mit **Fertig** abschliessen.
-5. Mit **Speichern** sicherst du deine Arbeit als Datei. Später öffnest du sie wieder mit **Öffnen…** oder schickst sie jemandem.
+5. Mit **Speichern** sicherst du deine Arbeit als Datei. Später öffnest du sie wieder mit **Datei → Öffnen…** oder schickst sie jemandem.
 6. **Export** (oben) druckt den Kasten als PDF oder erstellt eine Excel- bzw. CSV-Datei.
 
 Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Tastenkürzeln.
@@ -133,9 +133,9 @@ Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Taste
 
 ### Gemeinsam arbeiten
 
-Speichere die Datei in einem geteilten Ordner (z. B. OneDrive, Google Drive, Dropbox, Syncthing). Andere öffnen sie mit **Öffnen…**, machen ihre Änderungen und speichern wieder.
+Speichere die Datei in einem geteilten Ordner (z. B. OneDrive, Google Drive, Dropbox, Syncthing). Andere öffnen sie mit **Datei → Öffnen…**, machen ihre Änderungen und speichern wieder.
 
-Um getrennt bearbeitete Kästen zusammenzuführen, nutze **Importieren…**: Es fügt eine andere Kasten-Datei in den geöffneten Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen werden unten und Lösungsvarianten rechts angefügt.
+Um getrennt bearbeitete Kästen zusammenzuführen, nutze **Datei → Importieren…**: Es fügt eine andere Kasten-Datei in den geöffneten Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen werden unten und Lösungsvarianten rechts angefügt.
 
 Es sollte immer nur eine Person gleichzeitig daran arbeiten. Sonst überschreibt, wer zuletzt speichert, die Änderungen der anderen.
 
@@ -146,7 +146,7 @@ Du kannst [`index.html`](index.html) auch herunterladen und per Doppelklick öff
 ### Häufige Fragen
 
 **Mein Kasten ist weg!**
-Vermutlich wurden die Browserdaten gelöscht, oder du hast das Tool in einem anderen Browser bzw. in einem privaten Fenster geöffnet. Öffne deine zuletzt gespeicherte `.kasten.json` mit **Öffnen…**. Darum ist regelmässiges Speichern wichtig.
+Vermutlich wurden die Browserdaten gelöscht, oder du hast das Tool in einem anderen Browser bzw. in einem privaten Fenster geöffnet. Öffne deine zuletzt gespeicherte `.kasten.json` mit **Datei → Öffnen…**. Darum ist regelmässiges Speichern wichtig.
 
 **Kann ich den Excel-Export ohne Microsoft Excel öffnen?**
 Ja, zum Beispiel mit dem kostenlosen LibreOffice Calc, inklusive Bilder.
