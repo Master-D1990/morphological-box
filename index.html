@@ -321,6 +321,10 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #helpDlg .repo{margin:14px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
 #helpDlg .repo a{color:var(--accent)}
 #helpDlg .help li{margin-bottom:7px}
+#helpDlg .offline{display:flex;gap:12px;align-items:center;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px}
+#helpDlg .offline[hidden]{display:none}
+#helpDlg .offline p{margin:0;font-size:12.5px;color:var(--muted)}
+#helpDlg .offline p b{color:var(--text)}
 #bHelp{font-weight:600}
 #bar2>.g{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
 #bar2>.g+.g{border-left:1px solid var(--line);padding-left:12px;margin-left:4px}
@@ -332,6 +336,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 
 /* Handy: nur ansehen, eine Kopfzeile, keine Bearbeitungs-Elemente, Kasten seitwärts wischen */
 @media (max-width:760px){
+  #dlOffline{display:none!important}
   #bar{flex-wrap:nowrap;padding:6px 10px;gap:6px}
   #bar>*:not(#ptitle):not(#bOpen):not(#langSeg):not(#bHelp){display:none!important}
   #ptitle{flex:1 1 auto;min-width:0;font-size:15px;pointer-events:none}
@@ -452,8 +457,9 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   <div class="dlg-head"><h2 data-i18n="helpH"></h2><button class="icon" id="helpClose" aria-label="Close">✕</button></div>
   <p class="intro" data-i18n="helpIntro"></p>
   <!-- festes <img> mit Alt-Text: so kann Google das Beispielbild in der Bildersuche aufnehmen -->
-  <img class="shot" id="helpShot" src="docs/morphologischer-kasten-beispiel.webp" width="1569" height="2079" alt="Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien" data-i18n-alt="shotAlt">
+  <img class="shot" id="helpShot" onerror="this.style.display='none'" src="docs/morphologischer-kasten-beispiel.webp" width="1569" height="2079" alt="Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien" data-i18n-alt="shotAlt">
   <ul class="help" id="helpList"></ul>
+  <div class="offline" id="dlOffline"><button class="btn" id="dlTool" data-i18n="dlTool"></button><p data-i18n="dlToolHint"></p></div>
   <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
   <p class="repo" data-i18n="repoNote"></p>
 </dialog>
@@ -550,7 +556,7 @@ de:{
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   repoNote:`Open Source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Quellcode und Rückmeldungen auf GitHub</a>`, repoT:'Quellcode, Fehler melden und Ideen auf GitHub',
-  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
+  confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', dlTool:'Tool herunterladen (offline nutzen)', dlToolHint:'Lädt das Programm selbst als HTML-Datei herunter. Läuft per Doppelklick ohne Internet. <b>Deine Kästen sind nicht enthalten</b>, die sicherst du weiterhin mit «Speichern».', toolFile:'Morphologischer-Kasten-Tool', toolDownloaded:name=>'Tool heruntergeladen: '+name, toolDlFail:'Herunterladen nicht möglich. Alternativ index.html auf GitHub herunterladen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
   mobileH:'Am Computer bearbeiten', mobileIntro:'Der morphologische Kasten ist für Maus, Tastatur und einen grossen Bildschirm gemacht. Auf dem Handy kannst du Kästen ansehen: das Beispiel oder eine gespeicherte Datei über «Öffnen…». Seitwärts wischen und mit zwei Fingern zoomen. Zum Bearbeiten öffne die Seite am Computer.', mobileShare:'Link an mich senden', mobileView:'Beispiel ansehen', linkCopied:'Link kopiert',
   helpIntro:'Ein morphologischer Kasten zerlegt ein Problem in Teilfunktionen (Zeilen) und sammelt für jede mögliche Teillösungen (Zellen). Wählst du pro Zeile eine Teillösung, entsteht eine Lösungsvariante. Sie wird als farbige Linie über den Kasten gezeichnet.', confirmSample:'Beispiel öffnen? Der aktuelle Kasten wird ersetzt. Speichere ihn vorher, falls du ihn behalten willst.',
   confirmDelRow:(name,n)=>`Zeile ${q(name)} mit ${n} Teillösung(en) löschen?`, confirmDelCell:name=>`Teillösung ${q(name)} löschen?`,
@@ -627,7 +633,7 @@ en:{
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   repoNote:`Open source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Source code and feedback on GitHub</a>`, repoT:'Source code, bug reports and ideas on GitHub',
-  confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
+  confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', dlTool:'Download the tool (use offline)', dlToolHint:'Downloads the program itself as an HTML file. Runs with a double-click, no internet needed. <b>Your boxes are not included</b>, keep saving them with “Save”.', toolFile:'Morphological-Box-Tool', toolDownloaded:name=>'Tool downloaded: '+name, toolDlFail:'Download not possible. Alternatively download index.html from GitHub', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
   mobileH:'Edit on a computer', mobileIntro:'The morphological box is made for mouse, keyboard and a large screen. On your phone you can view boxes: the example or a saved file via “Open…”. Swipe sideways and pinch to zoom. To edit, open the page on a computer.', mobileShare:'Send me the link', mobileView:'View example', linkCopied:'Link copied',
   helpIntro:'A morphological box breaks a problem into sub-functions (rows) and collects possible partial solutions for each (cells). Picking one partial solution per row gives a solution variant. It is drawn as a coloured line across the box.', confirmSample:'Open the example? The current box will be replaced. Save it first if you want to keep it.',
   confirmDelRow:(name,n)=>`Delete row ${q(name)} with ${n} partial solution(s)?`, confirmDelCell:name=>`Delete partial solution ${q(name)}?`,
@@ -1580,6 +1586,14 @@ $('#mobileShare').onclick=async()=>{
 };
 $('#helpClose').onclick=closeHelp; $('#helpOk').onclick=closeHelp;
 $('#dlgSample').onclick=()=>{ if(loadSample()) closeHelp(); };
+if(location.protocol==='file:') $('#dlOffline').hidden=true; // läuft schon als heruntergeladene Kopie
+$('#dlTool').onclick=async()=>{ // Quelltext der Seite (nicht das veränderte DOM) als eigenständige Datei
+  try{
+    const r=await fetch(location.href.split(/[?#]/)[0],{cache:'no-cache'}); if(!r.ok) throw new Error(r.status);
+    const name=`${t('toolFile')}-${new Date().toLocaleDateString('sv')}.html`;
+    download(new Blob([await r.text()],{type:'text/html'}),name); toast(t('toolDownloaded',name));
+  }catch(e){ console.warn(e); toast(t('toolDlFail')); }
+};
 $('#helpDlg').addEventListener('click',e=>{ if(e.target.id==='helpDlg') closeHelp(); }); // Klick auf Hintergrund
 $('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-seen','1'); }catch(e){} });
 /* Aufklapp-Menüs: Einträge werden beim Öffnen in der aktuellen Sprache erzeugt */

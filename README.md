@@ -63,7 +63,7 @@ Only one person should edit the file at a time. Otherwise the last person to sav
 
 ### Use it offline
 
-You can also download [`index.html`](index.html) and double-click it. The tool then works completely without internet.
+Click **? Help → Download the tool (use offline)**, or download [`index.html`](index.html) here. Double-click the file and the tool works completely without internet. It contains only the tool, not your boxes. Download it again from time to time to stay up to date.
 
 ### FAQ
 
@@ -141,7 +141,7 @@ Es sollte immer nur eine Person gleichzeitig daran arbeiten. Sonst überschreibt
 
 ### Offline nutzen
 
-Du kannst [`index.html`](index.html) auch herunterladen und per Doppelklick öffnen. Dann funktioniert das Tool komplett ohne Internet.
+Klicke auf **? Hilfe → Tool herunterladen (offline nutzen)** oder lade hier [`index.html`](index.html) herunter. Per Doppelklick funktioniert das Tool dann komplett ohne Internet. Die Datei enthält nur das Tool, nicht deine Kästen. Lade sie ab und zu neu herunter, damit du aktuell bleibst.
 
 ### Häufige Fragen
 
