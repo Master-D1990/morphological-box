@@ -14,14 +14,14 @@
 <meta property="og:url" id="ogurl" content="https://master-d1990.github.io/morphological-box/">
 <meta property="og:title" content="Morphological Box | Morphologischer Kasten online">
 <meta property="og:description" content="Free browser tool for morphological boxes: sketches, traffic-light ratings and solution variants as coloured lines. No sign-up, data stays local.">
-<meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png">
+<meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/morphological-box-preview.png">
 <meta property="og:image:alt" content="Morphological box with sub-functions, partial solutions, traffic-light ratings and two solution variants drawn as coloured lines">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Morphological Box",
 "alternateName":["Morphologischer Kasten","Zwicky box","Morphological chart"],
 "description":"Free online tool for morphological boxes (Zwicky boxes): sub-functions and solutions with images and sketches, traffic-light ratings with reasons, solution variants drawn as coloured lines, variant comparison, print/PDF. Runs in the browser, no sign-up, data stays local.",
-"url":"https://master-d1990.github.io/morphological-box/","image":"https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png","screenshot":["https://master-d1990.github.io/morphological-box/docs/morphologischer-kasten-beispiel.png","https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png"],"applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)",
+"url":"https://master-d1990.github.io/morphological-box/","image":"https://master-d1990.github.io/morphological-box/docs/morphological-box-preview.png","screenshot":["https://master-d1990.github.io/morphological-box/docs/morphologischer-kasten-beispiel.png","https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png"],"applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)",
 "inLanguage":["de-CH","en"],"isAccessibleForFree":true,"license":"https://opensource.org/licenses/MIT",
 "offers":{"@type":"Offer","price":"0","priceCurrency":"CHF"},
 "codeRepository":"https://github.com/Master-D1990/morphological-box"}
@@ -308,7 +308,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #helpDlg h2,#mobileDlg h2{margin:0;font-size:19px}
 #helpDlg .dlg-head,#mobileDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 #helpDlg .intro,#mobileDlg .intro{color:var(--muted);margin:0 0 12px}
-#helpDlg .shot{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;margin:0 0 12px}
+#helpDlg .shot{display:block;width:auto;max-width:100%;height:auto;max-height:340px;margin-inline:auto;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
 #helpDlg .repo{margin:14px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
 #helpDlg .repo a{color:var(--accent)}
@@ -443,7 +443,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   <div class="dlg-head"><h2 data-i18n="helpH"></h2><button class="icon" id="helpClose" aria-label="Close">✕</button></div>
   <p class="intro" data-i18n="helpIntro"></p>
   <!-- festes <img> mit Alt-Text: so kann Google das Beispielbild in der Bildersuche aufnehmen -->
-  <img class="shot" id="helpShot" src="docs/morphologischer-kasten-beispiel.webp" width="1500" height="1000" alt="Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien" data-i18n-alt="shotAlt">
+  <img class="shot" id="helpShot" src="docs/morphologischer-kasten-beispiel.webp" width="1569" height="2079" alt="Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien" data-i18n-alt="shotAlt">
   <ul class="help" id="helpList"></ul>
   <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
   <p class="repo" data-i18n="repoNote"></p>
