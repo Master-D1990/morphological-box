@@ -57,6 +57,8 @@ Click **? Help** (top right) for a short guide with all keyboard shortcuts.
 
 Save the file to a shared folder (e.g. OneDrive, Google Drive, Dropbox, Syncthing). Others open it with **Open…**, make their changes and save again.
 
+To combine boxes that were worked on separately, use **Import…**: it adds another box file to the open one. Partial solutions go into the sub-function with the same name, new sub-functions are added at the bottom and solution variants on the right.
+
 Only one person should edit the file at a time. Otherwise the last person to save overwrites the others' changes.
 
 ### Use it offline
@@ -132,6 +134,8 @@ Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Taste
 ### Gemeinsam arbeiten
 
 Speichere die Datei in einem geteilten Ordner (z. B. OneDrive, Google Drive, Dropbox, Syncthing). Andere öffnen sie mit **Öffnen…**, machen ihre Änderungen und speichern wieder.
+
+Um getrennt bearbeitete Kästen zusammenzuführen, nutze **Importieren…**: Es fügt eine andere Kasten-Datei in den geöffneten Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen werden unten und Lösungsvarianten rechts angefügt.
 
 Es sollte immer nur eine Person gleichzeitig daran arbeiten. Sonst überschreibt, wer zuletzt speichert, die Änderungen der anderen.
 
