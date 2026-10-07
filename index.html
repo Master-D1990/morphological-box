@@ -259,6 +259,12 @@ textarea{resize:vertical;min-height:40px}
 .pts{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 .warn{font-size:12px;color:var(--warn);margin:4px 0}
 .warn.red{color:var(--r)}
+#side h3.hlink{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer}
+.linkbtn:hover{text-decoration:underline}
+#critSec{margin:0 -8px;padding:1px 8px 8px;border-radius:8px}
+#critSec.flash{animation:flash 1.8s ease-out}
+@keyframes flash{0%,35%{background:var(--accent-soft);box-shadow:0 0 0 2px var(--ring)}100%{background:transparent;box-shadow:0 0 0 2px transparent}}
 .crit{display:flex;gap:4px;align-items:center;margin-bottom:6px}
 .crit input[type=text]{margin-top:0!important}
 .eye{border:1px solid var(--line);background:var(--field);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--ph);flex:0 0 30px}
@@ -517,7 +523,7 @@ de:{
   cellPh:'Bild hierher ziehen<br>oder anklicken + Strg+V', moveRow:'Zeile verschieben', subfnPh:'Teilfunktion', delRow:'Zeile löschen',
   addCellT:'Teillösung hinzufügen oder Bilder hierher ziehen', addRow:'+ Teilfunktion',
   back:'← Übersicht', title:'Titel', desc:'Beschreibung', imgDropHint:'Bild hierher ziehen<br>oder Strg+V',
-  chooseImg:'Bild wählen…', rmImg:'Bild entfernen', rating:'Bewertung', noRating:'Keine Bewertung', reasonPh:'Begründung …',
+  chooseImg:'Bild wählen…', rmImg:'Bild entfernen', rating:'Bewertung', editCrit:'Kriterien bearbeiten →', editCritMenu:'Kriterien bearbeiten…', noRating:'Keine Bewertung', reasonPh:'Begründung …',
   overallView:'Alle Kriterien', overallViewHint:'schlechteste Ampel zählt', offView:'Aus', rateTglT:'Ampel ein/aus. Beim Ideensammeln ausschalten, damit Bewertungen die Kreativität nicht bremsen (Taste B)', keysOff:'Ampel ist aus. Zum Bewerten einschalten (Taste B)', keysHintAll:`Für die Tasten ${kb(1)} ${kb(2)} ${kb(3)} oben bei «Kriterium» ein einzelnes Kriterium wählen. Pfeiltasten wechseln die Zelle.`, keysAll:'Tasten 1/2/3 bewerten ein einzelnes Kriterium. Wähle zuerst oben bei «Kriterium» eines aus',
   keysHint:c=>`Tasten ${kb(1)} ${kb(2)} ${kb(3)} setzen für ${q(c)} Grün/Gelb/Rot, ${kb(0)} löscht. Pfeiltasten wechseln die Zelle.`,
   inVariants:'In Lösungsvarianten', noVariants:'Noch keine Lösungsvarianten.', delCell:'Teillösung löschen',
@@ -594,7 +600,7 @@ en:{
   cellPh:'Drop an image here<br>or click + Ctrl+V', moveRow:'Move row', subfnPh:'Sub-function', delRow:'Delete row',
   addCellT:'Add a partial solution or drop images here', addRow:'+ Sub-function',
   back:'← Overview', title:'Title', desc:'Description', imgDropHint:'Drop an image here<br>or Ctrl+V',
-  chooseImg:'Choose image…', rmImg:'Remove image', rating:'Rating', noRating:'No rating', reasonPh:'Reason …',
+  chooseImg:'Choose image…', rmImg:'Remove image', rating:'Rating', editCrit:'Edit criteria →', editCritMenu:'Edit criteria…', noRating:'No rating', reasonPh:'Reason …',
   overallView:'All criteria', overallViewHint:'worst rating counts', offView:'Off', rateTglT:'Traffic light on/off. Switch it off while collecting ideas so ratings don’t hold back creativity (key B)', keysOff:'Traffic light is off. Switch it on to rate (key B)', keysHintAll:`To use the keys ${kb(1)} ${kb(2)} ${kb(3)}, choose a single criterion under “Criterion” at the top. Arrow keys move between cells.`, keysAll:'Keys 1/2/3 rate a single criterion. Choose one under “Criterion” at the top first',
   keysHint:c=>`Keys ${kb(1)} ${kb(2)} ${kb(3)} set green/yellow/red for ${q(c)}, ${kb(0)} clears. Arrow keys move between cells.`,
   inVariants:'In solution variants', noVariants:'No solution variants yet.', delCell:'Delete partial solution',
@@ -998,7 +1004,7 @@ function cellEditor({row,cell}){
   <label class="f">${t('desc')}<textarea data-edit="desc" rows="3">${esc(cell.desc)}</textarea></label>
   <div class="imgdrop" id="imgdrop">${src?`<img src="${src}" data-zoom="${cell.img}" alt="">`:phHtml('imgDropHint')}</div>
   <div class="btnrow"><button class="btn small" data-act="pickimg">${t('chooseImg')}</button>${cell.img?`<button class="btn small" data-act="rmimg">${t('rmImg')}</button>`:''}</div>
-  <div class="rate-sec"><h3>${t('rating')}</h3>
+  <div class="rate-sec"><h3 class="hlink">${t('rating')}<button class="linkbtn" data-act="gocrit">${t('editCrit')}</button></h3>
   ${P.criteria.map(k=>{const r=cell.ratings[k.id]||{};return `<div class="rating"><div class="rhead"><b>${esc(k.name)}</b><span class="lights">`+
     ['g','y','r'].map(l=>`<button class="light ${l} ${r.level===l?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="${l}" title="${LV(l)}">${ICO[l]}</button>`).join('')+
     `<button class="light none ${!r.level?'on':''}" data-act="rate" data-crit="${k.id}" data-lvl="" title="${t('noRating')}">–</button></span></div>`+
@@ -1024,9 +1030,9 @@ function overview(){
   return `<h3 style="margin-top:0">${t('variantsH')}</h3>
   ${vars||`<div class="muted small" style="margin-bottom:8px">${t('noVarsLong')}</div>`}
   <button class="btn small" data-act="addvar">${t('addVar')}</button>
-  <h3>${t('criteriaH')}</h3>
+  <div id="critSec"><h3>${t('criteriaH')}</h3>
   ${P.criteria.map(k=>`<div class="crit"><button class="eye ${ui.view===k.id?'on':''}" data-act="viewcrit" data-crit="${k.id}" title="${t('viewCritT')}">◉</button><input type="text" data-edit="critname" data-crit="${k.id}" value="${esc(k.name)}"><button class="icon" data-act="delcrit" data-crit="${k.id}" title="${t('delCrit')}">✕</button></div>`).join('')}
-  <button class="btn small" data-act="addcrit">${t('addCrit')}</button>
+  <button class="btn small" data-act="addcrit">${t('addCrit')}</button></div>
   <h3>${t('helpH')}</h3>
   <div class="btnrow"><button class="btn small" data-act="help">${t('helpBtn')}</button><button class="btn small" data-act="loadsample">${t('loadSample')}</button><a class="btn small" href="${REPO}" target="_blank" rel="noopener" title="${esc(t('repoT'))}">GitHub</a></div>`;
 }
@@ -1043,6 +1049,12 @@ function setSide(show){
   drawLines();
 }
 const sideVisible=()=>!document.body.classList.contains('noside');
+function showCriteria(){ // Übersicht zeigen, zu «Bewertungskriterien» scrollen und kurz hervorheben
+  if(!sideVisible()) setSide(true);
+  select(null);
+  const s=$('#critSec'); s.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+  s.classList.remove('flash'); void s.offsetWidth; s.classList.add('flash');
+}
 function select(id){
   ui.sel=id; if(id) ui.pasteVar=null;
   if(id&&!sideVisible()) setSide(true);
@@ -1568,8 +1580,8 @@ const tr=list=>list.map(([k,label,hint])=>({k,label:t(label),hint:hint?t(hint):'
 const MENUS={
   fileMenu:{items:()=>[...tr([['new','new',''],['open','open','openT'],['import','import','importHint']]),{sep:true},...tr([['saveAs','saveAs','saveAsT']])],
     pick:k=>({new:newBox,open:openFile,import:importFile,saveAs:()=>saveFile(true)})[k]()},
-  viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL}],
-    pick:k=>{ ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
+  viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL},{sep:true},{k:'@edit',label:t('editCritMenu')}],
+    pick:k=>{ if(k==='@edit') return showCriteria(); ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
   sortMenu:{items:()=>tr([...(ui.view===OFF?[]:[['rating','sortRating','sortRatingHint']]),['score','sortScore','sortScoreHint'],['alpha','sortAlpha',''],['variants','sortVar','sortVarHint']]), pick:k=>sortCells(k)},
   varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},...(ui.view===ALL||ui.view===OFF?[]:[{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')}]),{k:'alpha',label:t('sortAlpha'),hint:''}],
@@ -1659,6 +1671,7 @@ $('#side').addEventListener('click',e=>{
   const f=ui.sel&&findCell(ui.sel), id=b.dataset.var||b.dataset.crit;
   switch(b.dataset.act){
     case 'back': select(null); break;
+    case 'gocrit': showCriteria(); break;
     case 'pickimg': $('#imgFile').click(); break;
     case 'rmimg': change(()=>{f.cell.img=null;}); break;
     case 'rate': change(()=>setRating(f.cell,b.dataset.crit,b.dataset.lvl)); break;
