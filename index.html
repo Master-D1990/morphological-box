@@ -738,7 +738,7 @@ function afterHistory(){ editSnap=null; ui.dirty=true; validateUi(); renderAll()
 function resetHistory(){ undoStack=[]; redoStack=[]; editSnap=null; }
 function validateUi(){
   if(ui.sel&&!findCell(ui.sel)) ui.sel=null;
-  if(ui.view!==ALL&&ui.view!==OFF&&!P.criteria.some(k=>k.id===ui.view)) ui.view=P.criteria[0].id;
+  if(ui.view!==ALL&&ui.view!==OFF&&!P.criteria.some(k=>k.id===ui.view)) ui.view=ALL; // Standard: «Alle Kriterien»
   if(ui.editVar&&!getVar(ui.editVar)) ui.editVar=null;
   if(narrow()) ui.view=ALL; // Handy: keine Ansichtsleiste, Ampel immer über alle Kriterien (schlechteste zählt)
 }
@@ -881,7 +881,7 @@ function renderBanner(){
 // Koordinaten wie in Excel: Lösung (Spalte) als Buchstabe, Teilfunktion (Zeile) als Zahl, z. B. B2
 function coordOf(c,row){ return colName(row.cells.indexOf(c))+(P.rows.indexOf(row)+1); }
 function coordById(id){ const f=findCell(id); return f?coordOf(f.cell,f.row):''; }
-const onView=()=>ui.lastView===ALL||P.criteria.some(k=>k.id===ui.lastView)?ui.lastView:P.criteria[0].id; // Kriterium beim Wiedereinschalten
+const onView=()=>ui.lastView===ALL||P.criteria.some(k=>k.id===ui.lastView)?ui.lastView:ALL; // Kriterium beim Wiedereinschalten
 function toggleRating(){ // Ampel aus = Ideenphase; beim Einschalten zurück zum zuletzt gewählten Kriterium
   if(ui.view===OFF) ui.view=onView();
   else { ui.lastView=ui.view; ui.view=OFF; }
