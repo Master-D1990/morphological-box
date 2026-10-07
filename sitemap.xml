@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://master-d1990.github.io/morphological-box/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://master-d1990.github.io/morphological-box/?lang=en"/>
+    <image:image><image:loc>https://master-d1990.github.io/morphological-box/docs/morphologischer-kasten-beispiel.webp</image:loc></image:image>
   </url>
-  <url><loc>https://master-d1990.github.io/morphological-box/?lang=de</loc></url>
-  <url><loc>https://master-d1990.github.io/morphological-box/?lang=en</loc></url>
+  <url>
+    <loc>https://master-d1990.github.io/morphological-box/?lang=de</loc>
+    <image:image><image:loc>https://master-d1990.github.io/morphological-box/docs/morphologischer-kasten-beispiel.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://master-d1990.github.io/morphological-box/?lang=en</loc>
+    <image:image><image:loc>https://master-d1990.github.io/morphological-box/docs/morphological-box-example.webp</image:loc></image:image>
+  </url>
 </urlset>

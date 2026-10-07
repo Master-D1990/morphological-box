@@ -14,13 +14,14 @@
 <meta property="og:url" id="ogurl" content="https://master-d1990.github.io/morphological-box/">
 <meta property="og:title" content="Morphological Box | Morphologischer Kasten online">
 <meta property="og:description" content="Free browser tool for morphological boxes: sketches, traffic-light ratings and solution variants as coloured lines. No sign-up, data stays local.">
-<meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/screenshot-en.png">
+<meta property="og:image" content="https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png">
+<meta property="og:image:alt" content="Morphological box with sub-functions, partial solutions, traffic-light ratings and two solution variants drawn as coloured lines">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Morphological Box",
 "alternateName":["Morphologischer Kasten","Zwicky box","Morphological chart"],
 "description":"Free online tool for morphological boxes (Zwicky boxes): sub-functions and solutions with images and sketches, traffic-light ratings with reasons, solution variants drawn as coloured lines, variant comparison, print/PDF. Runs in the browser, no sign-up, data stays local.",
-"url":"https://master-d1990.github.io/morphological-box/","image":"https://master-d1990.github.io/morphological-box/docs/screenshot-en.png","applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)",
+"url":"https://master-d1990.github.io/morphological-box/","image":"https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png","screenshot":["https://master-d1990.github.io/morphological-box/docs/morphologischer-kasten-beispiel.png","https://master-d1990.github.io/morphological-box/docs/morphological-box-example.png"],"applicationCategory":"DesignApplication","operatingSystem":"Any (web browser)",
 "inLanguage":["de-CH","en"],"isAccessibleForFree":true,"license":"https://opensource.org/licenses/MIT",
 "offers":{"@type":"Offer","price":"0","priceCurrency":"CHF"},
 "codeRepository":"https://github.com/Master-D1990/morphological-box"}
@@ -307,6 +308,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #helpDlg h2,#mobileDlg h2{margin:0;font-size:19px}
 #helpDlg .dlg-head,#mobileDlg .dlg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 #helpDlg .intro,#mobileDlg .intro{color:var(--muted);margin:0 0 12px}
+#helpDlg .shot{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;margin:0 0 12px}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
 #helpDlg .repo{margin:14px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
 #helpDlg .repo a{color:var(--accent)}
@@ -440,6 +442,8 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 <dialog id="helpDlg">
   <div class="dlg-head"><h2 data-i18n="helpH"></h2><button class="icon" id="helpClose" aria-label="Close">✕</button></div>
   <p class="intro" data-i18n="helpIntro"></p>
+  <!-- festes <img> mit Alt-Text: so kann Google das Beispielbild in der Bildersuche aufnehmen -->
+  <img class="shot" id="helpShot" src="docs/morphologischer-kasten-beispiel.webp" width="1500" height="1000" alt="Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien" data-i18n-alt="shotAlt">
   <ul class="help" id="helpList"></ul>
   <div class="btnrow" style="margin-top:14px"><button class="btn" id="dlgSample" data-i18n="loadSample"></button><span class="spacer"></span><button class="btn primary" id="helpOk" data-i18n="helpOk"></button></div>
   <p class="repo" data-i18n="repoNote"></p>
@@ -519,7 +523,7 @@ de:{
   rmSketch:'Skizze entfernen', sketchHint:'Bild hierher ziehen<br>oder anklicken + Strg+V', addSketch:'Bild wählen…',
   notePh:'Notiz / Begründung der Lösungsvariante …', variantsH:'Lösungsvarianten',
   noVarsLong:'Noch keine Lösungsvarianten. Lege eine an und klicke dann pro Zeile eine Teillösung an.',
-  criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s',
+  criteriaH:'Bewertungskriterien', viewCritT:'Als Ampel-Kriterium verwenden', delCrit:'Kriterium löschen', addCrit:'+ Kriterium', helpH:'So funktioniert\'s', shotAlt:'Morphologischer Kasten mit Teilfunktionen, Teillösungen, Ampelbewertung und zwei Lösungsvarianten als farbige Linien',
   help:()=>`<li><b>Vorgehen</b>: erst Teillösungen sammeln und dabei noch nicht bewerten. Schaltest du oben die «Ampel» aus (Taste ${kb('B')}), sind alle Bewertungen ausgeblendet. Erst wenn keine neuen Ideen mehr kommen, bewerten. «Alle Kriterien» färbt nach der schlechtesten Ampel: ein Rot macht die Teillösung rot.</li>
     <li><b>Zelle anklicken</b>: rechts Titel, Bild, Ampel und Begründung bearbeiten.</li>
     <li><b>Bild</b>: Datei auf eine Zelle ziehen oder Zelle wählen und ${kb('Strg')}+${kb('V')}. Bilder werden automatisch verkleinert.</li>
@@ -595,7 +599,7 @@ en:{
   rmSketch:'Remove sketch', sketchHint:'Drop an image here<br>or click + Ctrl+V', addSketch:'Choose image…',
   notePh:'Note / rationale for this solution variant …', variantsH:'Solution variants',
   noVarsLong:'No solution variants yet. Create one, then click one partial solution per row.',
-  criteriaH:'Evaluation criteria', viewCritT:'Use as rating criterion', delCrit:'Delete criterion', addCrit:'+ Criterion', helpH:'How to use',
+  criteriaH:'Evaluation criteria', viewCritT:'Use as rating criterion', delCrit:'Delete criterion', addCrit:'+ Criterion', helpH:'How to use', shotAlt:'Morphological box with sub-functions, partial solutions, traffic-light ratings and two solution variants drawn as coloured lines',
   help:()=>`<li><b>Approach</b>: first collect partial solutions without rating them. Switching off “Traffic light” at the top (key ${kb('B')}) hides all ratings. Only rate once no new ideas come up. “All criteria” colours by the worst rating: one red makes the partial solution red.</li>
     <li><b>Click a cell</b> to edit its title, image, rating and reason on the right.</li>
     <li><b>Image</b>: drop a file on a cell, or select a cell and press ${kb('Ctrl')}+${kb('V')}. Images are scaled down automatically.</li>
@@ -650,6 +654,8 @@ function applyStatic(){
   if(ul==='de'||ul==='en'){ $('#canon').href=base+'?lang='+ul; $('#ogurl').content=base+'?lang='+ul; }
   $$('[data-i18n]').forEach(el=>{ el.innerHTML=t(el.dataset.i18n); });
   $$('[data-i18n-title]').forEach(el=>{ el.title=t(el.dataset.i18nTitle); });
+  $$('[data-i18n-alt]').forEach(el=>{ el.alt=t(el.dataset.i18nAlt); });
+  $('#helpShot').src=LANG==='de'?'docs/morphologischer-kasten-beispiel.webp':'docs/morphological-box-example.webp';
   $$('#langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
 }
 function setLang(l){

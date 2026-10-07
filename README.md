@@ -7,7 +7,7 @@ No installation, no account, no data upload.
 
 [English](#english) · [Deutsch](#deutsch) · [For developers](#for-developers)
 
-![Screenshot](docs/screenshot-en.png)
+![Morphological box with sub-functions, partial solutions and solution variants](docs/morphological-box-example.png)
 
 ---
 
@@ -87,7 +87,7 @@ Please open an [issue](https://github.com/Master-D1990/morphological-box/issues)
 
 👉 **Tool auf Deutsch öffnen: https://master-d1990.github.io/morphological-box/?lang=de**
 
-![Screenshot](docs/screenshot-de.png)
+![Morphologischer Kasten mit Teilfunktionen, Teillösungen und Lösungsvarianten](docs/morphologischer-kasten-beispiel.png)
 
 ### Was ist ein morphologischer Kasten?
 
