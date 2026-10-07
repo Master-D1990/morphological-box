@@ -53,6 +53,12 @@ Click **? Help** (top right) for a short guide with all keyboard shortcuts.
 - While you work, your current state is cached automatically in your browser.
 - That browser cache is **not a backup**. It is lost if you clear your browser data or switch to another browser or computer. Click **Save** regularly. This creates a `.kasten.json` file that contains everything, including all images.
 
+### Privacy, security and warranty
+
+- **Privacy:** The tool does not send any data. Everything stays in your browser. The website is hosted on GitHub Pages, and GitHub may log technical data such as your IP address ([GitHub privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)).
+- **Security:** `.kasten.json` files contain only data, no executable code. The tool checks every file when opening or importing it.
+- **Warranty:** Use at your own risk, without any warranty. See the [MIT License](LICENSE).
+
 ### Working together
 
 Save the file to a shared folder (e.g. OneDrive, Google Drive, Dropbox, Syncthing). Others open it with **File → Open…**, make their changes and save again.
@@ -130,6 +136,12 @@ Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Taste
 
 - Während du arbeitest, wird der aktuelle Stand automatisch im Browser zwischengespeichert.
 - Dieser Zwischenspeicher ist **keine Sicherung**. Er geht verloren, wenn du die Browserdaten löschst oder den Browser oder Computer wechselst. Klicke deshalb regelmässig auf **Speichern**. So entsteht eine `.kasten.json`-Datei, die alles enthält, auch alle Bilder.
+
+### Datenschutz, Sicherheit und Gewähr
+
+- **Datenschutz:** Das Tool überträgt keine Daten, alles bleibt in deinem Browser. Die Webseite wird über GitHub Pages bereitgestellt. GitHub kann dabei technische Daten wie die IP-Adresse protokollieren ([Datenschutzerklärung von GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)).
+- **Sicherheit:** `.kasten.json`-Dateien enthalten nur Daten, keinen ausführbaren Code. Das Tool prüft jede Datei beim Öffnen und Importieren.
+- **Gewähr:** Die Nutzung erfolgt auf eigenes Risiko und ohne Gewähr, siehe [MIT-Lizenz](LICENSE).
 
 ### Gemeinsam arbeiten
 

@@ -319,7 +319,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 #helpDlg .shot{display:block;width:auto;max-width:100%;height:auto;max-height:340px;margin-inline:auto;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
 #helpDlg .help{font-size:14px;color:var(--text);padding-left:20px}
 #helpDlg .repo{margin:14px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
-#helpDlg .repo a{color:var(--accent)}
+#helpDlg .repo a,#helpDlg .help a{color:var(--accent)}
 #helpDlg .help li{margin-bottom:7px}
 #helpDlg .offline{display:flex;gap:12px;align-items:center;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px}
 #helpDlg .offline[hidden]{display:none}
@@ -552,7 +552,8 @@ de:{
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>
-    <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>`,
+    <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>
+    <li><b>Datenschutz & Gewähr</b>: Das Tool überträgt keine Daten, alles bleibt in deinem Browser. Die Webseite liegt auf GitHub Pages, GitHub kann dabei technische Daten wie die IP-Adresse protokollieren (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>). Kasten-Dateien enthalten nur Daten, keinen ausführbaren Code, und werden beim Öffnen geprüft. Nutzung ohne Gewähr (MIT-Lizenz).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   repoNote:`Open Source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Quellcode und Rückmeldungen auf GitHub</a>`, repoT:'Quellcode, Fehler melden und Ideen auf GitHub',
@@ -629,7 +630,8 @@ en:{
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>
-    <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>`,
+    <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>
+    <li><b>Privacy & warranty</b>: the tool does not send any data, everything stays in your browser. The website is hosted on GitHub Pages, and GitHub may log technical data such as your IP address (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub privacy statement</a>). Box files contain only data, no executable code, and are checked when opened. No warranty (MIT License).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB',
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   repoNote:`Open source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Source code and feedback on GitHub</a>`, repoT:'Source code, bug reports and ideas on GitHub',
@@ -692,7 +694,7 @@ const newCell=(title='')=>({id:uid(),title,desc:'',img:null,ratings:{}});
 const getVar=id=>P.variants.find(v=>v.id===id);
 const ALL='*', OFF='-'; // Ampel-Ansicht «Alle Kriterien» bzw. «Aus» (Ideenphase) statt eines einzelnen Kriteriums
 // Ansicht des Kastens, wird in der Datei gespeichert. view: gewähltes Ampel-Kriterium (auch bei ausgeschalteter Ampel), rating: Ampel ein
-const SETTINGS={cellW:170,lineOp:0.55,coords:true,view:ALL,rating:true};
+const SETTINGS={cellW:170,lineOp:0.55,coords:true,showDesc:false,view:ALL,rating:true};
 function viewFromSettings(){ ui.lastView=P.settings.view; ui.view=P.settings.rating===false?OFF:P.settings.view; }
 function setView(v){ // Ampel-Ansicht durch den Nutzer ändern: in die Datei-Einstellungen übernehmen
   ui.view=v; if(v!==OFF){ ui.lastView=v; P.settings.view=v; } P.settings.rating=v!==OFF;
@@ -733,15 +735,38 @@ function sampleProject(){
       {id:uid(),name:t('variantN','B'),color:COLORS[1],visible:true,note:S.notes[1],picks:pick(3,0,0,0),imgs:[]}],
     settings:{...SETTINGS}};
 }
-function normalize(p){
-  p.title??='';
-  p.criteria=Array.isArray(p.criteria)&&p.criteria.length?p.criteria:[{id:uid(),name:t('overall')}];
-  p.rows=Array.isArray(p.rows)?p.rows:[];
-  p.rows.forEach(r=>{r.cells=r.cells||[];r.cells.forEach(c=>{c.ratings=c.ratings||{};c.desc??='';c.title??='';});});
-  p.variants=Array.isArray(p.variants)?p.variants:[];
-  p.variants.forEach(v=>{v.picks=v.picks||{};v.imgs=Array.isArray(v.imgs)?v.imgs:[];v.visible??=true;v.note??='';v.color=v.color||COLORS[0];});
-  p.settings=Object.assign({...SETTINGS},p.settings||{}); // fehlende Werte (z. B. ältere Dateien ohne Ampel-Ansicht) mit Standard füllen
-  return p;
+/* Daten aus Datei/Zwischenspeicher prüfen, bevor sie verwendet werden. Eine Datei kann von fremder Hand stammen:
+   Texte werden beim Anzeigen mit esc() abgesichert, alles andere (IDs, Farben, Stufen, Zahlen, Bilder) landet teils
+   ungeprüft in HTML/CSS und wird deshalb hier auf erlaubte Werte beschränkt. Bilder: nur Rasterformate, wie sie
+   das Tool selbst erzeugt (SVG könnte Skript enthalten und liefe als blob:-Adresse mit den Rechten des Tools).
+   Unbekannte Felder bleiben erhalten (Dateien neuerer Versionen), werden aber nirgends angezeigt. */
+const SAFE_ID=/^[A-Za-z0-9_-]{1,64}$/, BAD_KEY=new Set(['__proto__','constructor','prototype']);
+const SAFE_IMG=/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=\s]*$/;
+function normalize(p,imgs){ // -> {project,images}
+  const obj=x=>x&&typeof x==='object'&&!Array.isArray(x)?x:{}, arr=x=>Array.isArray(x)?x.filter(y=>y&&typeof y==='object'):[];
+  const str=x=>typeof x==='string'?x:x==null?'':String(x);
+  const num=(x,lo,hi,d)=>typeof x==='number'&&isFinite(x)?Math.min(hi,Math.max(lo,x)):d, bool=(x,d)=>typeof x==='boolean'?x:d;
+  const ids=new Map(), id=x=>{ // ungültige IDs durch neue ersetzen, Verweise darauf gleich mit
+    const k=str(x); if(SAFE_ID.test(k)&&!BAD_KEY.has(k)) return k;
+    if(!ids.has(k)) ids.set(k,uid()); return ids.get(k);
+  };
+  p=obj(p);
+  const crits=arr(p.criteria).map(k=>({...k,id:id(k.id),name:str(k.name)}));
+  const project={...p,title:str(p.title),
+    criteria:crits.length?crits:[{id:uid(),name:t('overall')}],
+    rows:arr(p.rows).map(r=>({...r,id:id(r.id),name:str(r.name),cells:arr(r.cells).map(c=>({...c,id:id(c.id),title:str(c.title),desc:str(c.desc),
+      img:c.img==null?null:id(c.img),
+      ratings:Object.fromEntries(Object.entries(obj(c.ratings)).map(([k,v])=>[id(k),{...obj(v),level:['g','y','r'].includes(obj(v).level)?v.level:'',reason:str(obj(v).reason)}]))}))})),
+    variants:arr(p.variants).map((v,i)=>({...v,id:id(v.id),name:str(v.name),note:str(v.note),
+      color:/^#[0-9a-fA-F]{6}$/.test(v.color)?v.color:COLORS[i%COLORS.length],visible:bool(v.visible,true),
+      picks:Object.fromEntries(Object.entries(obj(v.picks)).map(([r,c])=>[id(r),id(c)])),
+      imgs:Array.isArray(v.imgs)?v.imgs.map(id):[]}))};
+  const st=obj(p.settings); // fehlende Werte (z. B. ältere Dateien ohne Ampel-Ansicht) mit Standard füllen
+  project.settings={...st,cellW:num(st.cellW,120,320,SETTINGS.cellW),lineOp:num(st.lineOp,0,1,SETTINGS.lineOp),
+    coords:bool(st.coords,SETTINGS.coords),showDesc:bool(st.showDesc,SETTINGS.showDesc),rating:bool(st.rating,SETTINGS.rating),
+    view:st.view===ALL||st.view==null?ALL:id(st.view)};
+  const images={}; Object.entries(obj(imgs)).forEach(([k,v])=>{ if(typeof v==='string'&&SAFE_IMG.test(v)) images[id(k)]=v; });
+  return {project,images};
 }
 
 /* ---------- Undo ---------- */
@@ -1179,7 +1204,7 @@ function parseFile(text){ // Kasten-Datei prüfen und migrieren; null bei Fehler
 function loadData(text,{quiet=false}={}){
   const m=parseFile(text); if(!m) return false;
   let d=m.data;
-  clearBlobs(); P=normalize(d.project); IMG=d.images||{}; ui.sample=false; viewFromSettings();
+  clearBlobs(); ({project:P,images:IMG}=normalize(d.project,d.images)); ui.sample=false; viewFromSettings();
   resetHistory(); ui.sel=null; ui.editVar=null; ui.dirty=false;
   validateUi(); renderAll(); scheduleSave();
   if(m.from<SCHEMA_VERSION){ ui.dirty=true; updateStatus(); toast(t('migrated',m.from,SCHEMA_VERSION)); }
@@ -1188,7 +1213,7 @@ function loadData(text,{quiet=false}={}){
 }
 function importData(text){ // anderen Kasten einfügen: gleichnamige Teilfunktionen/Kriterien zusammenführen, Rest unten bzw. rechts anfügen
   const m=parseFile(text); if(!m) return false;
-  const src=normalize(m.data.project), simg=m.data.images||{};
+  const {project:src,images:simg}=normalize(m.data.project,m.data.images);
   const key=s=>(s||'').trim().toLowerCase();
   const imgMap={}, newImg=id=>!id||!simg[id]?null:imgMap[id]??=(()=>{ const nid=uid(); IMG[nid]=simg[id]; return nid; })();
   const n={cells:0,rows:0,vars:src.variants.length};
@@ -1524,7 +1549,7 @@ async function buildXlsx(){
   return zipStore(files,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 function buildCsv(){
-  const sep=LANG==='de'?';':',', cq=v=>{ const s=String(v??''); return /[";,\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const sep=LANG==='de'?';':',', cq=v=>{ let s=String(v??''); if(/^[=+\-@\t\r]/.test(s)) s="'"+s; /* sonst rechnet Excel Text als Formel */ return /[";,\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
   const head=[t('xlColPos'),t('xlColSubfn'),t('xlColSolution'),t('desc'),...P.criteria.flatMap(k=>[`${k.name}: ${t('xlColLevel')}`,`${k.name}: ${t('xlColReason')}`]),t('xlColOverall'),t('xlColVariants')];
   const lines=[head.map(cq).join(sep)];
   for(const row of P.rows) for(const c of row.cells){
@@ -1900,7 +1925,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
       const m=migrate(JSON.parse(saved.data));
       if(m.newer){ // Zwischenspeicher einer neueren Version: sichern statt überschreiben
         await idbSet('backup-newer-v'+m.newer,saved).catch(()=>{}); toast(t('cacheTooNew'));
-      }else{ P=normalize(m.data.project); IMG=m.data.images||{}; ui.dirty=!!saved.dirty||m.from<SCHEMA_VERSION; restored=true; }
+      }else{ ({project:P,images:IMG}=normalize(m.data.project,m.data.images)); ui.dirty=!!saved.dirty||m.from<SCHEMA_VERSION; restored=true; }
     }catch(e){ console.warn(e); }
   }
   if(!restored){ P=sampleProject(); IMG={}; ui.sample=true; }
