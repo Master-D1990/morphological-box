@@ -685,6 +685,13 @@ let undoStack=[],redoStack=[],editSnap=null;
 const newCell=(title='')=>({id:uid(),title,desc:'',img:null,ratings:{}});
 const getVar=id=>P.variants.find(v=>v.id===id);
 const ALL='*', OFF='-'; // Ampel-Ansicht «Alle Kriterien» bzw. «Aus» (Ideenphase) statt eines einzelnen Kriteriums
+// Ansicht des Kastens, wird in der Datei gespeichert. view: gewähltes Ampel-Kriterium (auch bei ausgeschalteter Ampel), rating: Ampel ein
+const SETTINGS={cellW:170,lineOp:0.55,coords:true,view:ALL,rating:true};
+function viewFromSettings(){ ui.lastView=P.settings.view; ui.view=P.settings.rating===false?OFF:P.settings.view; }
+function setView(v){ // Ampel-Ansicht durch den Nutzer ändern: in die Datei-Einstellungen übernehmen
+  ui.view=v; if(v!==OFF){ ui.lastView=v; P.settings.view=v; } P.settings.rating=v!==OFF;
+  ui.dirty=true; updateStatus(); scheduleSave(); renderAll();
+}
 const critName=id=>id===ALL?t('overallView'):id===OFF?t('offView'):(P.criteria.find(k=>k.id===id)||{}).name||'';
 function viewLvl(c,crit=ui.view){ // Ampelfarbe einer Teillösung in der Ansicht; «Alle Kriterien»: die schlechteste zählt (Rot = K.O.)
   if(crit===OFF) return 'n';
@@ -706,7 +713,7 @@ function removeCell(id){
 function emptyProject(){
   return {title:t('newBox'),criteria:[{id:uid(),name:t('overall')}],
     rows:[{id:uid(),name:t('subfnN',1),cells:[]},{id:uid(),name:t('subfnN',2),cells:[]}],
-    variants:[],settings:{cellW:170,lineOp:0.55,coords:true}};
+    variants:[],settings:{...SETTINGS,rating:false}}; // neuer Kasten startet in der Ideenphase (Ampel aus)
 }
 function sampleProject(){
   const S=t('sample');
@@ -718,7 +725,7 @@ function sampleProject(){
     variants:[
       {id:uid(),name:t('variantN','A'),color:COLORS[0],visible:true,note:S.notes[0],picks:pick(0,1,1,1),imgs:[]},
       {id:uid(),name:t('variantN','B'),color:COLORS[1],visible:true,note:S.notes[1],picks:pick(3,0,0,0),imgs:[]}],
-    settings:{cellW:170,lineOp:0.55,coords:true}};
+    settings:{...SETTINGS}};
 }
 function normalize(p){
   p.title??='';
@@ -727,7 +734,7 @@ function normalize(p){
   p.rows.forEach(r=>{r.cells=r.cells||[];r.cells.forEach(c=>{c.ratings=c.ratings||{};c.desc??='';c.title??='';});});
   p.variants=Array.isArray(p.variants)?p.variants:[];
   p.variants.forEach(v=>{v.picks=v.picks||{};v.imgs=Array.isArray(v.imgs)?v.imgs:[];v.visible??=true;v.note??='';v.color=v.color||COLORS[0];});
-  p.settings=Object.assign({cellW:170,lineOp:0.55,coords:true},p.settings||{});
+  p.settings=Object.assign({...SETTINGS},p.settings||{}); // fehlende Werte (z. B. ältere Dateien ohne Ampel-Ansicht) mit Standard füllen
   return p;
 }
 
@@ -743,8 +750,10 @@ function beginEdit(){ // erster Tastendruck nach Fokus erzeugt einen Undo-Schrit
   if(editSnap===null) return;
   undoStack.push(editSnap); redoStack=[]; editSnap=null; $('#undo').disabled=false; $('#redo').disabled=true;
 }
-function undo(){ if(!undoStack.length) return; redoStack.push(snapshot()); P=JSON.parse(undoStack.pop()); afterHistory(); }
-function redo(){ if(!redoStack.length) return; undoStack.push(snapshot()); P=JSON.parse(redoStack.pop()); afterHistory(); }
+// Rückgängig betrifft nur den Inhalt, die Ansicht (P.settings) bleibt wie sie ist
+function restore(json){ const keep=P.settings; P=JSON.parse(json); P.settings=keep; afterHistory(); }
+function undo(){ if(!undoStack.length) return; redoStack.push(snapshot()); restore(undoStack.pop()); }
+function redo(){ if(!redoStack.length) return; undoStack.push(snapshot()); restore(redoStack.pop()); }
 function afterHistory(){ editSnap=null; ui.dirty=true; validateUi(); renderAll(); scheduleSave(); }
 function resetHistory(){ undoStack=[]; redoStack=[]; editSnap=null; }
 function validateUi(){
@@ -894,9 +903,7 @@ function coordOf(c,row){ return colName(row.cells.indexOf(c))+(P.rows.indexOf(ro
 function coordById(id){ const f=findCell(id); return f?coordOf(f.cell,f.row):''; }
 const onView=()=>ui.lastView===ALL||P.criteria.some(k=>k.id===ui.lastView)?ui.lastView:ALL; // Kriterium beim Wiedereinschalten
 function toggleRating(){ // Ampel aus = Ideenphase; beim Einschalten zurück zum zuletzt gewählten Kriterium
-  if(ui.view===OFF) ui.view=onView();
-  else { ui.lastView=ui.view; ui.view=OFF; }
-  renderAll();
+  setView(ui.view===OFF?onView():OFF);
 }
 function toggleDesc(){ P.settings.showDesc=!P.settings.showDesc; renderToolbar(); renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); }
 function toggleCoords(on){ P.settings.coords=on; $('#showcoords').setAttribute('aria-pressed',on); renderMatrix(); renderSide(); renderVarList(); }
@@ -1093,7 +1100,7 @@ function sortCells(mode){
 function loadSample(){
   if(!confirmDiscard()) return false;
   if(!ui.dirty&&!confirm(t('confirmSample'))) return false;
-  clearBlobs(); P=sampleProject(); IMG={}; ui.sample=true; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  clearBlobs(); P=sampleProject(); IMG={}; ui.sample=true; viewFromSettings(); ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave(); return true;
 }
 function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
@@ -1166,7 +1173,7 @@ function parseFile(text){ // Kasten-Datei prüfen und migrieren; null bei Fehler
 function loadData(text,{quiet=false}={}){
   const m=parseFile(text); if(!m) return false;
   let d=m.data;
-  clearBlobs(); P=normalize(d.project); IMG=d.images||{}; ui.sample=false;
+  clearBlobs(); P=normalize(d.project); IMG=d.images||{}; ui.sample=false; viewFromSettings();
   resetHistory(); ui.sel=null; ui.editVar=null; ui.dirty=false;
   validateUi(); renderAll(); scheduleSave();
   if(m.from<SCHEMA_VERSION){ ui.dirty=true; updateStatus(); toast(t('migrated',m.from,SCHEMA_VERSION)); }
@@ -1542,7 +1549,7 @@ function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add(
 function newBox(){
   if(!confirmDiscard()) return;
   if(!ui.dirty&&!confirm(t('confirmNew'))) return;
-  clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; ui.lastView=ui.view===OFF?ui.lastView:ui.view; ui.view=OFF; ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
+  clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; viewFromSettings(); ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
   resetHistory(); validateUi(); renderAll(); scheduleSave();
 }
 $('#bOpen').onclick=openFile; // nur auf dem Handy sichtbar, am Computer im Datei-Menü
@@ -1581,7 +1588,7 @@ const MENUS={
   fileMenu:{items:()=>[...tr([['new','new',''],['open','open','openT'],['import','import','importHint']]),{sep:true},...tr([['saveAs','saveAs','saveAsT']])],
     pick:k=>({new:newBox,open:openFile,import:importFile,saveAs:()=>saveFile(true)})[k]()},
   viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL},{sep:true},{k:'@edit',label:t('editCritMenu')}],
-    pick:k=>{ if(k==='@edit') return showCriteria(); ui.view=k; renderToolbar(); renderMatrix(); renderSide(); renderVarList(); }},
+    pick:k=>{ if(k==='@edit') return showCriteria(); setView(k); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
   sortMenu:{items:()=>tr([...(ui.view===OFF?[]:[['rating','sortRating','sortRatingHint']]),['score','sortScore','sortScoreHint'],['alpha','sortAlpha',''],['variants','sortVar','sortVarHint']]), pick:k=>sortCells(k)},
   varSortMenu:{items:()=>[{k:'score',label:t('vSortScore'),hint:t('vSortScoreHint')},...(ui.view===ALL||ui.view===OFF?[]:[{k:'rating',label:t('vSortRating',critName(ui.view)),hint:t('vSortRatingHint')}]),{k:'alpha',label:t('sortAlpha'),hint:''}],
@@ -1685,7 +1692,7 @@ $('#side').addEventListener('click',e=>{
       if(confirm(t('confirmDelCrit',critName(id))))
         change(()=>{ P.criteria=P.criteria.filter(k=>k.id!==id); P.rows.forEach(r=>r.cells.forEach(c=>delete c.ratings[id])); });
       break;
-    case 'viewcrit': ui.view=id; renderAll(); break;
+    case 'viewcrit': setView(id); break;
     case 'addvar': addVariant(); break;
     case 'delvar': if(confirm(t('confirmDelVar',getVar(id).name))) change(()=>{ P.variants=P.variants.filter(v=>v.id!==id); }); break;
     case 'editvar': toggleEditVar(id); break;
@@ -1883,6 +1890,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
     }catch(e){ console.warn(e); }
   }
   if(!restored){ P=sampleProject(); IMG={}; ui.sample=true; }
+  viewFromSettings();
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
