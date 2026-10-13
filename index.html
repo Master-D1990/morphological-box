@@ -137,6 +137,12 @@ main{flex:1;display:flex;min-height:0}
 .dots{display:flex;gap:4px;height:14px;margin-top:auto}
 .cdesc{font-size:12px;line-height:1.3;color:var(--muted);white-space:pre-wrap;overflow:hidden;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;margin-bottom:2px}
 .cell.wd .ctitle{height:auto}
+.whys{display:flex;flex-direction:column;gap:3px;margin-top:auto;font-size:11.5px;line-height:1.3}
+.whys .wl{display:flex;gap:5px;align-items:flex-start}
+.whys .dot{flex:0 0 auto;margin-top:1px}
+.whys .wt{min-width:0;overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.whys .wt b{font-weight:600}
+.whys .wt span{color:var(--muted);white-space:pre-wrap}
 .dot{width:14px;height:14px;border-radius:50%;background:var(--empty);display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;line-height:1;color:#fff}
 .dot.y{color:#1d2330}
 .dot svg{width:10px;height:10px;display:block}
@@ -202,7 +208,7 @@ main{flex:1;display:flex;min-height:0}
 .vt thead th[data-vh]{white-space:normal}
 .vt td.pick{cursor:pointer}
 .vt td.pick:hover{outline:2px solid var(--accent);outline-offset:-2px}
-.rating-off .dots,.rating-off .rate-sec,.rating-off .rt,.rating-off .vt .why{display:none!important}
+.rating-off .dots,.rating-off .whys,.rating-off .rate-sec,.rating-off .rt,.rating-off .vt .why{display:none!important}
 .vt td.lvl-g{background:var(--g-bg)} .vt td.lvl-y{background:var(--y-bg)} .vt td.lvl-r{background:var(--r-bg)}
 .vt td .pk{display:flex;align-items:center;gap:8px}
 .vt td .pk img{height:calc(var(--img-h)*.36);width:calc(var(--img-h)*.48);object-fit:contain;border-radius:4px;background:var(--soft);flex:0 0 auto}
@@ -351,7 +357,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
   .rowhead{flex-direction:column;justify-content:center;gap:4px;padding:6px 2px;margin-right:8px}
   .row.colhead .rowhead.corner{visibility:hidden;min-height:0;height:30px;padding:0!important}
   .cells{gap:8px} .row{margin-bottom:8px}
-  .cell .cdesc{display:none}
+  .cell .cdesc,.cell .whys{display:none}
   .vt{--vw:150px;border-spacing:8px 0;margin-left:-8px}
   .vt th,.vt td{padding:5px 7px}
   .vt th.vcorner{min-width:0;width:96px}
@@ -431,6 +437,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
     <span class="grp" data-i18n="rateGrp"></span>
     <button class="btn tgl" id="bRate" aria-pressed="true" data-i18n="viewBy" data-i18n-title="rateTglT"></button>
     <span class="menu" id="viewMenu"><button class="btn" id="viewBtn" data-i18n-title="viewByT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
+    <button class="btn tgl" id="showwhy" aria-pressed="false" data-i18n="whys" data-i18n-title="whyT"></button>
   </span>
   <span class="g">
     <span class="menu" id="sortMenu"><button class="btn" data-i18n="sortPh" data-i18n-title="sortT" aria-haspopup="true"></button><span class="menu-list" role="menu" hidden></span></span>
@@ -510,7 +517,7 @@ de:{
   print:'PDF / Drucken', undoT:'Rückgängig (Strg+Z)', redoT:'Wiederholen (Strg+Y)',
   side:'Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)',
   themeAuto:'Farbschema: automatisch', themeLight:'Farbschema: hell', themeDark:'Farbschema: dunkel',
-  cellsGrp:'Zellen', rateGrp:'Bewertung', viewBy:'Ampel', critPre:'Kriterium:', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Beschreibung', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', lines:'Linien-Transparenz', linesT:'Transparenz der Linien der Lösungsvarianten (rechts = durchsichtiger)', variantsLbl:'Lösungsvarianten',
+  cellsGrp:'Zellen', rateGrp:'Bewertung', viewBy:'Ampel', critPre:'Kriterium:', viewByT:'Nach welchem Kriterium die Zellen grün/gelb/rot eingefärbt werden', cellSize:'Grösse', descs:'Beschreibung', descT:'Beschreibungen in den Zellen anzeigen (Taste D)', whys:'Begründungen', whyT:'Ampel jedes Kriteriums mit Begründung in den Teillösungen auflisten (Taste G)', lines:'Linien-Transparenz', linesT:'Transparenz der Linien der Lösungsvarianten (rechts = durchsichtiger)', variantsLbl:'Lösungsvarianten',
   exportPh:'Export', exportT:'Drucken / PDF, Excel-Datei (mit Bildern) oder CSV', exportPdfHint:'Seite 1 Kasten, Seite 2 Übersicht der Lösungsvarianten', exportXlsxHint:'Kasten, Lösungsvarianten, Bewertungen, mit allen Bildern', exportCsvHint:'Bewertungstabelle als Text, ohne Bilder', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Excel-Datei wird erstellt …', exported:n=>'Exportiert: '+n, exportFail:'Export fehlgeschlagen',
   xlSheetBox:'Kasten', xlSheetVariants:'Lösungsvarianten', xlSheetRatings:'Bewertungen', xlDistribution:'Verteilung', xlMissing:'Fehlt noch', xlHasRed:'Enthält Rot', xlVisible:'Sichtbar', xlYes:'Ja', xlNo:'Nein',
@@ -552,7 +559,7 @@ de:{
     <li><b>Sortieren</b> (oben, zwischen Bewertung und Lösungsvarianten): ordnet die Teillösungen jeder Teilfunktion nach Ampel, Gesamtbewertung, alphabetisch oder nach Lösungsvarianten (Teillösung der ersten Lösungsvariante der Übersicht ganz links, dann die der zweiten usw.).</li>
     <li><b>Lösungsvarianten umordnen</b>: in der Übersicht unten am Spaltenkopf (⠿) ziehen oder über «Sortieren» neben der Überschrift.</li>
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('G')} Begründungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>
     <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>
@@ -588,7 +595,7 @@ en:{
   print:'PDF / Print', undoT:'Undo (Ctrl+Z)', redoT:'Redo (Ctrl+Y)',
   side:'Sidebar', sideT:'Show/hide sidebar (key S)',
   themeAuto:'Colour scheme: automatic', themeLight:'Colour scheme: light', themeDark:'Colour scheme: dark',
-  cellsGrp:'Cells', rateGrp:'Rating', viewBy:'Traffic light', critPre:'Criterion:', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Description', descT:'Show descriptions in the cells (key D)', lines:'Line transparency', linesT:'Transparency of the solution variant lines (right = more see-through)', variantsLbl:'Solution variants',
+  cellsGrp:'Cells', rateGrp:'Rating', viewBy:'Traffic light', critPre:'Criterion:', viewByT:'Which criterion colours the cells green/yellow/red', cellSize:'Size', descs:'Description', descT:'Show descriptions in the cells (key D)', whys:'Reasons', whyT:'List each criterion’s rating with its reason in the partial solutions (key G)', lines:'Line transparency', linesT:'Transparency of the solution variant lines (right = more see-through)', variantsLbl:'Solution variants',
   exportPh:'Export', exportT:'Print / PDF, Excel file (with images) or CSV', exportPdfHint:'Page 1 box, page 2 solution variant overview', exportXlsxHint:'Box, solution variants, ratings, with all images', exportCsvHint:'Ratings table as text, no images', exportXlsx:'Excel (.xlsx)', exportCsv:'CSV',
   exporting:'Creating Excel file …', exported:n=>'Exported: '+n, exportFail:'Export failed',
   xlSheetBox:'Box', xlSheetVariants:'Solution variants', xlSheetRatings:'Ratings', xlDistribution:'distribution', xlMissing:'Still missing', xlHasRed:'Contains red', xlVisible:'Visible', xlYes:'Yes', xlNo:'No',
@@ -630,7 +637,7 @@ en:{
     <li><b>Sort</b> (top, between Rating and Solution variants): orders the partial solutions of every sub-function by rating, overall score, alphabetically or by solution variants (the first solution variant’s partial solution on the far left, then the second’s, and so on).</li>
     <li><b>Reorder solution variants</b>: drag a column header (⠿) in the overview below, or use “Sort” next to its heading.</li>
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
-    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('K')} coordinates on/off</li>
+    <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('G')} reasons on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>
     <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>
@@ -697,7 +704,7 @@ const newCell=(title='')=>({id:uid(),title,desc:'',img:null,ratings:{}});
 const getVar=id=>P.variants.find(v=>v.id===id);
 const ALL='*', OFF='-'; // Ampel-Ansicht «Alle Kriterien» bzw. «Aus» (Ideenphase) statt eines einzelnen Kriteriums
 // Ansicht des Kastens, wird in der Datei gespeichert. view: gewähltes Ampel-Kriterium (auch bei ausgeschalteter Ampel), rating: Ampel ein
-const SETTINGS={cellW:170,lineOp:0.55,coords:true,showDesc:false,view:ALL,rating:true};
+const SETTINGS={cellW:170,lineOp:0.55,coords:true,showDesc:false,showWhy:false,view:ALL,rating:true};
 function viewFromSettings(){ ui.lastView=P.settings.view; ui.view=P.settings.rating===false?OFF:P.settings.view; }
 function setView(v){ // Ampel-Ansicht durch den Nutzer ändern: in die Datei-Einstellungen übernehmen
   ui.view=v; if(v!==OFF){ ui.lastView=v; P.settings.view=v; } P.settings.rating=v!==OFF;
@@ -766,7 +773,7 @@ function normalize(p,imgs){ // -> {project,images}
       imgs:Array.isArray(v.imgs)?v.imgs.map(id):[]}))};
   const st=obj(p.settings); // fehlende Werte (z. B. ältere Dateien ohne Ampel-Ansicht) mit Standard füllen
   project.settings={...st,cellW:num(st.cellW,120,320,SETTINGS.cellW),lineOp:num(st.lineOp,0,1,SETTINGS.lineOp),
-    coords:bool(st.coords,SETTINGS.coords),showDesc:bool(st.showDesc,SETTINGS.showDesc),rating:bool(st.rating,SETTINGS.rating),
+    coords:bool(st.coords,SETTINGS.coords),showDesc:bool(st.showDesc,SETTINGS.showDesc),showWhy:bool(st.showWhy,SETTINGS.showWhy),rating:bool(st.rating,SETTINGS.rating),
     view:st.view===ALL||st.view==null?ALL:id(st.view)};
   const images={}; Object.entries(obj(imgs)).forEach(([k,v])=>{ if(typeof v==='string'&&SAFE_IMG.test(v)) images[id(k)]=v; });
   return {project,images};
@@ -919,7 +926,7 @@ function renderToolbar(){
   $('#viewBtn').innerHTML=`<span class="pre">${t('critPre')}</span> ${esc(critName(ui.view===OFF?onView():ui.view)||t('noName'))}`;
   const off=ui.view===OFF; document.documentElement.classList.toggle('rating-off',off);
   $('#bRate').setAttribute('aria-pressed',!off); $('#viewBtn').disabled=off;
-  $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').setAttribute('aria-pressed',!!P.settings.showDesc); $('#showcoords').setAttribute('aria-pressed',!!P.settings.coords);
+  $('#size').value=P.settings.cellW; $('#lineop').value=(1-(P.settings.lineOp??0.55)).toFixed(2); $('#showdesc').setAttribute('aria-pressed',!!P.settings.showDesc); $('#showwhy').setAttribute('aria-pressed',!!P.settings.showWhy); $('#showwhy').disabled=off; $('#showcoords').setAttribute('aria-pressed',!!P.settings.coords);
   $('#chips').innerHTML=P.variants.map(v=>`<span class="chip ${v.visible?'':'off'} ${ui.editVar===v.id?'editing':''}" style="--c:${v.color}">`+
     `<button class="vis" data-var="${v.id}" title="${t('chipVis')}">${v.visible?'●':'○'}</button>`+
     `<button class="vedit" data-var="${v.id}" title="${esc(v.name)}: ${t('chipEdit')}">${esc(v.name)||'?'}</button></span>`).join('')+
@@ -940,6 +947,7 @@ function toggleRating(){ // Ampel aus = Ideenphase; beim Einschalten zurück zum
   setView(ui.view===OFF?onView():OFF);
 }
 function toggleDesc(){ P.settings.showDesc=!P.settings.showDesc; renderToolbar(); renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); }
+function toggleWhy(){ P.settings.showWhy=!P.settings.showWhy; renderToolbar(); renderMatrix(); ui.dirty=true; updateStatus(); scheduleSave(); }
 function toggleCoords(on){ P.settings.coords=on; $('#showcoords').setAttribute('aria-pressed',on); renderMatrix(); renderSide(); renderVarList(); }
 function tooltip(c){
   const f=P.settings.coords&&findCell(c.id);
@@ -955,10 +963,13 @@ function cellHtml(c,row){
   const picked=ev&&ev.picks[row.id]===c.id;
   const src=imgSrc(c.img);
   const sd=P.settings.showDesc&&c.desc;
-  return `<div class="cell lvl-${lvl} ${ui.sel===c.id?'sel':''} ${picked?'picked':''} ${sd?'wd':''}" ${picked?`style="--vc:${ev.color}"`:''} data-cell="${c.id}" data-row="${row.id}" title="${esc(tooltip(c))}">`+
+  // Begründungen: statt der Punkte jedes bewertete/begründete Kriterium als Zeile (Ampel, Name, Begründung)
+  const wl=P.settings.showWhy?P.criteria.map(k=>[k,c.ratings[k.id]||{}]).filter(([,r])=>r.level||r.reason):[];
+  const whys=wl.map(([k,r])=>{const l=r.level||'n';return `<div class="wl"><span class="dot ${l}" title="${LV(l)}">${ICO[l]}</span><span class="wt"><b>${esc(k.name)}</b>${r.reason?` <span>${esc(r.reason)}</span>`:''}</span></div>`;}).join('');
+  return `<div class="cell lvl-${lvl} ${ui.sel===c.id?'sel':''} ${picked?'picked':''} ${sd||wl.length?'wd':''}" ${picked?`style="--vc:${ev.color}"`:''} data-cell="${c.id}" data-row="${row.id}" title="${esc(tooltip(c))}">`+
     (P.settings.coords?`<span class="cco">${coordOf(c,row)}</span>`:'')+
     `<div class="img">${src?`<img src="${src}" draggable="false" alt="">`:phHtml('cellPh')}</div>`+
-    `<div class="ctext"><div class="ctitle"><span class="cgrip" draggable="true" title="${esc(t('moveCellT'))}">⠿</span>${esc(c.title)||`<i>${t('untitled')}</i>`}</div>${sd?`<div class="cdesc">${esc(c.desc)}</div>`:''}<div class="dots">${dots}</div></div></div>`;
+    `<div class="ctext"><div class="ctitle"><span class="cgrip" draggable="true" title="${esc(t('moveCellT'))}">⠿</span>${esc(c.title)||`<i>${t('untitled')}</i>`}</div>${sd?`<div class="cdesc">${esc(c.desc)}</div>`:''}${wl.length?`<div class="whys">${whys}</div>`:`<div class="dots">${dots}</div>`}</div></div>`;
 }
 function renderMatrix(){
   const co=P.settings.coords, maxCells=Math.max(0,...P.rows.map(r=>r.cells.length));
@@ -1589,6 +1600,7 @@ function newBox(){
 $('#bOpen').onclick=openFile; // nur auf dem Handy sichtbar, am Computer im Datei-Menü
 $('#bRate').onclick=toggleRating;
 $('#showdesc').onclick=toggleDesc;
+$('#showwhy').onclick=toggleWhy;
 $('#showcoords').onclick=()=>{ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); };
 $('#bSave').onclick=()=>saveFile(false);
 
@@ -1766,7 +1778,7 @@ document.addEventListener('input',e=>{
   switch(k){
     case 'title': f.cell.title=tg.value; rerenderCell(f.cell.id); break;
     case 'desc': f.cell.desc=tg.value; rerenderCell(f.cell.id); drawLines(); break;
-    case 'reason': ensureRating(f.cell,crit).reason=tg.value; rerenderCell(f.cell.id); break;
+    case 'reason': ensureRating(f.cell,crit).reason=tg.value; rerenderCell(f.cell.id); if(P.settings.showWhy) drawLines(); break;
     case 'critname': P.criteria.find(c=>c.id===crit).name=tg.value; renderToolbar(); renderMatrix(); break;
     case 'varname': v.name=tg.value; renderToolbar(); renderBanner(); break;
     case 'varnote': v.note=tg.value; break;
@@ -1791,6 +1803,7 @@ document.addEventListener('keydown',e=>{
   if(key==='s'){ setSide(!sideVisible()); return; }
   if(key==='k'){ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); return; }
   if(key==='d'){ toggleDesc(); return; }
+  if(key==='g'){ toggleWhy(); return; }
   if(key==='b'){ toggleRating(); return; }
   if(ui.sel&&['1','2','3','0'].includes(e.key)){
     if(ui.view===OFF){ toast(t('keysOff')); return; }
