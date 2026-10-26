@@ -95,7 +95,7 @@ main{flex:1;display:flex;min-height:0}
 #stage{flex:1;overflow:auto;padding:18px}
 #canvas{position:relative;display:inline-block;min-width:100%}
 #matrix{display:inline-block;min-width:100%;padding-bottom:40px}
-#printhead{display:none}
+#printout{display:none}
 
 /* Matrix */
 .row{display:flex;align-items:stretch;margin-bottom:12px;position:relative}
@@ -374,35 +374,14 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 }
 @media print{
   @page{size:A4 landscape;margin:8mm}
-  :root,:root[data-theme="dark"],:root:not([data-theme="light"]){
-  --bg:#f3f4f7; --panel:#fff; --line:#d8dbe1; --text:#1d2330; --muted:#6b7280; --accent:#2f6fed;
-  --g:#2e9e4f; --y:#e0a800; --r:#d64545;
-  --g-bg:#eaf7ee; --y-bg:#fff7da; --r-bg:#fdecec;
-  --field:#fff; --hover:#f0f2f5; --soft:#f7f8fa; --faint:#9aa1ad; --ph:#b0b6c2;
-  --empty:#e1e4ea; --empty2:#cfd3da; --accent-soft:#eef3ff; --ring:#c9d8fb; --warn:#9a6a00; --danger-line:#f0c4c4;
-  color-scheme:light;
-  }
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html,body{height:auto;overflow:visible;background:#fff;display:block}
-  #bar,#bar2,#banner,#side,#toast,#lightbox,#helpDlg,#mobileDlg,.addcell,#addrow,.handle,.delrow,.sk .hint,.ph,#varlist .sub{display:none!important}
-  #canvas,#matrix{display:block;min-width:0} /* inline-block lässt sich nicht auf Seiten umbrechen */
-  #matrix{padding-bottom:0}
-  .row{break-inside:avoid}
-  #varlist{break-before:page;margin-top:0}
-  #varlist h2{font-size:16px;margin-bottom:8px}
-  .vt td.pick:hover{outline:none}
-  .rowname{border-color:transparent!important;background:transparent!important}
-  main{display:block}
-  #stage{overflow:visible;padding:0}
-  .rowhead{position:static;box-shadow:none}
-  .row.colhead{position:static}
-  .addvarcol,.addvar-empty,#varlist.empty,#varSortMenu,.vgrip,.cgrip{display:none!important}
-  .cell.sel{outline:none}
-  .cell:hover{transform:none;box-shadow:none}
-  #printhead{display:block;margin-bottom:10px}
-  #printhead h1{font-size:18px;margin:0 0 6px}
-  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;align-items:center}
-  .legend i{display:inline-block;width:24px;height:6px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  body>:not(#printout){display:none!important}
+  #printout{display:block}
+  /* eine Seite = bedruckbare Fläche (100vh im Druck); 193 mm als Obergrenze, falls ein Browser vh nicht auf die Seite bezieht */
+  .pp{height:min(calc(100vh - 2px),193mm);overflow:hidden;break-after:page;break-inside:avoid}
+  .pp:last-child{break-after:auto}
+  .pp svg{display:block;width:100%;height:100%}
 }
 </style>
 </head>
@@ -450,7 +429,7 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 </div>
 <div id="banner" hidden></div>
 <main>
-  <div id="stage"><div id="printhead"></div><div id="canvas"><div id="matrix"></div><section id="varlist"></section><svg id="lines"></svg></div></div>
+  <div id="stage"><div id="canvas"><div id="matrix"></div><section id="varlist"></section><svg id="lines"></svg></div></div>
   <aside id="side"></aside>
 </main>
 <input type="file" id="imgFile" accept="image/*" hidden>
@@ -564,7 +543,7 @@ de:{
     <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>
     <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>
     <li><b>Datenschutz & Gewähr</b>: Das Tool überträgt keine Daten, alles bleibt in deinem Browser. Die Webseite liegt auf GitHub Pages, GitHub kann dabei technische Daten wie die IP-Adresse protokollieren (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>). Kasten-Dateien enthalten nur Daten, keinen ausführbaren Code, und werden beim Öffnen geprüft. Nutzung ohne Gewähr (MIT-Lizenz).</li>`,
-  printRating:'Ampel-Kriterium: ', dateLocale:'de-CH',
+  printRating:'Ampel-Kriterium: ', dateLocale:'de-CH', tilePage:n=>`Seite ${n}`, tileRows:(a,b)=>a===b?`Teilfunktion ${a}`:`Teilfunktionen ${a} bis ${b}`, tileCols:(a,b)=>a===b?`Teillösung ${a}`:`Teillösungen ${a} bis ${b}`, tileShort:n=>`S. ${n}`, contTo:n=>`weiter S. ${n}`, contFrom:n=>`von S. ${n}`,
   confirmDiscard:'Der aktuelle Kasten hat Änderungen, die nicht in einer Datei gespeichert sind. Trotzdem fortfahren?',
   repoNote:`Open Source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Quellcode und Rückmeldungen auf GitHub</a>`, repoT:'Quellcode, Fehler melden und Ideen auf GitHub',
   confirmNew:'Neuen leeren Kasten anlegen? Der aktuelle wird ersetzt.', loadSample:'Beispiel öffnen', dlTool:'Tool herunterladen (offline nutzen)', dlToolHint:'Lädt das Programm selbst als HTML-Datei herunter. Läuft per Doppelklick ohne Internet. <b>Deine Kästen sind nicht enthalten</b>, die sicherst du weiterhin mit «Speichern».', toolFile:'Morphologischer-Kasten-Tool', toolDownloaded:name=>'Tool heruntergeladen: '+name, toolDlFail:'Herunterladen nicht möglich. Alternativ index.html auf GitHub herunterladen', helpBtn:'? Hilfe', helpBtnT:'Bedienung anzeigen (Taste ?)', helpOk:'Los geht\'s',
@@ -642,7 +621,7 @@ en:{
     <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>
     <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>
     <li><b>Privacy & warranty</b>: the tool does not send any data, everything stays in your browser. The website is hosted on GitHub Pages, and GitHub may log technical data such as your IP address (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub privacy statement</a>). Box files contain only data, no executable code, and are checked when opened. No warranty (MIT License).</li>`,
-  printRating:'Rating criterion: ', dateLocale:'en-GB',
+  printRating:'Rating criterion: ', dateLocale:'en-GB', tilePage:n=>`Page ${n}`, tileRows:(a,b)=>a===b?`Sub-function ${a}`:`Sub-functions ${a} to ${b}`, tileCols:(a,b)=>a===b?`Partial solution ${a}`:`Partial solutions ${a} to ${b}`, tileShort:n=>`p. ${n}`, contTo:n=>`cont. p. ${n}`, contFrom:n=>`from p. ${n}`,
   confirmDiscard:'The current box has changes that are not saved to a file. Continue anyway?',
   repoNote:`Open source (MIT) · <a href="https://github.com/Master-D1990/morphological-box" target="_blank" rel="noopener">Source code and feedback on GitHub</a>`, repoT:'Source code, bug reports and ideas on GitHub',
   confirmNew:'Create a new empty box? The current one will be replaced.', loadSample:'Open example', dlTool:'Download the tool (use offline)', dlToolHint:'Downloads the program itself as an HTML file. Runs with a double-click, no internet needed. <b>Your boxes are not included</b>, keep saving them with “Save”.', toolFile:'Morphological-Box-Tool', toolDownloaded:name=>'Tool downloaded: '+name, toolDlFail:'Download not possible. Alternatively download index.html from GitHub', helpBtn:'? Help', helpBtnT:'Show how to use (key ?)', helpOk:'Got it',
@@ -1020,7 +999,7 @@ function drawLines(){
     // Verlängerung nach unten bis zur Spalte der Variante in der Übersicht
     let arrow='';
     const th=m.querySelector(`#varlist th[data-vh="${v.id}"]`);
-    if(th&&!ui.printing){
+    if(th){
       const r=th.getBoundingClientRect(), [x0,y0]=pts[pts.length-1];
       const x1=r.left-base.left+r.width/2, y1=r.top-base.top-2, ym=(y0+y1)/2;
       if(y1>y0){
@@ -1087,11 +1066,6 @@ function overview(){
   <button class="btn small" data-act="addcrit">${t('addCrit')}</button></div>
   <h3>${t('helpH')}</h3>
   <div class="btnrow"><button class="btn small" data-act="help">${t('helpBtn')}</button><button class="btn small" data-act="loadsample">${t('loadSample')}</button><a class="btn small" href="${REPO}" target="_blank" rel="noopener" title="${esc(t('repoT'))}">GitHub</a></div>`;
-}
-function renderPrintHead(){
-  $('#printhead').innerHTML=`<h1>${esc(P.title)}</h1><div class="legend">`+
-    P.variants.filter(v=>v.visible).map(v=>`<span><i style="background:${v.color}"></i><b>${esc(v.name)}</b>${v.note?': '+esc(v.note):''}</span>`).join('')+
-    `<span class="muted">${t('printRating')}${esc(critName(ui.view))} · ${new Date().toLocaleDateString(t('dateLocale'))}</span></div>`;
 }
 
 /* ---------- Aktionen ---------- */
@@ -1579,7 +1553,7 @@ function download(blob,name){
 }
 async function exportAs(kind){
   const base=fileName().replace(/\.kasten\.json$/,'');
-  if(kind==='pdf'){ $('#stage').scrollLeft=0; window.print(); return; }
+  if(kind==='pdf'){ printBox(); return; }
   try{
     if(kind==='xlsx'){ toast(t('exporting')); download(await buildXlsx(),base+'.xlsx'); toast(t('exported',base+'.xlsx')); }
     if(kind==='csv'){ download(buildCsv(),base+'.csv'); toast(t('exported',base+'.csv')); }
@@ -1909,26 +1883,307 @@ document.addEventListener('drop',async e=>{
 });
 
 /* ---------- Druck ---------- */
-// Druck: Seite 1 = Titel + Kasten (auf A4 quer eingepasst), Seite 2 = Variantenübersicht
-const PRINT_W=1060, PRINT_H=730; // nutzbare Fläche A4 quer bei 8 mm Rand, in CSS-px
-function preparePrint(){
-  const mx=$('#matrix'), vl=$('#varlist'), svg=$('#lines');
-  mx.style.zoom=''; vl.style.zoom=''; svg.style.transform=''; $('#stage').scrollLeft=0;
-  ui.printing=true; renderPrintHead(); drawLines();
-  const headH=70+Math.ceil(P.variants.filter(v=>v.visible).length/4)*18;
-  // tatsächliche Inhaltsgrösse (ohne «+»-Knöpfe, die im Druck fehlen)
-  const mr=mx.getBoundingClientRect(); let cw=1,ch=1;
-  $$('#matrix .rowhead, #matrix .cell').forEach(el=>{ const r=el.getBoundingClientRect(); cw=Math.max(cw,r.right-mr.left); ch=Math.max(ch,r.bottom-mr.top); });
-  const z=Math.min(1.4,PRINT_W/cw,(PRINT_H-headH)/ch); // kleine Kästen dürfen etwas grösser werden
-  if(z!==1){ mx.style.zoom=z; svg.style.transformOrigin='0 0'; svg.style.transform=`scale(${z})`; }
-  const tbl=vl.querySelector('.vt'); const zv=tbl?Math.min(1,PRINT_W/tbl.offsetWidth):1;
-  if(zv<1) vl.style.zoom=zv;
+// Jede Druckseite ist eine eigene SVG-Grafik in fester Seitengrösse (A4 quer bei 8 mm Rand, in CSS-px). Alle Positionen
+// rechnet das Tool selbst aus, am Bildschirm wird nichts vermessen: Zoomstufe, Fensterbreite und Zellgrösse der Ansicht
+// spielen keine Rolle, Zellen und Linien liegen im selben Koordinatensystem. Der Browser passt jede Seite als Ganzes in
+// die bedruckbare Fläche ein (Breite 100 %, Höhe 100vh), auch bei anderen Rändern, Papierformaten oder Skalierung im Druckdialog.
+const PG_W=1062, PG_H=733, S_MIN=0.75, S_MAX=1.4; // Seite 281 × 194 mm; kleinster gut lesbarer Massstab; kleine Kästen dürfen wachsen
+const PC={text:'#1d2330',muted:'#6b7280',line:'#d8dbe1',accent:'#2f6fed',soft:'#f7f8fa',ph:'#b0b6c2',warn:'#9a6a00',
+  g:'#2e9e4f',y:'#e0a800',r:'#d64545',n:'#e1e4ea',gbg:'#eaf7ee',ybg:'#fff7da',rbg:'#fdecec',nbg:'#fff',empty2:'#cfd3da'}; // Druck immer hell
+const PFONT='system-ui,-apple-system,"Segoe UI",sans-serif';
+const PB={cw:170,hw:235,gx:12,gy:12,hh:50,pad:6}; // Kasten im Druck: Zellbreite, Kopfspalte, Abstände, Kopfzeile, Innenabstand
+const DOTS_ROW=Math.floor((PB.cw-2*PB.pad+4)/18); // Ampelpunkte je Zeile in einer Zelle, mehr Kriterien brechen um
+const f1=n=>+n.toFixed(1);
+let pctx=null;
+const textW=(s,fs,fw=400)=>{ pctx=pctx||document.createElement('canvas').getContext('2d'); pctx.font=`${fw} ${fs}px ${PFONT}`; return pctx.measureText(s).width; };
+// Text auf Breite w umbrechen. runs: [{t,fw,fill,it}]; Absätze bleiben, zu lange Wörter werden getrennt,
+// was über max Zeilen hinausgeht, endet mit «…». Ergebnis: Zeilen aus Stücken {t,fw,fill,it}
+function wrapRuns(runs,w,fs,max=99){
+  w-=2; // Reserve: gedruckte Schrift kann minimal breiter laufen als im Canvas gemessen
+  const lines=[[]]; let x=0;
+  const nl=()=>{ lines.push([]); x=0; };
+  const push=(s,r)=>{ const ln=lines[lines.length-1], last=ln[ln.length-1];
+    if(last&&last.fw===r.fw&&last.fill===r.fill&&last.it===r.it) last.t+=s; else ln.push({t:s,fw:r.fw,fill:r.fill,it:r.it});
+    x+=textW(s,fs,r.fw); };
+  for(const r of runs) String(r.t??'').split('\n').forEach((para,pi)=>{
+    if(pi) nl();
+    for(const tok of para.split(/(\s+)/)){
+      if(!tok) continue;
+      if(/^\s+$/.test(tok)){ if(x>0) push(' ',r); continue; }
+      for(let word of tok.split(/(?<=-)(?=[^-])/)) for(;;){ // nach einem vorhandenen Bindestrich darf umbrochen werden
+        if(x+textW(word,fs,r.fw)<=w||word.length<2&&!x){ push(word,r); break; }
+        if(x){ nl(); continue; } // auf der nächsten Zeile nochmals versuchen
+        let k=word.length-1; while(k>1&&textW(word.slice(0,k)+'-',fs,r.fw)>w) k--;
+        const cut=word.slice(0,k); push(cut.endsWith('-')?cut:cut+'-',r); nl(); word=word.slice(k);
+      }
+    }
+  });
+  lines.forEach(ln=>{ const l=ln[ln.length-1]; if(l) l.t=l.t.trimEnd(); });
+  while(lines.length>1&&!lines[lines.length-1].length) lines.pop();
+  if(lines.length>max){
+    lines.length=max; const ln=lines[max-1], width=()=>ln.reduce((s,p)=>s+textW(p.t,fs,p.fw),0);
+    if(!ln.length) ln.push({t:'',fw:runs[0]?.fw,fill:runs[0]?.fill});
+    const l=ln[ln.length-1]; l.t+='…';
+    while(width()>w&&l.t.length>1) l.t=l.t.slice(0,-2).trimEnd()+'…';
+  }
+  return lines.length===1&&!lines[0].length?[]:lines;
 }
-function endPrint(){
-  ui.printing=false; $('#matrix').style.zoom=''; $('#varlist').style.zoom=''; $('#lines').style.transform=''; drawLines();
+const wrapText=(s,w,fs,o={},max)=>wrapRuns([{t:s,...o}],w,fs,max);
+// Zeilen als SVG-Text, y = Oberkante der ersten Zeile; o.anchor: 'middle' oder 'end'
+function svgText(lines,x,y,fs,lh,o={}){
+  return lines.map((ln,i)=>`<text x="${f1(x)}" y="${f1(y+i*lh+(lh-fs)/2+fs*.8)}" font-size="${fs}"${o.anchor?` text-anchor="${o.anchor}"`:''}${o.fill?` fill="${o.fill}"`:''}${o.fw?` font-weight="${o.fw}"`:''}>`+
+    ln.map(p=>`<tspan${p.fw?` font-weight="${p.fw}"`:''}${p.fill?` fill="${p.fill}"`:''}${p.it?' font-style="italic"':''}>${esc(p.t)}</tspan>`).join('')+'</text>').join('');
 }
-window.addEventListener('beforeprint',preparePrint);
-window.addEventListener('afterprint',endPrint);
+const svgImg=(id,x,y,w,h)=>{ const src=imgSrc(id); return src?`<image href="${src}" x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" preserveAspectRatio="xMidYMid meet"/>`:''; };
+const svgDot=(l,cx,cy)=>`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="7" fill="${PC[l]}"/>`+
+  (ICO[l]||'').replace('<svg ',`<svg x="${f1(cx-5)}" y="${f1(cy-5)}" width="10" height="10" color="${l==='y'?PC.text:'#fff'}" `);
+let clipN=0;
+const svgClip=(x,y,w,h,rx=0)=>{ const id='pclip'+(++clipN); return [id,`<clipPath id="${id}"><rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" rx="${rx}"/></clipPath>`]; };
+// Bänder: n Elemente gleichmässig auf Gruppen von höchstens k verteilen (14 bei k=6: 5+5+4 statt 6+6+2)
+function evenBands(n,k){ const nb=Math.ceil(n/k), out=[]; let st=0; for(let i=0;i<nb;i++){ const len=Math.round((n-st)/(nb-i)); out.push([st,st+len-1]); st+=len; } return out; }
+// Bänder nach Höhe: so wenige wie nötig (jedes höchstens lim hoch), dann die Höhen möglichst ausgleichen
+function heightBands(hs,lim){
+  const greedy=l=>{ const out=[]; let st=0,acc=0; hs.forEach((h,i)=>{ if(i>st&&acc+h>l){ out.push([st,i-1]); st=i; acc=0; } acc+=h; }); out.push([st,hs.length-1]); return out; };
+  const nb=greedy(lim).length; let lo=Math.max(...hs), hi=Math.max(lim,lo);
+  for(let i=0;i<40;i++){ const mid=(lo+hi)/2; if(greedy(mid).length<=nb) hi=mid; else lo=mid; }
+  return greedy(hi);
+}
+
+// Kopf von Seite 1: Titel, Legende der Lösungsvarianten, Ampel-Kriterium und Datum
+function printHead(){
+  const tl=wrapText(P.title||' ',PG_W,18,{fw:700},2); let s=svgText(tl,0,0,18,24), y=tl.length*24+6, x=0;
+  const items=P.variants.filter(v=>v.visible).map(v=>({v,w:30+textW(v.name,12,700)}));
+  const info=t('printRating')+critName(ui.view)+' · '+new Date().toLocaleDateString(t('dateLocale'));
+  items.forEach(({v,w})=>{ if(x&&x+w>PG_W){ x=0; y+=18; }
+    s+=`<rect x="${f1(x)}" y="${f1(y+6)}" width="24" height="6" rx="3" fill="${v.color}"/>`+svgText([[{t:v.name,fw:700}]],x+30,y,12,18); x+=w+16; });
+  const iw=textW(info,12); if(x&&x+iw>PG_W){ x=0; y+=18; }
+  s+=svgText([[{t:info}]],x,y,12,18,{fill:PC.muted});
+  return {svg:s,h:y+18+12};
+}
+// Kopf einer Seite mit Zusatzangaben (Kacheln, Übersicht): Titel fett, dann graue Angaben, rechts optional Kachelkarte
+function printSubHead(parts,map=''){
+  const tt=wrapText(P.title||' ',PG_W*0.4,14,{fw:700},1)[0]||[];
+  return {svg:svgText([[...tt,...parts.map(p=>({t:' · '+p,fill:PC.muted}))]],0,0,14,20)+map,h:34};
+}
+
+/* Kasten: Texte einmal umbrechen (Modell), dann für eine Bildhöhe ih die Lage aller Zeilen und Spalten (Layout) */
+function boxModel(){
+  const rating=ui.view!==OFF, co=P.settings.coords, iw=PB.cw-2*PB.pad, nx=co?30:12;
+  const rows=P.rows.map((row,ri)=>{
+    const name=wrapText(row.name||' ',PB.hw-nx-10,14,{fw:600},4);
+    const cells=row.cells.map(c=>{
+      const title=c.title?wrapText(c.title,iw,13,{fw:600},3):wrapText(t('untitled'),iw,13,{fill:PC.ph,it:1},1);
+      const desc=P.settings.showDesc&&c.desc?wrapText(c.desc,iw,12,{fill:PC.muted},6):[];
+      const whys=rating&&P.settings.showWhy?P.criteria.map(k=>[k,c.ratings[k.id]||{}]).filter(([,r])=>r.level||r.reason)
+        .map(([k,r])=>({l:r.level||'n',lines:wrapRuns([{t:k.name,fw:600},...(r.reason?[{t:' '+r.reason,fill:PC.muted}]:[])],iw-19,11.5,4)})):[];
+      const bottom=!rating?0:whys.length?4+whys.reduce((s,w)=>s+w.lines.length*15,0)+3*(whys.length-1):Math.ceil(P.criteria.length/DOTS_ROW)*18;
+      return {c,title,desc,whys,lvl:viewLvl(c),txt:4+title.length*16.25+(desc.length?4+desc.length*15.6+2:0)+bottom}; // Höhe ohne Bild und Innenabstand
+    });
+    return {row,ri,name,nx,cells,head:12+name.length*18};
+  });
+  return {rows,rating,co,C:Math.max(1,...P.rows.map(r=>r.cells.length)),nC:Math.max(0,...P.rows.map(r=>r.cells.length))};
+}
+function boxLayout(M,ih){
+  const {cw,hw,gx,gy,hh,pad}=PB, xs=Array.from({length:M.C},(_,j)=>hw+gx+j*(cw+gx)), ys=[]; let y=hh+8;
+  M.rows.forEach(r=>{ const h=Math.max(r.head,...r.cells.map(c=>2*pad+ih+c.txt)); ys.push([y,y+h]); y+=h+gy; });
+  return {ih,xs,ys};
+}
+// Ausschnitt aus Spaltenband cb und Zeilenband rb, mit halbem Abstand rundum; im Druckbild beginnt er bei (bx,by)
+const PBX=PB.hw+PB.gx/2, PBY=PB.hh+8-PB.gy/2;
+function boxBand(L,cb,rb){ const b={cb,rb,X0:L.xs[cb[0]]-PB.gx/2,X1:L.xs[cb[1]]+PB.cw+PB.gx/2,Y0:L.ys[rb[0]][0]-PB.gy/2,Y1:L.ys[rb[1]][1]+PB.gy/2};
+  b.w=PBX+b.X1-b.X0; b.h=PBY+b.Y1-b.Y0; return b; }
+// Linien der sichtbaren Lösungsvarianten in Kasten-Koordinaten; teilen sich Varianten eine Teillösung, liegen ihre Punkte nebeneinander
+function boxPaths(M,L){
+  const vis=P.variants.filter(v=>v.visible), share={};
+  vis.forEach(v=>Object.values(v.picks).forEach(cid=>(share[cid]=share[cid]||[]).push(v.id)));
+  return vis.map(v=>{ const pts=[]; let rad=9;
+    M.rows.forEach((r,i)=>{ const cid=v.picks[r.row.id], j=r.row.cells.findIndex(c=>c.id===cid); if(j<0) return;
+      const list=share[cid]||[v.id], gap=(PB.cw-2*PB.pad)/(list.length+1); rad=Math.min(rad,Math.max(4,gap/2-2));
+      pts.push([L.xs[j]+PB.pad+gap*(list.indexOf(v.id)+1),L.ys[i][0]+PB.pad+L.ih/2]); });
+    return {v,pts,rad};
+  }).filter(p=>p.pts.length);
+}
+// Kurve wie am Bildschirm: von Punkt zu Punkt senkrecht aus- und einlaufend
+const curve=(a,b,u)=>{ const ym=(a[1]+b[1])/2, v=1-u; return [a[0]*(v*v*v+3*v*v*u)+b[0]*(3*v*u*u+u*u*u), a[1]*v*v*v+ym*3*v*u+b[1]*u*u*u]; };
+const pathD=pts=>pts.reduce((d,p,j)=>{ if(!j) return `M${f1(p[0])} ${f1(p[1])}`; const a=pts[j-1], ym=f1((a[1]+p[1])/2);
+  return d+` C${f1(a[0])} ${ym} ${f1(p[0])} ${ym} ${f1(p[0])} ${f1(p[1])}`; },'');
+function svgBoxCell(m,x,y,h,ih,r){
+  const {cw,pad}=PB, iw=cw-2*pad, c=m.c, bw=m.lvl==='n'?1:3;
+  let s=`<rect x="${f1(x+bw/2)}" y="${f1(y+bw/2)}" width="${f1(cw-bw)}" height="${f1(h-bw)}" rx="8" fill="${PC[m.lvl+'bg']}" stroke="${m.lvl==='n'?PC.line:PC[m.lvl]}" stroke-width="${bw}"/>`+
+    `<rect x="${x+pad}" y="${y+pad}" width="${iw}" height="${f1(ih)}" rx="5" fill="${PC.soft}"/>`+svgImg(c.img,x+pad,y+pad,iw,ih);
+  if(r.co){ const co=coordOf(c,r.row), w=textW(co,10.5,700)+10;
+    s+=`<rect x="${x+4.5}" y="${y+4.5}" width="${f1(w)}" height="15" rx="4" fill="#fff" stroke="${PC.line}"/>`+svgText([[{t:co}]],x+4.5+w/2,y+4.5,10.5,15,{anchor:'middle',fw:700,fill:PC.muted}); }
+  let ty=y+pad+ih+4;
+  s+=svgText(m.title,x+pad,ty,13,16.25); ty+=m.title.length*16.25;
+  if(m.desc.length) s+=svgText(m.desc,x+pad,ty+4,12,15.6);
+  let by=y+h-pad; // Ampel unten in der Zelle
+  if(m.whys.length) for(const w of [...m.whys].reverse()){ by-=w.lines.length*15; s+=svgDot(w.l,x+pad+7,by+8.5)+svgText(w.lines,x+pad+19,by,11.5,15); by-=3; }
+  else if(r.rating){ const nr=Math.ceil(P.criteria.length/DOTS_ROW);
+    P.criteria.forEach((k,i)=>{ s+=svgDot((c.ratings[k.id]||{}).level||'n',x+pad+7+i%DOTS_ROW*18,by-7-(nr-1-Math.floor(i/DOTS_ROW))*18); }); }
+  return s;
+}
+function svgRowHead(r,y,h,co){
+  return `<rect x=".5" y="${f1(y+.5)}" width="${PB.hw-1}" height="${f1(h-1)}" rx="8" fill="#fff" stroke="${PC.line}"/>`+
+    (co?svgText([[{t:String(r.ri+1)}]],15,y+h/2-10,13,20,{anchor:'middle',fw:700,fill:PC.accent}):'')+
+    svgText(r.name,r.nx,y+(h-r.name.length*18)/2,14,18);
+}
+function svgCorner(){
+  const {hw,hh}=PB;
+  return `<rect x=".5" y=".5" width="${hw-1}" height="${hh-1}" rx="8" fill="#fff" stroke="${PC.line}"/><line x1="1" y1="${hh-1}" x2="${hw-1}" y2="1" stroke="${PC.line}"/>`+
+    svgText([[{t:t('hdrSolutions')+' →'}]],hw-10,4,11,16,{anchor:'end',fw:600,fill:PC.muted})+svgText([[{t:t('hdrFunctions')+' ↓'}]],10,hh-20,11,16,{fw:600,fill:PC.muted});
+}
+// Ausschnitt b des Kastens (mit Kopfspalte und Kopfzeile), Ursprung oben links. Kacheln haben rund um die Zellen
+// einen Randstreifen E, in dem die Linien weiterlaufen und die Hinweise marks stehen (so verdecken sie keine Zellen)
+function svgBoxView(M,L,paths,b,marks=[],E=0){
+  const {cw,hh}=PB, dx=PBX+E-b.X0, dy=PBY+E-b.Y0, ri=M.rows.slice(b.rb[0],b.rb[1]+1);
+  let s=svgCorner();
+  if(M.co) for(let j=b.cb[0];j<=b.cb[1]&&j<M.nC;j++) s+=`<rect x="${f1(L.xs[j]+dx+.5)}" y=".5" width="${cw-1}" height="${hh-1}" rx="6" fill="${PC.soft}" stroke="${PC.line}"/>`+
+    svgText([[{t:colName(j)}]],L.xs[j]+dx+cw/2,0,15,hh,{anchor:'middle',fw:700,fill:PC.muted});
+  ri.forEach(r=>{ const [y0,y1]=L.ys[r.ri];
+    s+=svgRowHead(r,y0+dy,y1-y0,M.co);
+    r.cells.forEach((m,j)=>{ if(j>=b.cb[0]&&j<=b.cb[1]) s+=svgBoxCell(m,L.xs[j]+dx,y0+dy,y1-y0,L.ih,{...M,row:r.row}); }); });
+  const op=P.settings.lineOp??0.55, [cid,clip]=svgClip(PBX,PBY,b.X1-b.X0+2*E,b.Y1-b.Y0+2*E);
+  s+=`<defs>${clip}</defs><g clip-path="url(#${cid})"><g transform="translate(${f1(dx)} ${f1(dy)})">`+paths.map(p=>`<g opacity="${op}">`+
+    `<path d="${pathD(p.pts)}" fill="none" stroke="${p.v.color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`+
+    p.pts.map(q=>`<circle cx="${f1(q[0])}" cy="${f1(q[1])}" r="${f1(p.rad)}" fill="${p.v.color}" stroke="#fff" stroke-width="2"/>`).join('')+'</g>').join('')+'</g></g>';
+  // Hinweise «weiter S. n» / «von S. n» im Randstreifen, an den Seiten hochkant; liegen zwei aufeinander,
+  // wird der zweite entlang des Rands verschoben
+  const W=b.X1-b.X0, H=b.Y1-b.Y0, placed=[[],[],[],[]], cl=(v,lo,hi)=>Math.min(Math.max(v,lo),hi);
+  marks.forEach(m=>{
+    const mw=textW(m.txt,10.5,700)+10, mh=16, x=m.x+dx-PBX-E, y=m.y+dy-PBY-E, d=[x,W-x,y,H-y], side=d.indexOf(Math.min(...d)); // links, rechts, oben, unten
+    const vert=side<2, len=vert?H:W; let c=cl(vert?y:x,mw/2,len-mw/2);
+    const hit=()=>placed[side].some(o=>Math.abs(o-c)<mw+3);
+    for(let i=1;hit()&&i<40;i++) c=cl((vert?y:x)+Math.ceil(i/2)*(i%2?1:-1)*(mw+3),mw/2,len-mw/2);
+    placed[side].push(c);
+    const cx=E+(vert?(side?W+E/2:-E/2):c), cy=E+(vert?c:(side===3?H+E/2:-E/2));
+    s+=`<g transform="translate(${f1(PBX+cx)} ${f1(PBY+cy)})${vert?' rotate(-90)':''}"><rect x="${f1(-mw/2)}" y="${-mh/2}" width="${f1(mw)}" height="${mh}" rx="4" fill="#fff" stroke="${m.col}" stroke-width="1.5"/>`+
+      svgText([[{t:m.txt}]],0,-mh/2,10.5,mh,{anchor:'middle',fw:700,fill:m.col})+'</g>';
+  });
+  return s;
+}
+// Kasten-Seiten: passt der Kasten lesbar auf eine Seite, eine Seite; sonst Seite 1 Gesamtübersicht mit Kachelraster,
+// danach Kacheln (je eine Seite, alle im selben Massstab, Kopfspalte und Kopfzeile wiederholt)
+function boxPages(){
+  const head=printHead();
+  if(!P.rows.length) return [head.svg];
+  const M=boxModel(), all=L=>boxBand(L,[0,M.C-1],[0,M.rows.length-1]);
+  // Bildhöhe: die, mit welcher der Kasten am grössten auf die Seite passt (bei Gleichstand die grössere)
+  let best=null;
+  for(let ih=Math.round(PB.cw*.6);ih>=Math.round(PB.cw*.3);ih-=2){
+    const L=boxLayout(M,ih), b=all(L), s=Math.min(S_MAX,PG_W/b.w,(PG_H-head.h)/b.h); if(!best||s>best.s*1.005) best={L,b,s}; }
+  const page=(L,b,s)=>head.svg+`<g transform="translate(0 ${head.h}) scale(${f1(s*1000)/1000})">${svgBoxView(M,L,boxPaths(M,L),b)}</g>`;
+  if(best.s>=S_MIN) return [page(best.L,best.b,best.s)];
+  // Kacheln: Spalten gleichmässig, Zeilen nach Höhe; Grenzen so, dass jede Kachel bei Massstab S_MIN auf eine Seite passt
+  const L=boxLayout(M,Math.round(PB.cw*.6)), TH=34, TE=20, pitch=PB.cw+PB.gx;
+  const colBands=evenBands(M.C,Math.max(1,Math.floor((PG_W/S_MIN-PBX-2*TE)/pitch)));
+  const rowBands=heightBands(L.ys.map(([a,b])=>b-a+PB.gy),(PG_H-TH)/S_MIN-PBY-2*TE);
+  if(colBands.length*rowBands.length<2) return [page(best.L,best.b,best.s)]; // eine einzige Kachel bringt nichts
+  const grid=[]; rowBands.forEach((rb,ri)=>colBands.forEach((cb,ci)=>grid.push({...boxBand(L,cb,rb),ri,ci,marks:[]})));
+  const paths=boxPaths(M,L), find=(bands,v,k)=>{ const i=bands.findIndex(b=>v<b[k]); return i<0?bands.length-1:i; };
+  const xB=colBands.map((_,i)=>grid[i]), yB=rowBands.map((_,i)=>grid[i*colBands.length]);
+  const tileAt=([x,y])=>grid[find(yB,y,'Y1')*colBands.length+find(xB,x,'X1')];
+  // Wo eine Linie von einer Kachel in die nächste läuft (Kurve abgetastet)
+  const cross=[], used=new Set();
+  paths.forEach(p=>{ let prev=tileAt(p.pts[0]), pp=p.pts[0]; used.add(prev);
+    for(let j=1;j<p.pts.length;j++) for(let k=1;k<=60;k++){ const q=curve(p.pts[j-1],p.pts[j],k/60), tl=tileAt(q);
+      if(tl!==prev) cross.push({a:prev,b:tl,pa:pp,pb:q,col:p.v.color});
+      used.add(tl); prev=tl; pp=q; } });
+  // Kacheln ohne Teillösungen und ohne Linie (ungleich lange Zeilen) entfallen; Seitenzahlen erst danach vergeben
+  const tiles=grid.filter(tl=>used.has(tl)||M.rows.slice(tl.rb[0],tl.rb[1]+1).some(r=>r.cells.length>tl.cb[0]));
+  if(tiles.length<2) return [page(best.L,best.b,best.s)];
+  tiles.forEach((tl,i)=>tl.page=i+2);
+  // Wo eine Linie eine Kachel verlässt, steht «weiter S. n», wo sie hereinkommt «von S. n»
+  cross.forEach(c=>{ c.a.marks.push({x:c.pa[0],y:c.pa[1],col:c.col,txt:t('contTo',c.b.page)}); c.b.marks.push({x:c.pb[0],y:c.pb[1],col:c.col,txt:t('contFrom',c.a.page)}); });
+  const z=Math.min(S_MAX,PG_W/(Math.max(...tiles.map(b=>b.w))+2*TE),(PG_H-TH)/(Math.max(...tiles.map(b=>b.h))+2*TE));
+  tiles.forEach(tl=>{ const seen=[]; tl.marks=tl.marks.filter(m=>{ if(seen.some(o=>o.txt===m.txt&&o.col===m.col&&Math.hypot(o.x-m.x,o.y-m.y)<60)) return false; seen.push(m); return true; }); });
+  // Seite 1: ganzer Kasten mit eingezeichneten Kacheln
+  const b=all(L), s1=Math.min(S_MAX,PG_W/b.w,(PG_H-head.h)/b.h);
+  const gridSvg=tiles.map(tl=>`<rect x="${f1(tl.X0+PBX-b.X0+3)}" y="${f1(tl.Y0+PBY-b.Y0+3)}" width="${f1(tl.X1-tl.X0-6)}" height="${f1(tl.Y1-tl.Y0-6)}" rx="6" fill="none" stroke="${PC.muted}" stroke-width="${f1(2/s1)}" stroke-dasharray="${f1(8/s1)} ${f1(5/s1)}"/>`+
+    `<rect x="${f1(tl.X0+PBX-b.X0+3+4/s1)}" y="${f1(tl.Y0+PBY-b.Y0+3+4/s1)}" width="${f1((textW(t('tileShort',tl.page),12,700)+8)/s1)}" height="${f1(17/s1)}" rx="${f1(3/s1)}" fill="#fff"/>`+
+    svgText([[{t:t('tileShort',tl.page)}]],tl.X0+PBX-b.X0+3+8/s1,tl.Y0+PBY-b.Y0+3+4/s1,12/s1,17/s1,{fw:700,fill:PC.text})).join('');
+  const pages=[head.svg+`<g transform="translate(0 ${head.h}) scale(${f1(s1*1000)/1000})">${svgBoxView(M,L,paths,b)}${gridSvg}</g>`];
+  tiles.forEach(tl=>{
+    const cs=10, map=`<g transform="translate(${PG_W-colBands.length*(cs+2)} 2)">`+tiles.map(o=>`<rect x="${o.ci*(cs+2)}" y="${o.ri*(cs+2)}" width="${cs}" height="${cs}" rx="2" fill="${o===tl?PC.accent:PC.n}"/>`).join('')+'</g>';
+    const hd=printSubHead([t('tilePage',tl.page),t('tileRows',tl.rb[0]+1,tl.rb[1]+1)+' · '+t('tileCols',colName(tl.cb[0]),colName(Math.min(tl.cb[1],M.nC-1)))],map);
+    pages.push(hd.svg+`<g transform="translate(0 ${TH}) scale(${f1(z*1000)/1000})">${svgBoxView(M,L,paths,tl,tl.marks,TE)}</g>`);
+  });
+  return pages;
+}
+
+/* Übersicht der Lösungsvarianten als Tabelle; zu viele Varianten oder Zeilen werden auf weitere Seiten verteilt */
+function varPages(){
+  const vs=P.variants; if(!vs.length) return [];
+  const rating=ui.view!==OFF, LW=200, VW=200, SP=12, PX=10, scores=vs.map(scoreVariant), co=P.settings.coords;
+  const cols=vs.map(v=>({v,name:wrapRuns([{t:v.name||'?',fw:700},...(v.visible?[]:[{t:' '+t('hidden'),fill:PC.muted}])],VW-2*PX,13,3)}));
+  // Zeilen: Kopf, Skizzen, je Teilfunktion, je Kriterium, Notiz; jede Zeile kennt ihre Höhe und zeichnet Beschriftung und Zellen
+  const rows=[];
+  const label=(lines,o={})=>({lines,o});
+  if(vs.some(v=>v.imgs.some(id=>imgSrc(id)))){
+    const n=v=>v.imgs.filter(id=>imgSrc(id)).length, bw=(VW-2*PX-6)/2;
+    rows.push({lab:label(wrapText(t('sketches'),LW-2*PX,13,{fw:600},2)),h:14+Math.max(...vs.map(v=>Math.ceil(n(v)/2)))*70-6,
+      cell:(v,x,y)=>({s:v.imgs.filter(id=>imgSrc(id)).map((id,i)=>`<rect x="${f1(x+PX+(i%2)*(bw+6))}" y="${f1(y+7+Math.floor(i/2)*70)}" width="${f1(bw)}" height="64" rx="4" fill="${PC.soft}"/>`+svgImg(id,x+PX+(i%2)*(bw+6),y+7+Math.floor(i/2)*70,bw,64)).join('')})});
+  }
+  P.rows.forEach((row,ri)=>{
+    const lab=wrapRuns([...(co?[{t:(ri+1)+' ',fill:PC.accent,fw:700}]:[]),{t:row.name,fw:600}],LW-2*PX,13,3);
+    const cell=vs.map(v=>{ const c=row.cells.find(x=>x.id===v.picks[row.id]);
+      if(!c) return {h:30,s:(x,y,h)=>svgText([[{t:t('missing'),it:1}]],x+PX,y+(h-17)/2,13,17,{fill:PC.warn})};
+      const img=c.img&&imgSrc(c.img), tw=VW-2*PX-(img?57:0), why=rating?(c.ratings[ui.view]||{}).reason:'';
+      const tl=wrapRuns([...(co?[{t:coordOf(c,row)+' ',fw:700,fill:PC.muted}]:[]),c.title?{t:c.title,fw:700}:{t:t('untitled'),fill:PC.ph,it:1}],tw,13,3);
+      const wl=why?wrapText(why,tw,11.5,{fill:PC.muted},4):[], th=tl.length*17+(wl.length?2+wl.length*15:0);
+      return {h:14+Math.max(img?37:0,th),bg:PC[viewLvl(c)+'bg'],s:(x,y,h)=>(img?`<rect x="${f1(x+PX)}" y="${f1(y+(h-37)/2)}" width="49" height="37" rx="4" fill="${PC.soft}"/>`+svgImg(c.img,x+PX,y+(h-37)/2,49,37):'')+
+        svgText(tl,x+PX+(img?57:0),y+(h-th)/2,13,17)+svgText(wl,x+PX+(img?57:0),y+(h-th)/2+tl.length*17+2,11.5,15)}; });
+    rows.push({lab:label(lab),h:Math.max(14+lab.length*17,...cell.map(c=>c.h)),cells:cell});
+  });
+  if(rating) P.criteria.forEach((k,i)=>rows.push({lab:label(wrapText(k.name,LW-2*PX,13,{fw:600},2)),h:30,sep:!i,
+    cell:(v,x,y,h,vi)=>{ const p=scores[vi].per[i], bw=VW-2*PX-48, tot=p.cnt.g+p.cnt.y+p.cnt.r+p.cnt.n, [cid,clip]=svgClip(x+PX,y+h/2-4.5,bw,9,4.5); let bx=x+PX;
+      return {s:`<defs>${clip}</defs><g clip-path="url(#${cid})"><rect x="${f1(x+PX)}" y="${f1(y+h/2-4.5)}" width="${f1(bw)}" height="9" fill="${PC.n}"/>`+
+        ['g','y','r','n'].map(l=>{ if(!p.cnt[l]) return ''; const w=bw*p.cnt[l]/tot, r=`<rect x="${f1(bx)}" y="${f1(y+h/2-4.5)}" width="${f1(w)}" height="9" fill="${l==='n'?PC.empty2:PC[l]}"/>`; bx+=w; return r; }).join('')+'</g>'+
+        svgText([[{t:p.pct==null?'–':p.pct+' %'}]],x+VW-PX,y+(h-17)/2,12,17,{anchor:'end',fw:600})}; }}));
+  if(vs.some(v=>v.note)){ const nl=vs.map(v=>wrapText(v.note,VW-2*PX,12.5,{fill:PC.muted},12));
+    rows.push({lab:label(wrapText(t('note'),LW-2*PX,13,{fw:600},2)),h:14+Math.max(...nl.map(l=>l.length))*17,cell:(v,x,y,h,vi)=>({s:svgText(nl[vi],x+PX,y+7,12.5,17)})}); }
+  const HH=Math.max(56,14+Math.max(...cols.map(c=>c.name.length))*17);
+  // Seiten: Spalten so, dass Massstab S_MIN reicht; Massstab für alle Seiten gleich; Zeilen nach Höhe
+  const head=34, colW=k=>LW+k*(VW+SP), kmax=Math.max(1,Math.floor((PG_W/S_MIN-LW)/(VW+SP)));
+  const vBands=vs.length<=kmax?[[0,vs.length-1]]:evenBands(vs.length,kmax), kw=Math.max(...vBands.map(b=>b[1]-b[0]+1));
+  const tabH=HH+rows.reduce((s,r)=>s+r.h,0);
+  const s=Math.max(S_MIN,Math.min(S_MAX,PG_W/colW(kw),(PG_H-head)/tabH));
+  const rBands=rows.length?heightBands(rows.map(r=>r.h),(PG_H-head)/s-HH):[[0,-1]];
+  const pages=[];
+  vBands.forEach(vb=>rBands.forEach(rb=>{
+    const vi=vs.map((_,i)=>i).slice(vb[0],vb[1]+1), rr=rows.slice(rb[0],rb[1]+1), H=HH+rr.reduce((a,r)=>a+r.h,0);
+    let g='';
+    // Spalte: abgerundete Karte, Zellen mit Ampel-Hintergrund, Trennlinien zwischen den Zeilen
+    const column=(x,w,hdr,cellAt,top)=>{ const [cid,clip]=svgClip(x,0,w,H,10); let y=HH, inner=top||'';
+      rr.forEach(r=>{ const c=cellAt(r,x,y,r.h); if(c.bg) inner+=`<rect x="${f1(x)}" y="${f1(y)}" width="${w}" height="${f1(r.h)}" fill="${c.bg}"/>`;
+        inner+=`<line x1="${f1(x)}" y1="${f1(y)}" x2="${f1(x+w)}" y2="${f1(y)}" stroke="${PC.line}" stroke-width="${r.sep?2:1}"/>`+c.s; y+=r.h; });
+      return `<defs>${clip}</defs><g clip-path="url(#${cid})"><rect x="${x}" y="0" width="${w}" height="${f1(H)}" fill="#fff"/>${inner}</g>`+
+        `<rect x="${f1(x+.5)}" y=".5" width="${w-1}" height="${f1(H-1)}" rx="10" fill="none" stroke="${PC.line}"/>`+hdr; };
+    g+=column(0,LW,`<line x1="1" y1="${HH-1}" x2="${LW-1}" y2="1" stroke="${PC.line}"/>`+svgText([[{t:t('variantsLbl')+' →'}]],LW-PX,4,11,16,{anchor:'end',fw:600,fill:PC.muted})+
+      svgText([[{t:t('hdrFunctions')+' ↓'}]],PX,HH-20,11,16,{fw:600,fill:PC.muted}),(r,x,y,h)=>({bg:PC.soft,s:svgText(r.lab.lines,x+PX,y+(h-r.lab.lines.length*17)/2,13,17,{fill:PC.muted})}),`<rect x="0" y="0" width="${LW}" height="${HH}" fill="${PC.soft}"/>`);
+    vi.forEach((i,k)=>{ const x=LW+SP+k*(VW+SP), v=vs[i];
+      g+=column(x,VW,`<g${v.visible?'':' opacity=".5"'}>${svgText(cols[i].name,x+PX,(HH-cols[i].name.length*17)/2+2,13,17)}</g>`,
+        (r,cx,y,h)=>r.cells?{bg:r.cells[i].bg,s:r.cells[i].s(cx,y,h)}:r.cell(v,cx,y,h,i),
+        `<rect x="${x}" y="0" width="${VW}" height="5" fill="${v.color}"/>`); });
+    const parts=[t('overviewH')]; if(vBands.length*rBands.length>1) parts.push(t('tilePage',pages.length+1)+' / '+vBands.length*rBands.length);
+    pages.push(svgText([[{t:parts[0],fw:700},...(parts[1]?[{t:' · '+parts[1],fill:PC.muted}]:[])]],0,0,16,22)+`<g transform="translate(0 ${head}) scale(${f1(s*1000)/1000})">${g}</g>`);
+  }));
+  return pages;
+}
+
+function buildPrint(){
+  $('#printout')?.remove(); clipN=0;
+  const pages=[...boxPages(),...varPages()];
+  document.body.insertAdjacentHTML('beforeend',`<div id="printout">`+pages.map(p=>`<section class="pp"><svg viewBox="0 0 ${PG_W} ${PG_H}" preserveAspectRatio="xMinYMin meet" `+
+    `font-family='${PFONT}' fill="${PC.text}" style="white-space:pre">${p}</svg></section>`).join('')+'</div>');
+}
+// Über das Menü: Seiten vorher aufbauen und Bilder laden lassen; Strg+P baut sie in beforeprint auf
+async function printBox(){
+  buildPrint(); ui.printBuilt=true;
+  await Promise.all([...$$('#printout image')].map(im=>new Promise(res=>{ const i=new Image(); i.onload=i.onerror=res; i.src=im.getAttribute('href'); })));
+  window.print();
+}
+window.addEventListener('beforeprint',()=>{ if(!ui.printBuilt) buildPrint(); });
+window.addEventListener('afterprint',()=>{ ui.printBuilt=false; $('#printout')?.remove(); });
 window.addEventListener('resize',()=>{ applySize(); drawLines(); });
 window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.preventDefault(); e.returnValue=''; } });
 
