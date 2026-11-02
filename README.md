@@ -41,7 +41,7 @@ Many people do this in Excel, but sketches, ratings and comparisons quickly get 
 2. The first time you open it, you see an **example** and a short guide. Have a look around, then click **File → New** to start your own box. You can bring the example back any time via **? Help → Open example**.
 3. **Click a box** to edit its title, description, image and rating in the sidebar on the right.
 4. **Create a solution variant** with the **+** button, then click one partial solution per row. Click **Done** when you are finished.
-5. **Save** your work as a file with **Save**. You can open it again later with **File → Open…**, or send it to someone else.
+5. **Save** your work as a file with **Save**, or switch on **File → Auto-save** in Chrome or Edge to keep the chosen file up to date automatically. You can open it again later with **File → Open…**, or send it to someone else.
 6. **Export** (top) prints the box as PDF or creates an Excel or CSV file.
 
 Click **? Help** (top right) for a short guide with all keyboard shortcuts.
@@ -51,7 +51,9 @@ Click **? Help** (top right) for a short guide with all keyboard shortcuts.
 **Only on your own computer.** The tool does not upload anything to a server.
 
 - While you work, your current state is cached automatically in your browser.
-- That browser cache is **not a backup**. It is lost if you clear your browser data or switch to another browser or computer. Click **Save** regularly. This creates a `.kasten.json` file that contains everything, including all images.
+- That browser cache is **not a backup**. It is lost if you clear your browser data or switch to another browser or computer.
+- In **Chrome and Edge**, switch on **File → Auto-save** to write every change into the chosen `.kasten.json` file. Pick a file in a cloud folder (e.g. OneDrive, Google Drive, Dropbox, Syncthing) and your work is saved there automatically. The tool remembers the file and offers to continue with it after a reload.
+- In **Firefox and Safari**, save manually with **Save**. This creates a `.kasten.json` file that contains everything, including all images.
 
 ### Privacy, security and warranty
 
@@ -125,7 +127,7 @@ Viele machen das in Excel, aber mit Skizzen, Bewertungen und Vergleichen wird es
 2. Beim ersten Öffnen siehst du ein **Beispiel** und eine kurze Anleitung. Schau dich um und klicke dann auf **Datei → Neu**, um deinen eigenen Kasten anzulegen. Das Beispiel holst du jederzeit über **? Hilfe → Beispiel öffnen** zurück.
 3. **Ein Feld anklicken**, um Titel, Beschreibung, Bild und Bewertung in der Seitenleiste rechts zu bearbeiten.
 4. **Lösungsvariante anlegen** mit dem **+**-Knopf, dann pro Zeile eine Teillösung anklicken. Mit **Fertig** abschliessen.
-5. Mit **Speichern** sicherst du deine Arbeit als Datei. Später öffnest du sie wieder mit **Datei → Öffnen…** oder schickst sie jemandem.
+5. Mit **Speichern** sicherst du deine Arbeit als Datei. In Chrome und Edge kannst du unter **Datei → Automatisch speichern** die gewählte Datei laufend aktualisieren lassen. Später öffnest du sie wieder mit **Datei → Öffnen…** oder schickst sie jemandem.
 6. **Export** (oben) druckt den Kasten als PDF oder erstellt eine Excel- bzw. CSV-Datei.
 
 Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Tastenkürzeln.
@@ -135,7 +137,9 @@ Ein Klick auf **? Hilfe** (oben rechts) zeigt eine Kurzanleitung mit allen Taste
 **Nur auf deinem eigenen Computer.** Das Tool lädt nichts auf einen Server.
 
 - Während du arbeitest, wird der aktuelle Stand automatisch im Browser zwischengespeichert.
-- Dieser Zwischenspeicher ist **keine Sicherung**. Er geht verloren, wenn du die Browserdaten löschst oder den Browser oder Computer wechselst. Klicke deshalb regelmässig auf **Speichern**. So entsteht eine `.kasten.json`-Datei, die alles enthält, auch alle Bilder.
+- Dieser Zwischenspeicher ist **keine Sicherung**. Er geht verloren, wenn du die Browserdaten löschst oder den Browser oder Computer wechselst.
+- In **Chrome und Edge** schaltest du **Datei → Automatisch speichern** ein. Jede Änderung wird dann in die gewählte `.kasten.json`-Datei geschrieben, auch in einem Cloud-Ordner (z. B. OneDrive, Google Drive, Dropbox, Syncthing). Das Tool merkt sich die Datei und bietet nach einem Neuladen an, damit weiterzuarbeiten.
+- In **Firefox und Safari** speicherst du manuell mit **Speichern**. So entsteht eine `.kasten.json`-Datei, die alles enthält, auch alle Bilder.
 
 ### Datenschutz, Sicherheit und Gewähr
 

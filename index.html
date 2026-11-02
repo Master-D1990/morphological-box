@@ -296,8 +296,33 @@ body.noside #side{display:none}
 @media (min-width:1200px){ #bar{flex-wrap:nowrap} #bar>*{flex-shrink:0} #bar>#ptitle{flex-shrink:1} }
 #themeSeg svg{width:16px;height:16px;display:block}
 #themeSeg button{padding:5px 8px}
-#saveState{color:var(--accent);font-size:14px;cursor:help;margin-left:-4px}
+/* Speicherstatus + Auto-Schalter neben dem Projekttitel */
+#saveWrap{position:relative;display:inline-flex;align-items:center;gap:6px;min-width:0}
+#autoTgl,#autoTglPop{padding:3px 9px 3px 32px;font-size:12px;line-height:1.3}
+#autoTgl::before,#autoTglPop::before{left:7px;width:20px;height:12px;margin-top:-6px;border-radius:6px}
+#autoTgl::after,#autoTglPop::after{left:9px;width:8px;height:8px;margin-top:-4px}
+#autoTgl[aria-pressed=true]::after,#autoTglPop[aria-pressed=true]::after{transform:translateX(8px)}
+#saveState{border:0;background:transparent;border-radius:6px;padding:2px 4px;font-size:12.5px;cursor:pointer;color:var(--muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;min-width:0}
+#saveState:hover{background:var(--hover)}
+#saveState.ok{color:var(--g)}
+#saveState.warn{color:var(--warn)}
+#saveState.err{color:var(--r)}
+#saveState:empty{display:none}
+#savePop{position:absolute;top:calc(100% + 6px);left:0;z-index:45;min-width:250px;max-width:320px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.2);padding:8px}
+#savePop[hidden]{display:none}
+#savePop .sp-name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#savePop .sp-time{margin:2px 0 4px}
+#savePop .sp-auto{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;margin:8px 0}
+#savePop hr{border:0;border-top:1px solid var(--line);margin:6px 0}
+#savePop .sp-act{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--text);padding:7px 8px;border-radius:5px;cursor:pointer;white-space:nowrap;font-size:14px}
+#savePop .sp-act:hover{background:var(--hover)}
 #bSave.dirty{border-color:var(--accent);color:var(--accent);font-weight:600}
+#resumeBar{display:inline-flex;align-items:center;gap:2px;min-width:0}
+#resumeBar[hidden]{display:none}
+#resumeBtn{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent);border-color:var(--ring);background:var(--accent-soft)}
+#resumeClose{font-size:12px;padding:3px 5px}
+.menu-list button:disabled{opacity:.45;cursor:default}
+.menu-list button:disabled:hover{background:transparent}
 .menu{position:relative;display:inline-block}
 .menu>.btn::after{content:" ▾";font-size:11px;color:var(--muted)}
 #bar2 .menu>.btn,#bar2 .btn.tgl{padding:3px 9px;font-size:13px}
@@ -388,7 +413,19 @@ html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:no
 <body>
 <header id="bar">
   <input id="ptitle" type="text" data-i18n-title="ptitleT" spellcheck="false">
-  <span id="saveState" class="muted small"></span>
+  <span id="saveWrap">
+    <span id="autoWrap"><button type="button" class="btn tgl" id="autoTgl" aria-pressed="false" data-i18n="autoSave"></button></span>
+    <button type="button" id="saveState" aria-haspopup="true" aria-expanded="false"></button>
+    <div id="savePop" hidden>
+      <div class="sp-name" id="spName"></div>
+      <div class="sp-time small muted" id="spTime"></div>
+      <div class="sp-auto"><span data-i18n="autoSave"></span><button type="button" class="btn tgl" id="autoTglPop" aria-pressed="false">Auto</button></div>
+      <hr>
+      <button type="button" class="sp-act" id="popSaveAs" data-i18n="popSaveAs"></button>
+      <button type="button" class="sp-act" id="popOpen" data-i18n="openOther"></button>
+    </div>
+  </span>
+  <span id="resumeBar" hidden><button class="btn small" id="resumeBtn"></button><button class="icon" id="resumeClose">✕</button></span>
   <span class="spacer"></span>
   <button class="btn" id="undo" data-i18n-title="undoT">↶</button>
   <button class="btn" id="redo" data-i18n-title="redoT">↷</button>
@@ -493,6 +530,19 @@ const L={
 de:{
   appTitle:'Morphologischer Kasten', ptitleT:'Projekttitel', ctrl:'Strg',
   new:'Neu', open:'Öffnen…', openT:'Strg+O', import:'Importieren…', importHint:'Andere Kasten-Datei in diesen einfügen', file:'Datei', save:'Speichern', saveT:'Strg+S', saveAs:'Speichern unter…', saveAsT:'Strg+Umschalt+S',
+  autoSave:'Automatisch speichern', autoSaveHint:'Jede Änderung sofort in die gewählte Datei schreiben; Tippen beim Verlassen des Feldes oder nach 0,5 s', autoSaveOnly:'Nur in Chrome und Edge verfügbar',
+  autoOnly:'Nur in Chrome und Edge möglich',
+  statusChoose:'⚠ Nur im Browser · Datei wählen', statusChooseT:'Noch keine Datei verbunden. Klicken, um einen Speicherort zu wählen und danach automatisch zu speichern',
+  statusSave:'⚠ Nur im Browser · Speichern', statusSaveT:'Noch keine Datei gespeichert. Klicken, um eine Datei herunterzuladen',
+  statusSaved:'✓ Automatisch gespeichert', statusDirty:'● Ungespeicherte Änderungen', statusDirtyT:'Klicken zum Speichern',
+  statusErr:'⚠ Nicht gespeichert · erneut versuchen', statusStored:'✓ In Datei gespeichert',
+  savedTitle:(name,time)=>`Automatisch gespeichert in «${name}»${time?' · '+time:''}`,
+  storedTitle:(name,time)=>`In «${name}» gespeichert${time?' · '+time:''}`,
+  popSavedAt:time=>`Zuletzt gespeichert: ${time}`, notSavedYet:'Noch nicht in eine Datei geschrieben', popSaveAs:'Speichern unter …', openOther:'Andere Datei öffnen …',
+  autoSaved:'✓ Automatisch gespeichert', autoSavedT:name=>`Automatisch gespeichert in «${name}»`, autoSaveErr:'⚠ Speichern fehlgeschlagen', autoSaveErrT:'Automatisches Speichern fehlgeschlagen. Klicken zum Wiederholen',
+  unsavedAuto:'Änderungen sind noch nicht in der Datei gespeichert. Automatisch speichern ist eingeschaltet',
+  resume:name=>`Mit «${name}» weiterarbeiten`, resumeT:'Datei verbinden und automatisch weiterspeichern', resumeClose:'Hinweis schliessen und Datei vergessen', resumeForgotten:'Datei vergessen. Der Stand bleibt im Browser', resumeDenied:'Kein Zugriff auf die Datei. Bitte mit «Speichern» erneut wählen',
+  resumeAsk:name=>`Der Zwischenspeicher enthält neuere Änderungen als die Datei «${name}».\n\nOK: Zwischenspeicher behalten und in die Datei schreiben.\nAbbrechen: Datei «${name}» öffnen und den Zwischenspeicher verwerfen.`,
   print:'PDF / Drucken', undoT:'Rückgängig (Strg+Z)', redoT:'Wiederholen (Strg+Y)',
   side:'Seitenleiste', sideT:'Seitenleiste ein-/ausblenden (Taste S)',
   themeAuto:'Farbschema: automatisch', themeLight:'Farbschema: hell', themeDark:'Farbschema: dunkel',
@@ -540,7 +590,7 @@ de:{
     <li><b>Skizzen zur Lösungsvariante</b>: auf die Karte einer Lösungsvariante bzw. in die Zeile «Skizzen» der Übersicht ziehen, oder Karte anklicken + ${kb('Strg')}+${kb('V')}. Klick aufs Bild vergrössert.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} Ampel · ${kb('Strg')}+${kb('Z')}/${kb('Y')} Rückgängig · ${kb('Strg')}+${kb('S')} Speichern · ${kb('?')} diese Hilfe · ${kb('Esc')} Auswahl beenden · ${kb('S')} Seitenleiste ein/aus · ${kb('B')} Ampel ein/aus · ${kb('D')} Beschreibungen ein/aus · ${kb('G')} Begründungen ein/aus · ${kb('K')} Koordinaten ein/aus</li>
     <li><b>Koordinaten</b> wie in Excel (z. B. «B2» = Teillösung B der Teilfunktion 2) erleichtern die Abstimmung im Team.</li>
-    <li>Der Stand wird automatisch im Browser zwischengespeichert. Zum Sichern und Weitergeben «Speichern» (JSON-Datei inkl. Bilder).</li>
+    <li><b>Speichern</b>: Wähle einmal einen Speicherort, zum Beispiel in deinem Cloud-Ordner. Danach speichert das Tool jede Änderung automatisch. Der Stand wird automatisch im Browser zwischengespeichert. Das ist keine Sicherung, denn Browserdaten können gelöscht werden. In Chrome und Edge schreibt «Automatisch speichern» (im Datei-Menü) jede Änderung in die gewählte Datei, zum Beispiel in einen Cloud-Ordner wie OneDrive, Google Drive, Dropbox oder Syncthing. In Firefox und Safari mit «Speichern» manuell eine Datei anlegen (JSON inkl. Bilder).</li>
     <li><b>Importieren</b> (oben unter «Datei»): fügt eine andere Kasten-Datei in diesen Kasten ein. Teillösungen kommen in die gleichnamige Teilfunktion, neue Teilfunktionen unten, Lösungsvarianten rechts. Gleichnamige Kriterien werden zusammengeführt, neue ergänzt.</li>
     <li><b>Datenschutz & Gewähr</b>: Das Tool überträgt keine Daten, alles bleibt in deinem Browser. Die Webseite liegt auf GitHub Pages, GitHub kann dabei technische Daten wie die IP-Adresse protokollieren (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>). Kasten-Dateien enthalten nur Daten, keinen ausführbaren Code, und werden beim Öffnen geprüft. Nutzung ohne Gewähr (MIT-Lizenz).</li>`,
   printRating:'Ampel-Kriterium: ', dateLocale:'de-CH', tilePage:n=>`Seite ${n}`, tileRows:(a,b)=>a===b?`Teilfunktion ${a}`:`Teilfunktionen ${a} bis ${b}`, tileCols:(a,b)=>a===b?`Teillösung ${a}`:`Teillösungen ${a} bis ${b}`, tileShort:n=>`S. ${n}`, contTo:n=>`weiter S. ${n}`, contFrom:n=>`von S. ${n}`,
@@ -571,6 +621,19 @@ de:{
 en:{
   appTitle:'Morphological Box', ptitleT:'Project title', ctrl:'Ctrl',
   new:'New', open:'Open…', openT:'Ctrl+O', import:'Import…', importHint:'Add another box file to this one', file:'File', save:'Save', saveT:'Ctrl+S', saveAs:'Save as…', saveAsT:'Ctrl+Shift+S',
+  autoSave:'Auto-save', autoSaveHint:'Write every change to the chosen file right away; typing when leaving the field or after 0.5 s', autoSaveOnly:'Only available in Chrome and Edge',
+  autoOnly:'Only possible in Chrome and Edge',
+  statusChoose:'⚠ Browser only · Choose file', statusChooseT:'No file linked yet. Click to choose a save location and then save automatically',
+  statusSave:'⚠ Browser only · Save', statusSaveT:'No file saved yet. Click to download a file',
+  statusSaved:'✓ Auto-saved', statusDirty:'● Unsaved changes', statusDirtyT:'Click to save',
+  statusErr:'⚠ Not saved · try again', statusStored:'✓ Saved to file',
+  savedTitle:(name,time)=>`Auto-saved to “${name}”${time?' · '+time:''}`,
+  storedTitle:(name,time)=>`Saved to “${name}”${time?' · '+time:''}`,
+  popSavedAt:time=>`Last saved: ${time}`, notSavedYet:'Not written to a file yet', popSaveAs:'Save as …', openOther:'Open another file …',
+  autoSaved:'✓ Auto-saved', autoSavedT:name=>`Auto-saved to “${name}”`, autoSaveErr:'⚠ Save failed', autoSaveErrT:'Auto-save failed. Click to retry',
+  unsavedAuto:'Changes are not saved to the file yet. Auto-save is on',
+  resume:name=>`Continue with “${name}”`, resumeT:'Reconnect the file and keep saving automatically', resumeClose:'Dismiss and forget the file', resumeForgotten:'File forgotten. Your work stays in the browser', resumeDenied:'No access to the file. Please choose it again with “Save”',
+  resumeAsk:name=>`The browser cache contains newer changes than the file “${name}”.\n\nOK: keep the cache and write it into the file.\nCancel: open the file “${name}” and discard the cache.`,
   print:'PDF / Print', undoT:'Undo (Ctrl+Z)', redoT:'Redo (Ctrl+Y)',
   side:'Sidebar', sideT:'Show/hide sidebar (key S)',
   themeAuto:'Colour scheme: automatic', themeLight:'Colour scheme: light', themeDark:'Colour scheme: dark',
@@ -618,7 +681,7 @@ en:{
     <li><b>Solution variant sketches</b>: drop them on the solution variant card or in the “Sketches” row of the overview, or click the card + ${kb('Ctrl')}+${kb('V')}. Click an image to enlarge it.</li>
     <li>${kb(1)}${kb(2)}${kb(3)}${kb(0)} rating · ${kb('Ctrl')}+${kb('Z')}/${kb('Y')} undo/redo · ${kb('Ctrl')}+${kb('S')} save · ${kb('?')} this help · ${kb('Esc')} end selection · ${kb('S')} sidebar on/off · ${kb('B')} traffic light on/off · ${kb('D')} descriptions on/off · ${kb('G')} reasons on/off · ${kb('K')} coordinates on/off</li>
     <li><b>Coordinates</b> like in Excel (e.g. “B2” = partial solution B of sub-function 2) make it easy to talk about cells in a team.</li>
-    <li>Your work is cached automatically in the browser. To back it up or share it, use “Save” (JSON file including images).</li>
+    <li><b>Saving</b>: Choose a save location once, for example in your cloud folder. After that, the tool saves every change automatically. Your work is cached automatically in the browser. That is not a backup, because browser data can be cleared. In Chrome and Edge, “Auto-save” (in the File menu) writes every change into the chosen file, for example in a cloud folder such as OneDrive, Google Drive, Dropbox or Syncthing. In Firefox and Safari, create a file manually with “Save” (JSON including images).</li>
     <li><b>Import</b> (top, under “File”): adds another box file to this box. Partial solutions go into the sub-function with the same name, new sub-functions at the bottom, solution variants on the right. Criteria with the same name are merged, new ones are added.</li>
     <li><b>Privacy & warranty</b>: the tool does not send any data, everything stays in your browser. The website is hosted on GitHub Pages, and GitHub may log technical data such as your IP address (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub privacy statement</a>). Box files contain only data, no executable code, and are checked when opened. No warranty (MIT License).</li>`,
   printRating:'Rating criterion: ', dateLocale:'en-GB', tilePage:n=>`Page ${n}`, tileRows:(a,b)=>a===b?`Sub-function ${a}`:`Sub-functions ${a} to ${b}`, tileCols:(a,b)=>a===b?`Partial solution ${a}`:`Partial solutions ${a} to ${b}`, tileShort:n=>`p. ${n}`, contTo:n=>`cont. p. ${n}`, contFrom:n=>`from p. ${n}`,
@@ -668,14 +731,16 @@ function applyStatic(){
 }
 function setLang(l){
   LANG=l; try{ localStorage.setItem('mk-lang',l); }catch(e){}
-  applyStatic(); renderTheme(); if(P) renderAll();
+  applyStatic(); renderTheme(); renderResumeBar(); if(P) renderAll();
 }
 
 let P=null;            // Projekt (ohne Bilddaten)
 let IMG={};            // Bild-ID -> dataURL
 let BLOB={};           // Bild-ID -> blob:URL (Anzeige-Cache)
 const PAGE_TITLE=document.title, REPO='https://github.com/Master-D1990/morphological-box';
-const ui={sample:false,sel:null,editVar:null,view:null,handle:null,dirty:false,autosaveOk:true,pasteVar:null,pickVar:null};
+const ui={sample:false,sel:null,editVar:null,view:null,handle:null,handleReady:false,pendingHandle:null,dirty:false,autosaveOk:true,auto:true,autoErr:false,autoSaved:false,lastSaved:0,rev:0,pasteVar:null,pickVar:null};
+const AUTO_SUPPORTED=!!window.showSaveFilePicker;
+try{ ui.auto=localStorage.getItem('mk-autosave')!=='0'; }catch(e){}
 let undoStack=[],redoStack=[],editSnap=null;
 
 /* ---------- Modell ---------- */
@@ -894,8 +959,29 @@ function applySize(){
   document.documentElement.style.setProperty('--cell-w',w+'px');
   document.documentElement.style.setProperty('--img-h',Math.round(w*0.6)+'px');
 }
+const fmtSavedTime=ts=>{ if(!ts) return ''; try{ return new Date(ts).toLocaleString(t('dateLocale'),{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } };
 function updateStatus(){
-  $('#saveState').textContent=ui.dirty?'●':''; $('#saveState').title=ui.dirty?t('unsaved'):''; $('#bSave').classList.toggle('dirty',ui.dirty);
+  const s=$('#saveState'), linked=!!(ui.handle&&ui.handleReady), err=!!(ui.autoErr&&linked&&ui.auto), active=!!(AUTO_SUPPORTED&&ui.auto&&linked);
+  const time=fmtSavedTime(ui.lastSaved);
+  s.classList.remove('ok','warn','err');
+  if(err){ s.textContent=t('statusErr'); s.title=t('autoSaveErrT'); s.classList.add('err'); }
+  else if(!linked){
+    s.textContent=t(AUTO_SUPPORTED?'statusChoose':'statusSave');
+    s.title=t(AUTO_SUPPORTED?'statusChooseT':'statusSaveT'); s.classList.add('warn');
+  }
+  else if(active){ s.textContent=t('statusSaved'); s.title=t('savedTitle',ui.handle.name||'',time); s.classList.add('ok'); }
+  else if(ui.dirty){ s.textContent=t('statusDirty'); s.title=t('statusDirtyT'); s.classList.add('warn'); }
+  else { s.textContent=t('statusStored'); s.title=t('storedTitle',ui.handle.name||'',time); s.classList.add('ok'); }
+  // Auto-Schalter (Kopfzeile und Popover) an die aktive Einstellung binden
+  $$('#autoTgl,#autoTglPop').forEach(b=>{
+    b.setAttribute('aria-pressed',active?'true':'false'); b.disabled=!AUTO_SUPPORTED;
+    b.title=AUTO_SUPPORTED?t('autoSave'):t('autoOnly');
+  });
+  $('#autoWrap').title=AUTO_SUPPORTED?t('autoSave'):t('autoOnly');
+  $('#bSave').hidden=active;
+  $('#bSave').classList.toggle('dirty',ui.dirty);
+  $('#spName').textContent=linked?(ui.handle.name||t('noName')):t('noName');
+  $('#spTime').textContent=linked&&ui.lastSaved?t('popSavedAt',time):t('notSavedYet');
   // unverändertes Beispiel (= was Suchmaschinen sehen): Tool-Titel aus dem HTML behalten, sonst Kastenname im Tab
   document.title=ui.sample&&!ui.dirty?PAGE_TITLE:(ui.dirty?'• ':'')+(P.title?P.title+' | ':'')+t('appTitle');
   $('#undo').disabled=!undoStack.length; $('#redo').disabled=!redoStack.length;
@@ -1119,8 +1205,8 @@ function sortCells(mode){
 function loadSample(){
   if(!confirmDiscard()) return false;
   if(!ui.dirty&&!confirm(t('confirmSample'))) return false;
-  clearBlobs(); P=sampleProject(); IMG={}; ui.sample=true; viewFromSettings(); ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
-  resetHistory(); validateUi(); renderAll(); scheduleSave(); return true;
+  clearBlobs(); P=sampleProject(); IMG={}; ui.sample=true; viewFromSettings(); ui.sel=null; ui.editVar=null; ui.dirty=false;
+  resetHistory(); validateUi(); renderAll(); clearFileHandle(); scheduleSave(); return true;
 }
 function openHelp(){ $('#helpList').innerHTML=t('help'); const d=$('#helpDlg'); if(!d.open) d.showModal(); }
 function closeHelp(){ $('#helpDlg').close(); }
@@ -1194,9 +1280,10 @@ function loadData(text,{quiet=false}={}){
   let d=m.data;
   clearBlobs(); ({project:P,images:IMG}=normalize(d.project,d.images)); ui.sample=false; viewFromSettings();
   resetHistory(); ui.sel=null; ui.editVar=null; ui.dirty=false;
-  validateUi(); renderAll(); scheduleSave();
+  validateUi(); renderAll();
   if(m.from<SCHEMA_VERSION){ ui.dirty=true; updateStatus(); toast(t('migrated',m.from,SCHEMA_VERSION)); }
   else if(!quiet) toast(t('opened',P.title||t('appTitle')));
+  scheduleSave(); // diskrete Aktion: Zwischenspeicher und Datei sofort aktualisieren
   return true;
 }
 function importData(text){ // anderen Kasten einfügen: gleichnamige Teilfunktionen/Kriterien zusammenführen, Rest unten bzw. rechts anfügen
@@ -1241,27 +1328,52 @@ async function importFile(){
 }
 const fileName=()=>((P.title||t('fileBase')).replace(/[\\/:*?"<>|]+/g,'').trim()||t('fileBase'))+'.kasten.json';
 const pickerTypes=()=>[{description:t('appTitle'),accept:{'application/json':['.json']}}];
+async function writeHandle(h,data){ const w=await h.createWritable(); await w.write(data); await w.close(); }
+let writeLock=Promise.resolve();
+function queueWrite(h,data){ // nie zwei Schreibvorgänge gleichzeitig, auch nicht mit «Speichern»
+  const p=writeLock.then(()=>writeHandle(h,data));
+  writeLock=p.catch(()=>{});
+  return p;
+}
+async function permissionOk(h,request){
+  try{
+    if(!h.queryPermission) return true;
+    if(await h.queryPermission({mode:'readwrite'})==='granted') return true;
+    return request?(await h.requestPermission({mode:'readwrite'}))==='granted':false;
+  }catch(e){ return false; }
+}
+async function storeHandle(h){ try{ await idbSet('fileHandle',h); }catch(e){ console.warn(e); } }
+async function forgetHandle(){ try{ await idbSet('fileHandle',null); }catch(e){} }
+function setAutoPreference(on){ ui.auto=on; try{ localStorage.setItem('mk-autosave',on?'1':'0'); }catch(e){} }
 async function saveFile(as){
   const data=serialize();
-  if(window.showSaveFilePicker){
+  if(AUTO_SUPPORTED){
     try{
-      if(as||!ui.handle) ui.handle=await showSaveFilePicker({suggestedName:fileName(),types:pickerTypes()});
-      const w=await ui.handle.createWritable(); await w.write(data); await w.close();
+      if(as||!ui.handle||!ui.handleReady) ui.handle=await showSaveFilePicker({suggestedName:fileName(),types:pickerTypes()});
+      if(!(await permissionOk(ui.handle,true))) throw new Error('permission');
+      clearTimeout(autoT); autoT=null;
+      await queueWrite(ui.handle,data);
+      ui.handleReady=true; ui.pendingHandle=null; hideResumeBar(); await storeHandle(ui.handle);
+      setAutoPreference(true); ui.autoErr=false; ui.autoSaved=false; ui.lastSaved=Date.now();
       ui.dirty=false; updateStatus(); scheduleSave(); toast(t('saved',ui.handle.name)); return;
     }catch(err){ if(err.name==='AbortError') return; console.warn(err); }
   }
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([data],{type:'application/json'})); a.download=fileName(); a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  ui.dirty=false; updateStatus(); scheduleSave(); toast(t('downloaded',fileName()));
+  ui.autoSaved=false; ui.dirty=false; updateStatus(); scheduleSave(); toast(t('downloaded',fileName()));
 }
 const confirmDiscard=()=>!ui.dirty||confirm(t('confirmDiscard'));
 async function openFile(){
   if(!confirmDiscard()) return;
-  if(window.showOpenFilePicker){
+  if(AUTO_SUPPORTED){
     try{
       const [h]=await showOpenFilePicker({types:pickerTypes()});
-      if(loadData(await (await h.getFile()).text())) ui.handle=h;
+      const f=await h.getFile();
+      if(loadData(await f.text())){
+        ui.handle=h; ui.handleReady=true; ui.pendingHandle=null; hideResumeBar(); await storeHandle(h);
+        ui.lastSaved=f.lastModified||0; setAutoPreference(true); ui.autoErr=false; ui.autoSaved=false; updateStatus(); scheduleAutoSave();
+      }
     }catch(err){ if(err.name!=='AbortError') toast(t('openFail')); }
     return;
   }
@@ -1282,13 +1394,113 @@ async function idbGet(k){
     db.close(); return v;
   }catch(e){ return null; }
 }
-let saveT;
-function scheduleSave(){
-  clearTimeout(saveT);
-  saveT=setTimeout(async()=>{
-    try{ await idbSet('current',{data:serialize(),dirty:ui.dirty}); ui.autosaveOk=true; }
-    catch(e){ if(ui.autosaveOk) toast(t('autosaveFail')); ui.autosaveOk=false; console.warn(e); }
-  },500);
+/* Browser-Zwischenspeicher: bei jeder Änderung sofort schreiben, ohne Verzögerung,
+   damit der Stand beim Schliessen des Tabs aktuell ist. Schreibvorgänge werden gereiht. */
+let cacheLock=Promise.resolve();
+function cacheWrite(){
+  const rec={data:serialize(),dirty:ui.dirty};
+  cacheLock=cacheLock.then(()=>idbSet('current',rec)).then(
+    ()=>{ ui.autosaveOk=true; },
+    e=>{ if(ui.autosaveOk) toast(t('autosaveFail')); ui.autosaveOk=false; console.warn(e); });
+  return cacheLock;
+}
+function scheduleSave(text=false){ // text: Tippen in ein Feld, sonst diskrete Aktion
+  ui.rev++;
+  if(ui.dirty) ui.autoSaved=false;
+  cacheWrite();
+  scheduleAutoSave(text?TEXT_SAVE_MS:0);
+}
+
+/* ---------- Automatisches Speichern in die Datei ---------- */
+const TEXT_SAVE_MS=500; // Tippen: spätestens 500 ms nach dem letzten Tastendruck in die Datei schreiben
+let autoT=null,autoBusy=false,autoQueued=false;
+function scheduleAutoSave(delay=0){
+  clearTimeout(autoT); autoT=null;
+  if(!ui.auto||!ui.handle||!ui.handleReady||!ui.dirty) return;
+  if(delay>0) autoT=setTimeout(()=>{ autoT=null; runAutoSave(); },delay);
+  else runAutoSave(); // diskrete Aktion: sofort in die Datei schreiben
+}
+function flushAutoSave(){ // Feld verlassen oder Seite verstecken: einen wartenden Schreibvorgang sofort ausführen
+  if(autoT===null) return;
+  clearTimeout(autoT); autoT=null; runAutoSave();
+}
+async function runAutoSave(force=false){
+  if(!ui.auto||!ui.handle||!ui.handleReady) return;
+  if(autoBusy){ if(ui.dirty||force) autoQueued=true; return; } // läuft schon: danach genau einmal mit dem neuesten Stand
+  if(!ui.dirty&&!force) return;
+  autoBusy=true; autoQueued=false;
+  const rev=ui.rev, data=serialize(), wasErr=ui.autoErr;
+  try{
+    if(!(await permissionOk(ui.handle,true))) throw new Error('permission');
+    await queueWrite(ui.handle,data);
+    ui.autoErr=false; ui.autoSaved=true; ui.lastSaved=Date.now();
+    if(ui.rev===rev){ ui.dirty=false; updateStatus(); cacheWrite(); }
+    else updateStatus(); // während des Schreibens geändert: bleibt ungespeichert
+  }catch(err){
+    console.warn(err); ui.autoErr=true; ui.autoSaved=false; updateStatus();
+    if(!wasErr) toast(t('autoSaveErrT'));
+  }finally{
+    autoBusy=false;
+    if((autoQueued||ui.dirty)&&!ui.autoErr) scheduleAutoSave(0); // genau ein Nachschreibvorgang, mit dem neuesten Stand
+  }
+}
+async function enableAutoSave(){
+  let picked=false;
+  if(!ui.handle||!ui.handleReady){
+    try{
+      const h=await showSaveFilePicker({suggestedName:fileName(),types:pickerTypes()});
+      ui.handle=h; ui.handleReady=true; ui.pendingHandle=null; hideResumeBar(); await storeHandle(h); picked=true;
+    }catch(err){ if(err.name!=='AbortError') toast(t('openFail')); return; }
+  }
+  setAutoPreference(true); ui.autoErr=false; updateStatus();
+  if(picked) await runAutoSave(true);
+  else if(ui.dirty) scheduleAutoSave(0);
+  else { ui.autoSaved=true; updateStatus(); }
+}
+function toggleAutoSave(){
+  if(!AUTO_SUPPORTED) return;
+  if(ui.auto&&ui.handle&&ui.handleReady){ setAutoPreference(false); ui.autoErr=false; clearTimeout(autoT); autoT=null; updateStatus(); return; }
+  enableAutoSave(); // ohne Datei zuerst die Datei wählen
+}
+function renderResumeBar(){
+  const bar=$('#resumeBar'), h=ui.pendingHandle;
+  if(!h||!AUTO_SUPPORTED){ bar.hidden=true; return; }
+  const b=$('#resumeBtn');
+  b.textContent=t('resume',h.name||''); b.title=t('resumeT');
+  $('#resumeClose').title=t('resumeClose'); bar.hidden=false;
+}
+function hideResumeBar(){ $('#resumeBar').hidden=true; }
+function clearFileHandle(){
+  ui.handle=null; ui.handleReady=false; ui.pendingHandle=null; hideResumeBar();
+  clearTimeout(autoT); autoT=null; ui.autoErr=false; ui.autoSaved=false; ui.lastSaved=0;
+  forgetHandle(); updateStatus();
+}
+function fileBody(text){
+  try{ const d=JSON.parse(text); return d&&d.format===FORMAT?JSON.stringify({format:d.format,version:d.version,project:d.project,images:d.images}):null; }
+  catch(e){ return null; }
+}
+async function resumeFile(){
+  const h=ui.pendingHandle; if(!h) return;
+  let perm='denied';
+  try{ perm=await h.requestPermission({mode:'readwrite'}); }
+  catch(err){ if(err.name==='AbortError') return; }
+  if(perm!=='granted'){ toast(t('resumeDenied')); return; }
+  let file; try{ file=await h.getFile(); }catch(err){ console.warn(err); toast(t('openFail')); return; }
+  const text=await file.text();
+  const m=parseFile(text); if(!m) return;
+  const rec=await idbGet('current');
+  let cacheTime=0, cacheDirty=ui.dirty;
+  if(rec&&rec.data){ try{ cacheTime=Date.parse(JSON.parse(rec.data).saved)||0; }catch(e){} cacheDirty=ui.dirty||!!rec.dirty; }
+  const fileTime=Date.parse(m.data.saved)||file.lastModified||0;
+  const equal=fileBody(text)===fileBody(serialize());
+  let loadFromFile=false;
+  if(equal||fileTime>=cacheTime) loadFromFile=true;
+  else if(cacheDirty) loadFromFile=!confirm(t('resumeAsk',h.name));
+  else { ui.dirty=true; updateStatus(); } // Zwischenspeicher neuer: behalten und gleich in die Datei schreiben
+  if(loadFromFile&&!loadData(text,{quiet:true})) return;
+  ui.pendingHandle=null; ui.handle=h; ui.handleReady=true; hideResumeBar(); await storeHandle(h);
+  ui.lastSaved=file.lastModified||0; ui.autoErr=false; ui.autoSaved=false; updateStatus(); cacheWrite(); scheduleAutoSave();
+  toast(t('opened',h.name));
 }
 
 /* ---------- Export: Excel (.xlsx, eigener Writer ohne Bibliothek) und CSV ---------- */
@@ -1568,8 +1780,8 @@ function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add(
 function newBox(){
   if(!confirmDiscard()) return;
   if(!ui.dirty&&!confirm(t('confirmNew'))) return;
-  clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; viewFromSettings(); ui.handle=null; ui.sel=null; ui.editVar=null; ui.dirty=false;
-  resetHistory(); validateUi(); renderAll(); scheduleSave();
+  clearBlobs(); P=emptyProject(); IMG={}; ui.sample=false; viewFromSettings(); ui.sel=null; ui.editVar=null; ui.dirty=false;
+  resetHistory(); validateUi(); renderAll(); clearFileHandle(); scheduleSave();
 }
 $('#bOpen').onclick=openFile; // nur auf dem Handy sichtbar, am Computer im Datei-Menü
 $('#bRate').onclick=toggleRating;
@@ -1577,6 +1789,24 @@ $('#showdesc').onclick=toggleDesc;
 $('#showwhy').onclick=toggleWhy;
 $('#showcoords').onclick=()=>{ toggleCoords(!P.settings.coords); ui.dirty=true; updateStatus(); scheduleSave(); };
 $('#bSave').onclick=()=>saveFile(false);
+function showSavePop(show){
+  $('#savePop').hidden=!show;
+  $('#saveState').setAttribute('aria-expanded',show?'true':'false');
+}
+$('#saveState').onclick=()=>{
+  if(ui.autoErr&&ui.handle&&ui.handleReady){ showSavePop(false); runAutoSave(true); return; }
+  if(!ui.handle||!ui.handleReady){ showSavePop(false); if(AUTO_SUPPORTED) enableAutoSave(); else saveFile(false); return; }
+  if(ui.auto){ showSavePop($('#savePop').hidden); return; }
+  if(ui.dirty){ showSavePop(false); saveFile(false); return; }
+  showSavePop($('#savePop').hidden);
+};
+$('#autoTgl').onclick=()=>toggleAutoSave();
+$('#autoTglPop').onclick=()=>toggleAutoSave();
+$('#popSaveAs').onclick=()=>{ showSavePop(false); saveFile(true); };
+$('#popOpen').onclick=()=>{ showSavePop(false); openFile(); };
+document.addEventListener('click',e=>{ if(!e.target.closest('#saveWrap')) showSavePop(false); });
+$('#resumeBtn').onclick=resumeFile;
+$('#resumeClose').onclick=()=>{ ui.pendingHandle=null; hideResumeBar(); forgetHandle(); toast(t('resumeForgotten')); };
 
 $('#undo').onclick=undo; $('#redo').onclick=redo;
 $('#themeSeg').onclick=e=>{
@@ -1613,8 +1843,9 @@ $('#helpDlg').addEventListener('close',()=>{ try{ localStorage.setItem('mk-help-
 /* Aufklapp-Menüs: Einträge werden beim Öffnen in der aktuellen Sprache erzeugt */
 const tr=list=>list.map(([k,label,hint])=>({k,label:t(label),hint:hint?t(hint):''}));
 const MENUS={
-  fileMenu:{items:()=>[...tr([['new','new',''],['open','open','openT'],['import','import','importHint']]),{sep:true},...tr([['saveAs','saveAs','saveAsT']])],
-    pick:k=>({new:newBox,open:openFile,import:importFile,saveAs:()=>saveFile(true)})[k]()},
+  fileMenu:{items:()=>[...tr([['new','new',''],['open','open','openT'],['import','import','importHint']]),{sep:true},...tr([['saveAs','saveAs','saveAsT']]),{sep:true},
+      {k:'autosave',label:t('autoSave'),hint:t(AUTO_SUPPORTED?'autoSaveHint':'autoSaveOnly'),checked:AUTO_SUPPORTED&&ui.auto&&ui.handleReady&&!!ui.handle,disabled:!AUTO_SUPPORTED}],
+    pick:k=>{ if(k==='autosave') return toggleAutoSave(); ({new:newBox,open:openFile,import:importFile,saveAs:()=>saveFile(true)})[k](); }},
   viewMenu:{items:()=>[...P.criteria.map(k=>({k:k.id,label:k.name||t('noName'),checked:k.id===ui.view})),{k:ALL,label:t('overallView'),hint:t('overallViewHint'),checked:ui.view===ALL},{sep:true},{k:'@edit',label:t('editCritMenu')}],
     pick:k=>{ if(k==='@edit') return showCriteria(); setView(k); }},
   exportMenu:{items:()=>tr([['pdf','print','exportPdfHint'],['xlsx','exportXlsx','exportXlsxHint'],['csv','exportCsv','exportCsvHint']]), pick:k=>exportAs(k)},
@@ -1625,18 +1856,23 @@ const MENUS={
 function closeMenus(){ $$('.menu-list').forEach(l=>l.hidden=true); }
 function openMenu(id){
   const root=$('#'+id), list=root.querySelector('.menu-list');
-  const items=MENUS[id].items(), check=items.some(it=>'checked' in it);
-  list.innerHTML=items.map(it=>it.sep?'<hr>':`<button type="button" role="menuitem" data-k="${esc(it.k)}"${check?' class="chk"':''}>${check?`<span class="tick">${it.checked?'✓':''}</span>`:''}${esc(it.label)}${it.hint?`<small>${esc(it.hint)}</small>`:''}</button>`).join('');
+  const items=MENUS[id].items();
+  list.innerHTML=items.map(it=>{
+    if(it.sep) return '<hr>';
+    const chk='checked' in it;
+    return `<button type="button" role="menuitem" data-k="${esc(it.k)}"${chk?' class="chk"':''}${it.disabled?' disabled aria-disabled="true" title="'+esc(it.hint||'')+'"':''}>`+
+      `${chk?`<span class="tick">${it.checked?'✓':''}</span>`:''}${esc(it.label)}${it.hint?`<small>${esc(it.hint)}</small>`:''}</button>`;
+  }).join('');
   list.classList.remove('right'); list.hidden=false;
   if(list.getBoundingClientRect().right>innerWidth-8) list.classList.add('right'); // nicht über den Rand
-  (list.querySelector('.chk .tick:not(:empty)')?.parentElement||list.querySelector('button')).focus();
+  (list.querySelector('button:not(:disabled)')||list.querySelector('button'))?.focus();
 }
 function setupMenu(root){
   root.querySelector('.btn').onclick=e=>{ e.stopPropagation(); const open=!root.querySelector('.menu-list').hidden; closeMenus(); if(!open) openMenu(root.id); };
   root.querySelector('.menu-list').onclick=e=>{ const b=e.target.closest('[data-k]'); if(!b) return; closeMenus(); MENUS[root.id].pick(b.dataset.k); };
   root.addEventListener('keydown',e=>{ // Pfeiltasten im offenen Menü, Esc schliesst
     const list=root.querySelector('.menu-list'); if(list.hidden) return;
-    const items=[...list.querySelectorAll('button')], i=items.indexOf(document.activeElement);
+    const items=[...list.querySelectorAll('button:not(:disabled)')], i=items.indexOf(document.activeElement);
     if(e.key==='ArrowDown'){ e.preventDefault(); e.stopPropagation(); items[(i+1)%items.length].focus(); }
     else if(e.key==='ArrowUp'){ e.preventDefault(); e.stopPropagation(); items[(i-1+items.length)%items.length].focus(); }
     else if(e.key==='Escape'){ e.stopPropagation(); closeMenus(); root.querySelector('.btn').focus(); }
@@ -1653,7 +1889,7 @@ $('#bar2').addEventListener('click',e=>{
   if(b.classList.contains('vedit')) toggleEditVar(b.dataset.var);
 });
 $('#banner').addEventListener('click',e=>{ if(e.target.id==='doneVar'){ ui.editVar=null; renderAll(); } });
-$('#openFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(f){ ui.handle=null; loadData(await f.text()); } };
+$('#openFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(f){ clearFileHandle(); loadData(await f.text()); } };
 $('#importFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(f) importData(await f.text()); };
 $('#varImgFile').onchange=e=>{ const fs=[...e.target.files]; e.target.value=''; if(fs.length&&ui.pickVar) addVarImages(ui.pickVar,fs); };
 document.addEventListener('click',e=>{ const z=e.target.closest('[data-zoom]'); if(z) openLightbox(z.dataset.zoom); });
@@ -1741,9 +1977,9 @@ $('#side').addEventListener('change',e=>{
 document.addEventListener('focusin',e=>{ if(e.target.matches('input,textarea')) editSnap=snapshot(); });
 document.addEventListener('input',e=>{
   const tg=e.target;
-  const dirty=()=>{ ui.dirty=true; updateStatus(); scheduleSave(); if(!['size','lineop','ptitle'].includes(tg.id)) renderVarList(); };
-  if(tg.id==='size'){ P.settings.cellW=+tg.value; applySize(); drawLines(); return dirty(); }
-  if(tg.id==='lineop'){ P.settings.lineOp=Math.round((1-tg.value)*100)/100; drawLines(); return dirty(); }
+  const dirty=(text=true)=>{ ui.dirty=true; updateStatus(); scheduleSave(text); if(!['size','lineop','ptitle'].includes(tg.id)) renderVarList(); };
+  if(tg.id==='size'){ P.settings.cellW=+tg.value; applySize(); drawLines(); return dirty(false); } // Grösse: diskrete Aktion
+  if(tg.id==='lineop'){ P.settings.lineOp=Math.round((1-tg.value)*100)/100; drawLines(); return dirty(false); }
   if(tg.id==='ptitle'){ beginEdit(); P.title=tg.value; return dirty(); }
   if(tg.classList.contains('rowname')){ beginEdit(); P.rows.find(r=>r.id===tg.dataset.row).name=tg.value; return dirty(); }
   const k=tg.dataset.edit; if(!k) return;
@@ -1758,8 +1994,11 @@ document.addEventListener('input',e=>{
     case 'varnote': v.note=tg.value; break;
     case 'varcolor': v.color=tg.value; tg.closest('.vcard').style.setProperty('--c',v.color); renderToolbar(); drawLines(); break;
   }
-  dirty();
+  dirty(k!=='varcolor'); // Farbe ist eine diskrete Änderung, Text wird beim Verlassen des Feldes geschrieben
 });
+// Feld verlassen: einen noch wartenden Schreibvorgang sofort ausführen
+document.addEventListener('focusout',e=>{ if(e.target.matches('input,textarea')) flushAutoSave(); });
+document.addEventListener('change',e=>{ if(e.target.matches('input,textarea')) flushAutoSave(); });
 
 /* ---------- Tastatur ---------- */
 document.addEventListener('keydown',e=>{
@@ -2185,11 +2424,20 @@ async function printBox(){
 window.addEventListener('beforeprint',()=>{ if(!ui.printBuilt) buildPrint(); });
 window.addEventListener('afterprint',()=>{ ui.printBuilt=false; $('#printout')?.remove(); });
 window.addEventListener('resize',()=>{ applySize(); drawLines(); });
-window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.preventDefault(); e.returnValue=''; } });
+// Tab wird versteckt oder geschlossen: wartenden Schreibvorgang sofort ausführen
+function flushPending(){ cacheWrite(); flushAutoSave(); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flushPending(); });
+window.addEventListener('pagehide',flushPending);
+// warnen, solange ein Schreibvorgang läuft oder wartet bzw. Änderungen nicht in einer Datei sind
+window.addEventListener('beforeunload',e=>{
+  if(ui.dirty||autoBusy||autoQueued||autoT!==null){ e.preventDefault(); e.returnValue=''; }
+});
 
 /* ---------- Start ---------- */
 (async()=>{
   const saved=await Promise.race([idbGet('current'),new Promise(r=>setTimeout(()=>r(null),2000))]);
+  let storedHandle=null;
+  try{ storedHandle=await Promise.race([idbGet('fileHandle'),new Promise(r=>setTimeout(()=>r(null),2000))]); }catch(e){}
   let restored=false;
   if(saved&&saved.data){
     try{
@@ -2204,6 +2452,7 @@ window.addEventListener('beforeunload',e=>{ if(ui.dirty&&!ui.autosaveOk){ e.prev
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
+  if(storedHandle&&AUTO_SUPPORTED&&typeof storedHandle.getFile==='function'){ ui.pendingHandle=storedHandle; renderResumeBar(); }
   if(isPhone()){ let seen=null; try{ seen=sessionStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
   else { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
