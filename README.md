@@ -73,6 +73,8 @@ Only one person should edit the file at a time. Otherwise the last person to sav
 
 Click **? Help → Download the tool (use offline)**, or download [`index.html`](index.html) here. Double-click the file and the tool works completely without internet. It contains only the tool, not your boxes. Download it again from time to time to stay up to date.
 
+**Install as an app:** in Chrome or Edge click the install icon in the address bar (or menu → *Install*). The tool then opens in its own window, has its own icon and also starts without internet. On Android: menu → *Add to home screen*.
+
 ### FAQ
 
 **My box is gone!**
@@ -158,6 +160,8 @@ Es sollte immer nur eine Person gleichzeitig daran arbeiten. Sonst überschreibt
 ### Offline nutzen
 
 Klicke auf **? Hilfe → Tool herunterladen (offline nutzen)** oder lade hier [`index.html`](index.html) herunter. Per Doppelklick funktioniert das Tool dann komplett ohne Internet. Die Datei enthält nur das Tool, nicht deine Kästen. Lade sie ab und zu neu herunter, damit du aktuell bleibst.
+
+**Als App installieren:** In Chrome oder Edge auf das Installieren-Symbol in der Adressleiste klicken (oder Menü → *Installieren*). Das Tool öffnet sich dann in einem eigenen Fenster, hat ein eigenes Symbol und startet auch ohne Internet. Auf Android: Menü → *Zum Startbildschirm hinzufügen*.
 
 ### Häufige Fragen
 

@@ -8,6 +8,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" type="image/png" sizes="96x96">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f6fed">
 <meta name="description" content="Kostenloses Online-Tool für den morphologischen Kasten: Drag &amp; Drop, Skizzen, Ampelbewertung mit Begründung, Lösungsvarianten als farbige Linien. Free morphological box (Zwicky box) tool. Runs in the browser, no sign-up, data stays local.">
 <link rel="canonical" id="canon" href="https://master-d1990.github.io/morphological-box/">
 <link rel="alternate" hreflang="de" href="https://master-d1990.github.io/morphological-box/?lang=de">
@@ -2457,5 +2459,6 @@ window.addEventListener('beforeunload',e=>{
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.add('ready')));
 })();
 </script>
+<script>if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 </body>
 </html>
