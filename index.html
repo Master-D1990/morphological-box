@@ -298,10 +298,7 @@ body.noside #side{display:none}
 #themeSeg button{padding:5px 8px}
 /* Speicherstatus + Auto-Schalter neben dem Projekttitel */
 #saveWrap{position:relative;display:inline-flex;align-items:center;gap:6px;min-width:0}
-#autoTgl,#autoTglPop{padding:3px 9px 3px 32px;font-size:12px;line-height:1.3}
-#autoTgl::before,#autoTglPop::before{left:7px;width:20px;height:12px;margin-top:-6px;border-radius:6px}
-#autoTgl::after,#autoTglPop::after{left:9px;width:8px;height:8px;margin-top:-4px}
-#autoTgl[aria-pressed=true]::after,#autoTglPop[aria-pressed=true]::after{transform:translateX(8px)}
+#autoTgl,#autoTglPop{line-height:1.3}
 #saveState{border:0;background:transparent;border-radius:6px;padding:2px 4px;font-size:12.5px;cursor:pointer;color:var(--muted);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;min-width:0}
 #saveState:hover{background:var(--hover)}
 #saveState.ok{color:var(--g)}
@@ -327,11 +324,12 @@ body.noside #side{display:none}
 .menu>.btn::after{content:" ▾";font-size:11px;color:var(--muted)}
 #bar2 .menu>.btn,#bar2 .btn.tgl{padding:3px 9px;font-size:13px}
 /* Kippschalter: Schiene + Knopf, gleitet beim Umschalten nach rechts */
-.btn.tgl,#bar2 .btn.tgl{position:relative;padding-left:40px}
-.btn.tgl::before{content:"";position:absolute;left:8px;top:50%;width:26px;height:14px;margin-top:-7px;border-radius:7px;background:var(--empty2);transition:background .2s}
-.btn.tgl::after{content:"";position:absolute;left:10px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .2s}
+.btn.tgl,#bar2 .btn.tgl{position:relative;padding-right:2.9em}
+/* switch drawn in em, so it always matches the size of its text */
+.btn.tgl::before{content:"";position:absolute;right:.62em;top:50%;width:1.86em;height:1em;margin-top:-.5em;border-radius:.5em;background:var(--empty2);transition:background .2s}
+.btn.tgl::after{content:"";position:absolute;right:1.62em;top:50%;width:.72em;height:.72em;margin-top:-.36em;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .2s}
 .btn.tgl[aria-pressed=true]::before{background:var(--accent)}
-.btn.tgl[aria-pressed=true]::after{transform:translateX(12px)}
+.btn.tgl[aria-pressed=true]::after{transform:translateX(.86em)}
 @media (prefers-reduced-motion:reduce){ .btn.tgl::before,.btn.tgl::after{transition:none} }
 html:not(.ready) .btn.tgl::before,html:not(.ready) .btn.tgl::after{transition:none} /* beim Laden nicht von «aus» nach «ein» gleiten */
 #bRate+.menu{margin-left:-4px}
