@@ -2452,7 +2452,12 @@ window.addEventListener('beforeunload',e=>{
   validateUi(); renderAll();
   { let v='1'; try{ v=localStorage.getItem('mk-side')??'1'; }catch(e){} setSide(v!=='0'); }
   if(restored) toast(t('restored'));
-  if(storedHandle&&AUTO_SUPPORTED&&typeof storedHandle.getFile==='function'){ ui.pendingHandle=storedHandle; renderResumeBar(); }
+  if(storedHandle&&AUTO_SUPPORTED&&typeof storedHandle.getFile==='function'){
+    ui.pendingHandle=storedHandle; renderResumeBar();
+    // Erlaubnis noch gültig (Chrome: «Bei jedem Besuch zulassen» oder installierte App): ohne Klick weiterarbeiten
+    let perm='prompt'; try{ if(storedHandle.queryPermission) perm=await storedHandle.queryPermission({mode:'readwrite'}); }catch(e){}
+    if(perm==='granted') await resumeFile();
+  }
   if(isPhone()){ let seen=null; try{ seen=sessionStorage.getItem('mk-mobile-seen'); }catch(e){} if(!seen) $('#mobileDlg').showModal(); }
   else { let seen=null; try{ seen=localStorage.getItem('mk-help-seen'); }catch(e){ seen='1'; } if(!seen&&!restored) openHelp(); }
   if(document.fonts) document.fonts.ready.then(drawLines);
